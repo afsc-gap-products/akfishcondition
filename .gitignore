@@ -19,10 +19,7 @@
 
 # RStudio files
 .Rproj.user/
-
-# produced vignettes
-vignettes/*.html
-vignettes/*.pdf
+*.Rproj
 
 # OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
 .httr-oauth
@@ -30,10 +27,11 @@ vignettes/*.pdf
 # knitr and R markdown default cache directories
 *_cache/
 /cache/
+/archive/
 
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
-
-# R Environment Variables
-.Renviron
+inst/doc
+doc
+Meta

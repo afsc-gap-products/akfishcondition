@@ -1,0 +1,21 @@
+Package: akfishcondition
+Type: Package
+Title: Groundfish condition index
+Version: 0.0.1
+Authors@R: person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre"))
+Maintainer: Sean Rohan <sean.rohan@noaa.gov>
+Depends: R (>= 3.6.2),
+    dplyr,
+    ggplot2,
+    magrittr,
+    plyr,
+    reshape
+Description: This package calculates length-weight condition indices in Alaska. Functions based on GroundfishCondition package by Christoper N. Rooper (github.com/rooperc4/GroundfishCondition)
+License: GPL (>=2)
+Encoding: UTF-8
+LazyData: false
+RoxygenNote: 7.1.0
+Imports: colorspace,
+    viridis
+Suggests: knitr, rmarkdown
+VignetteBuilder: knitr
