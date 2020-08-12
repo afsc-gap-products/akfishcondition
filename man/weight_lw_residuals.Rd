@@ -4,16 +4,24 @@
 \alias{weight_lw_residuals}
 \title{A function to weight length-weight residuals by catch}
 \usage{
-weight_lw_residuals(residuals, year, stratum = NA, catch = 1)
+weight_lw_residuals(
+  residuals,
+  year,
+  stratum = NA,
+  stratum_biomass = NA,
+  catch = 1
+)
 }
 \arguments{
+\item{residuals}{Residual that will be weighted by catch}
+
 \item{year}{Year of sample must be the same length as the residuals}
 
 \item{stratum}{Vector of strata for weighting}
 
-\item{catch}{Catch for weighting residual (default = 1) must be the same length as residuals}
+\item{stratum_biomass}{Biomass in kg for the stratum.}
 
-\item{residual}{Residual that will be weighted by catch}
+\item{catch}{Catch for weighting residual (default = 1) must be the same length as residuals}
 }
 \description{
 This function weights length-weight residuals by a catch column. This

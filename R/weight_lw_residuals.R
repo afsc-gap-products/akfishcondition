@@ -10,7 +10,6 @@
 #' @param stratum_biomass Biomass in kg for the stratum.
 #' @keywords length, weight, groundfish condition
 #' @export
-#' @examples
 
 weight_lw_residuals <- function(residuals, year, stratum = NA, stratum_biomass = NA, catch = 1) {
   
