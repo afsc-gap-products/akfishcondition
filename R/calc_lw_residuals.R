@@ -131,7 +131,8 @@ calc_lw_residuals <- function(len, wt, stratum = NA, bias.correction = TRUE, out
     dev.off()
     
     sink(file = paste0(out_path,region[1], "_", species_code[1], "_model_summary.txt"))
-    cat(summary(lw.reg$mod))
+    print(summary(lw.reg$mod))
+    sink()
 
   }
   
