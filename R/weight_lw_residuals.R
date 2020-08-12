@@ -7,12 +7,12 @@
 #' @param year Year of sample must be the same length as the residuals
 #' @param catch Catch for weighting residual (default = 1) must be the same length as residuals
 #' @param stratum Vector of strata for weighting
-#' @param stratum_area Stratum area in hectares
+#' @param stratum_biomass Biomass in kg for the stratum.
 #' @keywords length, weight, groundfish condition
 #' @export
 #' @examples
 
-weight_lw_residuals <- function(residuals, year, stratum = NA, stratum_area = NA, catch = 1) {
+weight_lw_residuals <- function(residuals, year, stratum = NA, stratum_biomass = NA, catch = 1) {
   
   wtlw.res <- residuals
   
@@ -24,7 +24,7 @@ weight_lw_residuals <- function(residuals, year, stratum = NA, stratum_area = NA
     
     unique_years <- unique(year)
     
-    # Calculate residuals by year (Pre-2020 morphometric condition index approach)
+    # Calculate residuals by year with stratum weighting by catch (CNR's code)
     for(i in 1:length(unique_years)){
       year_ind <- which(year == unique_years[i])
       sel_resid <- residuals[year_ind]
@@ -34,8 +34,8 @@ weight_lw_residuals <- function(residuals, year, stratum = NA, stratum_area = NA
       var3 <- var1/var2*length(sel_catch)
       wtlw.res[year_ind] <- var3
     }
-  } else if(!is.na(stratum)[1] & is.na(stratum_area)) {
-    # Calculate residuals by stratum without biomass expansion by stratum area (CR's code)
+  } else if(!is.na(stratum)[1] & is.na(stratum_biomass)) {
+    # Calculate residuals by stratum without biomass expansion by stratum area 
     unique_years_stratum <- expand.grid(year = unique(year), stratum = unique(stratum))
       for(i in 1:nrow(unique_years_stratum)) {
         ind <- which(year == unique_years_stratum['year'] & stratum == unique_years_stratum['stratum'])
@@ -47,41 +47,30 @@ weight_lw_residuals <- function(residuals, year, stratum = NA, stratum_area = NA
         wtlw.res[ind] <- var3
       }
   } else {
-    # Stratum biomass expansion based on Wakabayashi index estimator
-    stratum <- c(c(1,1,2,2), c(1,1,2,2))
-    year <- c(rep(2018,4), rep(2019,4))
-    stratum_area <- c(c(10,10,20,20),c(10,10,20,20))
-    cpue <- c(c(10,20,10,20),c(1,2,1,2))
-    residuals <- c(c(0.1, 0.1, 0.5, 0.5), c(0.1, 0.1, 0.5, 0.5))
+    # 2020 ESR: Calculate residuals by stratum with biomass-weighted expansion (2020 ESR)
+    # stratum_biomass <- c(rep(0.5,4), c(0.25, 0.25, 1.5, 1.5))
+    # residuals <- c(c(0.05, 0.05, 0.5, 0.5), c(0.05, 0.05, 0.5, 0.5))
+    # year <- c(rep(2018,4), rep(2019,4))
+    # stratum <- c(c(1,1,2,2), c(1,1,2,2))
     
-    # Calculate stratum area by proportion
-    df_stratum <- data.frame(stratum, stratum_area) %>%
-      unique() %>%
-      dplyr::mutate(stratum_prop = stratum_area/sum(stratum_area)) %>%
-      dplyr::select(stratum, stratum_prop)
+    biomass_df <- data.frame(stratum_biomass, stratum, year) %>% 
+      unique()
     
-    # Calculate Wakabayashi biomass estimator
-    df_cpue <- data.frame(cpue, stratum, year, stratum_area, residuals = residuals) %>%
-      dplyr::group_by(stratum, year) %>%
-      dplyr::summarise(stratum_area = mean(stratum_area), 
-                       cpue = mean(cpue),
-                       n = n(),
-                       residuals = mean(residuals)) %>%
-      dplyr::mutate(cpue_var = (ifelse(n() <= 1, 0, var(cpue)/n))) %>%
-      dplyr::inner_join(df_stratum) %>%
-      dplyr::ungroup() %>%
-      dplyr::mutate(weighted_biomass = cpue * stratum_prop,
-                    weighted_var = cpue_var * stratum_prop)
-      
-    # Weight residuals by proportion of biomass in the stratum
-    df_residuals <- df_cpue %>%
+    biomass_proportion_df <- biomass_df %>% 
       dplyr::group_by(year) %>%
-      dplyr::mutate(prop_biomass = weighted_biomass / sum(weighted_biomass)) %>%
-      dplyr::mutate(stratum_weighted_residual = residuals * prop_biomass) %>%
-      dplyr::select(stratum, year, stratum_weighted_residual)
+      dplyr::summarise(year_biomass = sum(stratum_biomass)) %>%
+      dplyr::inner_join(biomass_df) %>%
+      dplyr::mutate(stratum_weight = stratum_biomass/year_biomass) %>%
+      dplyr::select(year, stratum, stratum_weight)
     
-    wt.lwres <- df_residuals
+    residuals_df <- data.frame(residuals, 
+                               year, 
+                               stratum) %>% 
+      dplyr::inner_join(biomass_proportion_df) %>%
+      dplyr::mutate(weighted_residuals = residuals * stratum_weight)
     
+    wtlw.res <- residuals_df$weighted_residuals
+      
   }
   
   return(wtlw.res)
