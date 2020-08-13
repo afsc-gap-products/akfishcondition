@@ -12,7 +12,8 @@ calc_lw_residuals(
   outlier.rm = FALSE,
   make_diagnostics = FALSE,
   species_code = NA,
-  year = NA
+  year = NA,
+  region = NA
 )
 }
 \arguments{
@@ -26,13 +27,13 @@ calc_lw_residuals(
 
 \item{year}{Year (provide if make_diagnostics = TRUE)}
 
+\item{region}{Region (provide if make_diagnostics = TRUE)}
+
 \item{length}{Set of individual fish lengths.}
 
 \item{weight}{Corresponding set of individual fish weights.}
 
 \item{bias.correct}{Bias corrected residuals following Brodziak (2012)}
-
-\item{region}{Region (provide if make_diagnostics = TRUE)}
 }
 \description{
 This function makes a log-log regression of length and weight for individual fish and then calculates a residual. A Bonferroni-corrected outlier correction can be applied to remove outliers. Option to use separate covariates for different strata.
