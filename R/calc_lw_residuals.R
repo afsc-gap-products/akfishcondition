@@ -91,7 +91,8 @@ calc_lw_residuals <- function(len,
       dplyr::summarise(n = n())
     
     sample_size_plot <- ggplot(data = sample_size_df, 
-                               aes(x = year, y = factor(stratum), fill = n, label = n)) + 
+                               aes(x = year, 
+                                   y = factor(stratum), fill = n, label = n)) + 
       geom_tile() + 
       geom_text() +
       scale_x_continuous(name = "Year") +
@@ -112,9 +113,10 @@ calc_lw_residuals <- function(len,
     
     rmse_plot <- ggplot() + 
       geom_point(data = rmse_df,
-                 aes(x = stratum, y = RMSE), 
+                 aes(x = stratum, 
+                     y = RMSE), 
                  size = rel(1.3)) +
-      scale_x_continuous(name = "Year") +
+      scale_x_discrete(name = "Stratum") +
       scale_color_discrete(name = "Stratum") + 
       theme_bw()
     
