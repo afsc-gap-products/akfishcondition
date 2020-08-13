@@ -1,7 +1,7 @@
 Package: akfishcondition
 Type: Package
 Title: Groundfish condition index
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre"))
 Maintainer: Sean Rohan <sean.rohan@noaa.gov>
 Depends: R (>= 3.6.2),

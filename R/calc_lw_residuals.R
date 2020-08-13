@@ -15,7 +15,15 @@
 #' @references Brodziak, J.2012. Fitting length-weight relationships with linear regression using the log-transformed allometric model with bias-correction. Pacific Islands Fish. Sci. Cent., Natl. Mar. Fish. Serv., NOAA, Honolulu, HI 96822-2396. Pacific Islands Fish. Sci. Cent. Admin. Rep. H-12-03, 4 p.
 #' @export
 
-calc_lw_residuals <- function(len, wt, stratum = NA, bias.correction = TRUE, outlier.rm=FALSE, make_diagnostics = FALSE, species_code = NA, year = NA) {
+calc_lw_residuals <- function(len, 
+                              wt, 
+                              stratum = NA, 
+                              bias.correction = TRUE, 
+                              outlier.rm = FALSE, 
+                              make_diagnostics = FALSE, 
+                              species_code = NA, 
+                              year = NA, 
+                              region = NA) {
   
   loglen <- log(len)
   logwt <- log(wt)
