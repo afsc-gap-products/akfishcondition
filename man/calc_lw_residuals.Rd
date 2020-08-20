@@ -13,7 +13,8 @@ calc_lw_residuals(
   make_diagnostics = FALSE,
   species_code = NA,
   year = NA,
-  region = NA
+  region = NA,
+  include_ci = TRUE
 )
 }
 \arguments{
