@@ -14,6 +14,7 @@
 #' @keywords length, weight, groundfish condition
 #' @references Brodziak, J.2012. Fitting length-weight relationships with linear regression using the log-transformed allometric model with bias-correction. Pacific Islands Fish. Sci. Cent., Natl. Mar. Fish. Serv., NOAA, Honolulu, HI 96822-2396. Pacific Islands Fish. Sci. Cent. Admin. Rep. H-12-03, 4 p.
 #' @export
+#' 
 
 calc_lw_residuals <- function(len, 
                               wt, 
@@ -23,7 +24,8 @@ calc_lw_residuals <- function(len,
                               make_diagnostics = FALSE, 
                               species_code = NA, 
                               year = NA, 
-                              region = NA) {
+                              region = NA,
+                              include_ci = TRUE) {
   
   loglen <- log(len)
   logwt <- log(wt)
@@ -31,21 +33,22 @@ calc_lw_residuals <- function(len,
   run_lw_reg <- function(logwt, loglen, stratum) {
     if(is.na(stratum)[1]) {
       lw.mod <-lm(logwt~loglen, na.action = na.exclude)
-      fitted_wt <- predict(lw.mod, newdata = data.frame(len = len)) 
+      fitted_df <- predict(lw.mod, newdata = data.frame(len = len), se.fit = TRUE) %>% 
+        as.data.frame()
     } else {
       stratum <- factor(stratum)
       lw.mod <- lm(logwt~loglen:stratum, na.action = na.exclude)
-      fitted_wt <- predict(lw.mod, newdata = data.frame(len = len, stratum = stratum)) 
+      # fitted_wt <- predict(lw.mod, newdata = data.frame(len = len, stratum = stratum))
+      fitted_df <- predict(lw.mod, newdata = data.frame(len = len), se.fit = TRUE) %>% 
+        as.data.frame()
     }
     
     return(list(mod = lw.mod, 
-                fitted_wt  = fitted_wt))
+                fitted_df = fitted_df))
   }
   
   # Run length-weight regression
   lw.reg <- run_lw_reg(logwt = logwt, loglen = loglen, stratum = stratum)
-  
-  length(lw.reg$fitted_wt)
   
   #Assessing Outliers using Bonferroni Outlier Test
   #Identify if there are any outliers in your data that exceed cutoff = 0.05 (default)
@@ -65,14 +68,22 @@ calc_lw_residuals <- function(len,
   if(bias.correction) {
     syx <- summary(lw.reg$mod)$sigma
     cf <- exp((syx^2)/2) 
-    lw.reg$fitted_wt <- log(cf *(exp(lw.reg$fitted_wt)))
+    
+    # Correction for mean and SE
+    lw.reg$fitted_df$fit <- log(cf *(exp(lw.reg$fitted_df$fit)))
+    lw.reg$fitted_df$lwr <- log(cf *(exp(lw.reg$fitted_df$fit - 2*lw.reg$fitted_df$se.fit)))
+    lw.reg$fitted_df$upr <- log(cf *(exp(lw.reg$fitted_df$fit + 2*lw.reg$fitted_df$se.fit)))
+    
   }
   
-  lw.res <- (logwt - lw.reg$fitted_wt)
+  # Residual with confidence intervals
+  lw.reg$fitted_df$lw.res_mean <- (logwt - lw.reg$fitted_df$fit)
+  lw.reg$fitted_df$lw.res_lwr <- (logwt - lw.reg$fitted_df$lwr)
+  lw.reg$fitted_df$lw.res_upr <- (logwt - lw.reg$fitted_df$upr)
   
   # Make diagnostic plots ----
   if(make_diagnostics) {
-
+    
     # Create output directory if it doesn't exist ----
     out_path <- paste0("./output/", region[1], "/")
     
@@ -84,7 +95,7 @@ calc_lw_residuals <- function(len,
     if(!dir.exists(out_path)) {
       dir.create(out_path)
     }
-
+    
     # Sample sizes
     sample_size_df <- data.frame(year, stratum) %>%
       dplyr::group_by(year, stratum) %>%
@@ -105,9 +116,9 @@ calc_lw_residuals <- function(len,
       return(mean(sqrt(x^2)))
     }
     
-    rmse_df <- data.frame(lw.res, stratum) %>%
+    rmse_df <- data.frame(lw.reg$fitted_df$lw.res_mean, stratum) %>%
       dplyr::group_by(stratum) %>%
-      dplyr::summarise(RMSE = rmse(lw.res))
+      dplyr::summarise(RMSE = rmse(lw.reg$fitted_df$lw.res_mean))
     
     write.csv(rmse_df, file = paste0(out_path, region[1], "_", species_code[1], "_rmse.csv"), row.names = FALSE)
     
@@ -143,8 +154,13 @@ calc_lw_residuals <- function(len,
     sink(file = paste0(out_path,region[1], "_", species_code[1], "_model_summary.txt"))
     print(summary(lw.reg$mod))
     sink()
-
+    
   }
   
-  return(lw.res)
+  if(!include_ci) {
+    return(lw.reg$fitted_df$lw.res_mean)
+  } else {
+    return(lw.reg$fitted_df)
+  }
+  
 }
