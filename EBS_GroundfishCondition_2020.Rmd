@@ -19,9 +19,13 @@ if(!("akfishcondition" %in% installed.packages())) {
 
 library(akfishcondition)
 pkg_version <- packageVersion("akfishcondition")
+
+# Unzip packaged csv and map files
+unzip(system.file("data/2020_ESR.zip", package = "akfishcondition"))
+
 # Load data
-ebs_dat <- readr::read_csv(file = "./data/2020-08-19_ebs_condition_data_2020_ESR.csv")
-nbs_dat <- readr::read_csv(file = "./data/2020-08-19_nbs_condition_data_2020_ESR.csv") %>%
+ebs_dat <- readr::read_csv(file = "./2020-08-19_ebs_condition_data_2020_ESR.csv")
+nbs_dat <- readr::read_csv(file = "./2020-08-19_nbs_condition_data_2020_ESR.csv") %>%
   dplyr::filter(SPECIES_CODE %in% c(21740, 21720, 10285, 10210))
 
 # Convert 10-25 cm lengths to age-1
@@ -95,6 +99,7 @@ Contributed by Sean Rohan^1^ and Ned Laman^1^
 **Description of Indicator**: Length-weight residuals represent how heavy a fish is per unit body length and are an indicator of somatic growth variability (Brodeur et al., 2004). Therefore, length-weight residuals can be considered an indicator of prey availability and growth conditions. Positive length-weight residuals indicate better condition (i.e., heavier per unit length) and negative residuals indicate poorer condition (i.e., lighter per unit length). Fish condition calculated in this way reflects fish growth trajectories which can have implications for biological productivity due to growth, reproduction, and mortality (Paul and Paul, 1999; Boldt and Haldorson, 2004).
 
 ```{r map, include=TRUE,out.width="200%",fig.cap="\\label{fig:figs}Figure 1. AFSC/RACE GAP summer bottom trawl survey strata (10-90) and station locations (x) on the eastern Bering Sea Shelf and in the Northern Bering Sea. ",  echo=FALSE}
+include_graphics("EBS_NBS_2019.png")
 ```
 
 Paired lengths and weights of individual fishes were collected from the Alaska Fisheries Science Center's Resource Assessment and Conservation Engineering (AFSC/RACE) - Groundfish Assessment Program's (GAP) bottom trawl surveys of the eastern Bering Sea (EBS) shelf and Northern Bering Sea (NBS). Fish condition analyses were applied to Walleye pollock (_Gadus chalcogrammus_), Pacific cod (_Gadus macrocephalus_), Arrowtooth flounder (_Atheresthes stomias_), Yellowfin sole (_Limanda aspera_), Flathead sole (_Hippoglossoides elassodon_), Northern rock sole (_Lepidopsetta polyxystra_), and Alaska Plaice (_Pleuronectes quadrituberculatus_) collected in bottom trawls at standard stations (Figure 1). No corner stations or non-standard strata were included. For these analyses and results, survey strata 31 and 32 were combined as stratum 30; strata 41, 42, and 43 were combined as stratum 40; and strata 61 and 62 were combined as stratum 60. Non-standard survey strata 82 and 90 were excluded from these analyses. Length-weight relationships for each species were estimated with a linear regression of log-transformed values over all years and areas where data were available (EBS: 1982-2019, NBS: 2010 & 2017-2019), with a different slope for each stratum to account for spatial-temporal variation in growth and bottom trawl survey sampling. Length-weight relationships for 100-250 mm pollock (corresponding with ages 1–2) were calculated independently. Bias-corrected weights-at-length (log scale) were estimated from the model and subtracted from observed weights to compute individual residuals per fish. Length-weight residuals were averaged for each stratum and weighted in proportion to regional biomass based on stratified area-swept expansion of summer bottom-trawl survey catch per unit effort. Average length-weight residuals were compared by stratum and year on the EBS shelf to evaluate spatial variation in fish condition. The NBS was treated as a single stratum and used a different length-weight regression than the EBS. Combinations of stratum and year with <10 samples were used for length-weight calculations but excluded from indicator calculations.
