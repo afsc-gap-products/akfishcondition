@@ -1,10 +1,10 @@
 Package: akfishcondition
 Type: Package
 Title: Groundfish condition index
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre"))
 Maintainer: Sean Rohan <sean.rohan@noaa.gov>
-Depends: R (>= 4.0),
+Depends: R (>= 3.5),
     dplyr,
     ggplot2,
     magrittr,
