@@ -34,8 +34,13 @@ unzip(system.file("data/2020_ESR.zip", package = "akfishcondition"))
 
 # Load data
 <<<<<<< HEAD
+<<<<<<< HEAD
 ebs_dat <- readr::read_csv(file = "./2020-08-22_ebs_condition_data_2020_ESR.csv")
 nbs_dat <- readr::read_csv(file = "./2020-08-22_nbs_condition_data_2020_ESR.csv") %>%
+=======
+ebs_dat <- readr::read_csv(file = "./2020-08-19_ebs_condition_data_2020_ESR.csv")
+nbs_dat <- readr::read_csv(file = "./2020-08-19_nbs_condition_data_2020_ESR.csv") %>%
+>>>>>>> 2501c5444f952aab9fcc8f3c1c32f99060d2f4e6
 =======
 ebs_dat <- readr::read_csv(file = "./2020-08-19_ebs_condition_data_2020_ESR.csv")
 nbs_dat <- readr::read_csv(file = "./2020-08-19_nbs_condition_data_2020_ESR.csv") %>%
