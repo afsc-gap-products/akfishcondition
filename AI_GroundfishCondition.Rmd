@@ -1,0 +1,242 @@
+---
+title: Aleutian Islands Groundfish Condition
+author: 
+- affiliation: RACE
+  description: Research Fisheries Biologist
+  email: Ned.Laman@NOAA.gov
+  name: Ned Laman
+output: word_document
+fontsize: 12pt
+addr: 
+  l1: 7600 Sand Pointe Way, NE
+  l2: NMFS RACE Division, Groundfish Assessment Program
+  l3: Seattle, WA 98115
+---
+
+```{r setup, include=FALSE}
+list_rpackage <- c("knitr", "ggplot2", "devtools", "reader", "viridis", "akfishcondition")
+which_not_installed <- which(list_rpackage %in% rownames(installed.packages()) == FALSE)
+
+if(length(which_not_installed) > 1){
+	install.packages(list_rpackage[which_not_installed], dep = TRUE)
+	# install akfishcondition from S.Rohan repo
+	if ("akfishcondition" %in% list_rpackage[which_not_installed]){
+		devtools::install_github("sean-rohan-NOAA/akfishcondition")
+		}
+	}
+
+# load the packages from the list
+lapply(list_rpackage, require, character.only = TRUE)
+
+# Load packages
+# library(knitr)
+# library(ggplot2)
+# library(devtools)
+# library(readr)
+# library(viridis)
+
+# Check the akfishcondition package is installed
+# if(!("akfishcondition" %in% installed.packages())) {
+#   devtools::install_github("sean-rohan-NOAA/akfishcondition")
+# }
+
+# library(akfishcondition)
+# pkg_version <- packageVersion("akfishcondition")
+
+# Unzip packaged csv and map files
+unzip(system.file("data/2020_ESR.zip", package = "akfishcondition"))
+
+# Load data
+ai_dat <- readr::read_csv(file = "2020_08_20_ai_condition_data_2018_ESR.csv")
+
+# Convert 10-25 cm lengths to age-1
+ai_dat$SPECIES_CODE[ai_dat$SPECIES_CODE == 21740  & ai_dat$LENGTH >= 100 & ai_dat$LENGTH <= 250] <- 21741
+ai_dat$COMMON_NAME[ai_dat$SPECIES_CODE == 21740] <- "walleye pollock (>250 mm)"
+ai_dat$COMMON_NAME[ai_dat$SPECIES_CODE == 21741] <- "walleye pollock (100–250 mm)"
+
+# Define ggplot themes for plotting
+theme_condition_index <- function() {
+  theme_bw() %+replace%
+    theme(plot.title = element_text(size = 20, face = "bold"),
+          panel.grid.major = element_blank(),
+          axis.text.x = element_text(size = 20),
+          axis.text.y = element_text(size = 20),
+          axis.title.x = element_text(size = 20),
+          axis.title.y = element_text(size = 20, angle = 90),
+          legend.title = element_text(size = 20, face = "bold"),
+          legend.text = element_text(size = 20),
+          panel.grid.minor = element_blank(),
+          strip.text = element_text(size = 20),
+          strip.background = element_blank())
+} 
+
+theme_pngs <- function() {
+  theme_bw() %+replace%
+    theme(plot.title = element_text(size = 12, face = "bold"),
+          panel.grid.major = element_blank(),
+          axis.text.x = element_text(size = 12),
+          axis.text.y = element_text(size = 12),
+          axis.title.x = element_text(size = 12),
+          axis.title.y = element_text(size = 12, angle = 90),
+          legend.title = element_text(size = 12, face = "bold"),
+          legend.text = element_text(size = 12),
+          panel.grid.minor = element_blank(),
+          strip.text = element_text(size = 12),
+          strip.background = element_blank())
+} 
+
+# Function to set plotting order
+set_plot_order <- function(COMMON_NAME) {
+  return(factor(COMMON_NAME, 
+         levels = c("walleye pollock (>250 mm)",
+                    "walleye pollock (100–250 mm)",
+                    "Pacific cod",
+                    "southern rock sole",
+                    "arrowtooth flounder",
+                    "Atka mackerel",
+                    "northern rockfish",
+                    "Pacific ocean perch"),
+         labels = c("walleye pollock (>250 mm)",
+                    "walleye pollock (100–250 mm)",
+                    "Pacific cod",
+                    "southern rock sole",
+                    "arrowtooth flounder",
+                    "Atka mackerel",
+                    "northern rockfish",
+                    "Pacific ocean perch")))
+}
+
+```
+
+Contributed by Ned Laman^1^, Sean Rohan^1^  
+^1^ Resource Assessment and Conservation Engineering Division, Groundfish Assessment Program, Alaska Fisheries Science Center, National Marine Fisheries Service, NOAA, Seattle, WA  
+**Contact**: ned.laman@noaa.gov  
+**Last updated**:  August 2020
+
+**Description of Indicator**: Residual body condition computed from a long-term average of length-weight-based body condition is an indicator of variability in somatic growth (Brodeur et al., 2004) and represents how heavy a fish is per unit body length. As such, it can be considered an indicator of ecosystem productivity. Positive residual body condition is interpreted to indicate fish in better condition (heavier per unit length) than those with negative residual body condition indicating poorer condition (lighter per unit length). Overall body condition of fishes likely reflects fish growth which can have implications for their subsequent survival (Paul and Paul, 1999; Boldt and Haldorson, 2004).
+
+```{r map, include = TRUE, out.width = "200%", fig.cap = "\\label{fig:figs}Figure 1. National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center (AFSC) Resource Assessment and Conservation Engineering Groundfish Assessment Program (RACE-GAP) Aleutian Islands summer bottom trawl survey area with International North Pacific Fisheries Commission (INPFC) statistical fishing strata delineated by the purple lines.",  echo = FALSE}
+include_graphics("MapAI.png") 
+```
+
+Paired lengths and weights of individual fishes were examined from the Alaska Fisheries Science Center biennial Resource Assessment and Conservation Engineering (AFSC/RACE) - Groundfish Assessment Program’s (GAP) bottom trawl survey of the Aleutian Islands (AI). Analyses focused on walleye pollock (*Gadus chalcogrammus*), Pacific cod (*Gadus macrocephalus*), arrowtooth flounder (*Atheresthes stomias*), southern rock sole (*Lepidopsetta bilineata*), Atka mackerel (*Pleurogrammus monopterygius*), northern rockfish (*Sebastes polyspinis*), and Pacific ocean perch (*Sebastes alutus*) collected in trawls with satisfactory performance at standard survey stations. Data were combined in the International North Pacific Fisheries Commission (INPFC) strata; Southern Bering Sea, Eastern Aleutian Islands, Central Aleutian Islands, and Western Aleutian Islands (Figure 1). 
+
+Length-weight relationships for each of the seven species were estimated within each stratum from a linear regression of log-transformed values across all years where data were available (1984--2018); the slopes of these relationships were estimated independently in each stratum to account for spatial-temporal variation in growth and bottom trawl survey sampling. Length-weight relationships for 100--250 mm fork length (1--2 year old) walleye pollock were established independent of the adult life history stages caught. Bias-corrected weights-at-length (log scale) were estimated from the model and subtracted from observed weights to compute individual residuals per fish. Length-weight residuals were averaged for each stratum and weighted in proportion to INPFC stratum biomass based on stratified area-swept expansion of summer bottom trawl survey catch per unit effort (CPUE). Average length-weight residuals were compared by stratum and year to evaluate spatial variation in fish condition. Combinations of stratum and year with <10 samples were used for length-weight relationships but excluded from indicator calculations.  
+
+**Methodological Changes**: The method used to calculate groundfish condition this year (2020) differs from previous years in that: 1) different regression slopes were estimated for each stratum, 2) a bias-correction was applied when predicting weights prior to calculating residuals, 3) stratum mean residuals were weighted in proportion to stratum biomass, and 4) stratum-year combinations with sample size <10 were not used in indicator calculations. As in previous years, confidence intervals for the condition indicator reflect uncertainty based on length-weight residuals, but are larger due to differences in sample sizes and stratum biomasses among years. Confidence intervals do not account for uncertainty in stratum biomass estimates. Efforts are underway to redevelop the groundfish condition indicator for next year’s (2021) ESR, using a spatio-temporal model with spatial random effects (VAST). This computational change is expected to provide more precise biomass expansion, improve estimates of uncertainty, and better account for spatio-temporal variation in length-weight sampling during bottom trawl surveys. Revised indicators will be presented in 2021 alongside a retrospective analysis comparing the historical and revised condition indicators. At present, research is being planned across multiple AFSC programs to explore standardization of statistical methods for calculating condition indicators and to examine relationships among morphometric condition indicators, bioenergetic indicators, and physiological measures of fish condition.
+
+**Status and Trends**: Residual body condition varied over time for all species considered (Figure 2). Condition of most species since 2010 has primarily been below the long term average. Exceptions occur for 100--250 mm walleye pollock in 2016 and Atka mackerel in 2012 where the residual body condition is neutral or slightly positive. Southern rock sole residual body condition is trending positive in the Aleutians since 2012. The period prior to the 2010 AI bottom trawl survey is characterized by body condition indicators cycling between positive and negative values through the years. 
+
+```{r figure 2 set up, include = FALSE, fig.height = 4, fig.width = 4, message = FALSE, warning = FALSE}
+##AI Calculations and figures
+ai_spp_vec <- unique(ai_dat$SPECIES_CODE)
+
+# Calculate length weight residuals
+for(i in 1:length(ai_spp_vec)) {
+  # Separate slope for each stratum. Bias correction according to Brodziak, no outlier detection.
+  ai_df <- akfishcondition::calc_lw_residuals(len = ai_dat$LENGTH[ai_dat$SPECIES_CODE == ai_spp_vec[i]], 
+                                               wt = ai_dat$WEIGHT[ai_dat$SPECIES_CODE == ai_spp_vec[i]], 
+                                               year = ai_dat$YEAR[ai_dat$SPECIES_CODE == ai_spp_vec[i]],
+                                               stratum = ai_dat$INPFC_STRATUM[ai_dat$SPECIES_CODE == ai_spp_vec[i]],
+                                               make_diagnostics = TRUE, # Make diagnostics
+                                               bias.correction = TRUE, # Bias correction turned on
+                                               outlier.rm = FALSE, # Outlier removal turned on
+                                               region = "AI",
+                                               species_code = ai_dat$SPECIES_CODE[ai_dat$SPECIES_CODE == ai_spp_vec[i]])
+  
+  ai_dat$resid_mean[ai_dat$SPECIES_CODE == ai_spp_vec[i]] <- ai_df$lw.res_mean
+  ai_dat$resid_lwr[ai_dat$SPECIES_CODE == ai_spp_vec[i]] <- ai_df$lw.res_lwr
+  ai_dat$resid_upr[ai_dat$SPECIES_CODE == ai_spp_vec[i]] <- ai_df$lw.res_upr
+  
+}
+
+# Estimate mean and std. err for each stratum, filter out strata with less than 10 samples
+ai_stratum_resids <- ai_dat %>% 
+  dplyr::group_by(COMMON_NAME, SPECIES_CODE, YEAR, INPFC_STRATUM, AREA_BIOMASS) %>%
+  dplyr::summarise(stratum_resid_mean = mean(resid_mean),
+                   stratum_resid_sd = sd(resid_mean),
+                   n = n()) %>%
+  dplyr::filter(n >= 10) %>%
+  dplyr::mutate(stratum_resid_se = stratum_resid_sd/sqrt(n))
+
+# Weight strata by biomass
+for(i in 1:length(ai_spp_vec)) {
+  ai_stratum_resids$weighted_resid_mean[ai_stratum_resids$SPECIES_CODE == ai_spp_vec[i]] <- 
+    akfishcondition::weight_lw_residuals(residuals = ai_stratum_resids$stratum_resid_mean[ai_stratum_resids$SPECIES_CODE == ai_spp_vec[i]], 
+                                         year = ai_stratum_resids$YEAR[ai_stratum_resids$SPECIES_CODE == ai_spp_vec[i]], 
+                                         stratum = ai_stratum_resids$INPFC_STRATUM[ai_stratum_resids$SPECIES_CODE == ai_spp_vec[i]], 
+                                         stratum_biomass = ai_stratum_resids$AREA_BIOMASS[ai_stratum_resids$SPECIES_CODE == ai_spp_vec[i]])
+  ai_stratum_resids$weighted_resid_se[ai_stratum_resids$SPECIES_CODE == ai_spp_vec[i]] <- 
+    akfishcondition::weight_lw_residuals(residuals = ai_stratum_resids$stratum_resid_se[ai_stratum_resids$SPECIES_CODE == ai_spp_vec[i]], 
+                                         year = ai_stratum_resids$YEAR[ai_stratum_resids$SPECIES_CODE == ai_spp_vec[i]], 
+                                         stratum = ai_stratum_resids$INPFC_STRATUM[ai_stratum_resids$SPECIES_CODE == ai_spp_vec[i]], 
+                                         stratum_biomass = ai_stratum_resids$AREA_BIOMASS[ai_stratum_resids$SPECIES_CODE == ai_spp_vec[i]])
+}
+
+# Biomass-weighted residual and SE by year
+ai_ann_mean_resid_df <- ai_stratum_resids %>% 
+  dplyr::group_by(YEAR, COMMON_NAME) %>%
+  dplyr::summarise(mean_wt_resid = mean(weighted_resid_mean),
+                   se_wt_resid = mean(weighted_resid_se))
+
+```
+
+```{r figure 2 grid, include = TRUE, echo = FALSE, fig.height = 14, fig.width = 12, fig.cap = "\\label{fig:figs}Figure 2. Biomass-weighted residual body condition index across survey years (1984--2018) for seven Aleutian Islands groundfish species collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center (AFSC) Resource Assessment and Conservation Engineering Groundfish Assessment Program (RACE-GAP) standard summer bottom trawl survey; error bars denote two standard errors.",  message = FALSE, warning = FALSE}
+ai_ann_mean_resid_df$DISPLAY_NAME <- set_plot_order(ai_ann_mean_resid_df$COMMON_NAME)
+
+fig2 <- ggplot(data = ai_ann_mean_resid_df, 
+               aes(x = YEAR, 
+                   y = mean_wt_resid,
+                   ymax = mean_wt_resid + 2*se_wt_resid,
+                   ymin = mean_wt_resid - 2*se_wt_resid)) + 
+  geom_bar(stat = "identity", fill = "plum", color = "black") +
+  geom_errorbar() +
+  geom_hline(yintercept = 0) +
+  facet_wrap(~DISPLAY_NAME, ncol = 2, scales = "free_y") +
+  scale_x_continuous(name = "Year") +
+  scale_y_continuous(name = "Length-weight weighted residual") +
+  theme_condition_index()
+print(fig2)
+```
+
+```{r figure 2 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+png("AIbyyear.png",width=6,height=7,units="in",res=300)
+print(fig2 + theme_pngs())
+dev.off()
+```
+
+The overall pattern of declining residual body condition index across recent survey years for the Aleutian Islands as described above was also apparent in the spatial condition indicators across INPFC strata (Figure 3). The relative contribution of stratum-specific residual body condition to the overall trends (indicated by the height of each colored bar segment) does not demonstrate a clear pattern. Although, for many species, changes in body condition were synchronous amongst strata within years. The strata represented by southern rock sole and 100--250 mm walleye pollock condition indicators varied through time but it is unclear whether this was due to variation in fish distribution or sampling effort. 
+
+```{r figure 3 set up, include = FALSE,  fig.height = 14, fig.width = 12, message = FALSE, warning = FALSE}
+
+#By stratum graphs
+
+
+```
+
+```{r figure 3 grid, include = TRUE, echo = FALSE, fig.height = 14, fig.width = 12, fig.cap = "\\label{fig:figs}Figure 3. Residual body condition index for seven Aleutian Islands groundfish species collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center (AFSC) Resource Assessment and Conservation Engineering Groundfish Assessment Program (RACE-GAP) standard summer bottom trawl survey (1984--2018) grouped by International North Pacific Fisheries Commission (INPFC) statistical sampling strata.", message = FALSE, warning = FALSE}
+ai_stratum_resids$DISPLAY_NAME <- set_plot_order(ai_stratum_resids$COMMON_NAME)
+
+fig3 <- ggplot(data = ai_stratum_resids, 
+               aes(x = YEAR, y = weighted_resid_mean, fill = factor(INPFC_STRATUM))) + 
+  geom_hline(yintercept = 0) +
+  geom_bar(stat = "identity", color = "black", position = "stack") +
+  facet_wrap(~DISPLAY_NAME, ncol = 2, scales = "free_y") +
+  scale_x_continuous(name = "Year") +
+  scale_y_continuous(name = "Length-weight weighted residual") +
+  scale_fill_brewer(name = "Stratum", palette = "BrBG") +
+  theme_condition_index()
+print(fig3)
+```
+
+```{r figure 3 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+png("AI_condition_by_stratum.png",width=6,height=7,units="in",res=300)
+print(fig3 + theme_pngs())
+dev.off()
+```
+
+**Factors causing observed trends**: Factors that could affect residual fish body condition presented here include temperature, trawl survey timing, stomach fullness, movement in or out of the survey area, or variable somatic growth. Since the Warm Blob in 2014 (Bond et al., 2015; Stabeno et al., 2019), there has been a general trend of warming ocean temperatures in the survey area through 2018 that could be affecting fish growth conditions there. Changing ocean conditions along with normal patterns of movement can cause the proportion of the population resident in the sampling area during the annual bottom trawl survey to vary. The date that the first length-weight data are collected is generally in the beginning of June and the bottom trawl survey is conducted throughout the summer months moving from east to west so that spatial and temporal trends in fish growth over the season become confounded with survey progress. The updated condition analyses presented here begin to, but do not wholly account for spatio-temporal variability in the underlying populations sampled. 
+
+**Implications**: Variations in body condition likely have implications for fish survival. In Prince William Sound, the condition of herring prior to the winter may influence their survival (Paul and Paul, 1999). The condition of Aleutian Islands groundfish may similarly contribute to survival and recruitment. As future years are added to the time series, the relationship between length-weight residuals and subsequent survival will be examined further. It is important to consider that residual body condition for most species in these analyses was computed for all sizes and sexes combined. Requirements for growth and survivorship differ for different fish life stages and some species have sexually dimorphic growth patterns. It may be more informative to examine life-stage (e.g., early juvenile, subadult, and adult phases) and sex specific body condition in the future.  
+
+The trend toward lowered body condition for many Aleutian Islands species over the last 3--4 RACE/AFSC GAP bottom trawl surveys is a potential cause for concern. It could indicate poor overwinter survival or may reflect the influence of locally changing environmental conditions depressing fish growth, local production, or survivorship. Indications are that the Warm Blob (Bond et al., 2015; Stabeno et al., 2019) has been followed by subsequent years with elevated water temperatures (e.g., Barbeaux et al., 2018; Laman, 2018) which may be related to changes in fish condition in the species examined. As we continue to add years of fish condition to the record and expand on our knowledge of the relationships between condition, growth, production, and survival, we hope to gain more insight into the overall health of fish populations in the Aleutian Islands.
