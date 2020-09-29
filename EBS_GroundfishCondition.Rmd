@@ -1,5 +1,5 @@
 ---
-title: Eastern Bering Sea Groundfish Condition
+title: Eastern and Northern Bering Sea Groundfish Condition
 author: 
 - affiliation: RACE
   description: Research Fisheries Biologist
@@ -43,6 +43,39 @@ ebs_dat$COMMON_NAME[ebs_dat$SPECIES_CODE == 21741] <- "Walleye pollock (100–25
 
 nbs_dat$SPECIES_CODE[nbs_dat$SPECIES_CODE == 21740 & nbs_dat$LENGTH >= 100 & nbs_dat$LENGTH <= 250] <- 21741
 nbs_dat$COMMON_NAME[nbs_dat$SPECIES_CODE == 21741] <- "Walleye pollock (100–250 mm)"
+
+# Load previous year's indicator and change names for plotting
+ebs_old_indicator_dat <- readr::read_csv(file = "2019_EBS_ESR_lwdata_by_year.csv") %>%
+  dplyr::rename(COMMON_NAME = sp.name,
+                YEAR = yrs) %>%
+  dplyr::mutate(DISPLAY_NAME = COMMON_NAME) %>%
+  dplyr::filter(YEAR >= 1997)
+
+ebs_old_indicator_dat$DISPLAY_NAME[!grepl("Alaska", x = ebs_old_indicator_dat$DISPLAY_NAME) & !grepl("Pacific", x = ebs_old_indicator_dat$DISPLAY_NAME)] <- tolower(ebs_old_indicator_dat$DISPLAY_NAME[!grepl("Alaska", x = ebs_old_indicator_dat$DISPLAY_NAME) & !grepl("Pacific", x = ebs_old_indicator_dat$DISPLAY_NAME)])
+ebs_old_indicator_dat$DISPLAY_NAME[ebs_old_indicator_dat$DISPLAY_NAME == "age 1 walleye pollock"] <- "walleye pollock (100–250 mm)"
+ebs_old_indicator_dat$DISPLAY_NAME[ebs_old_indicator_dat$DISPLAY_NAME == "walleye pollock"] <- "walleye pollock (>250 mm)"
+
+
+# Load previous year's indicator and change names for plotting
+ebs_old_indicator_dat <- readr::read_csv(file = "2019_EBS_ESR_lwdata_by_year.csv") %>%
+  dplyr::rename(COMMON_NAME = sp.name,
+                YEAR = yrs) %>%
+  dplyr::mutate(DISPLAY_NAME = COMMON_NAME) %>%
+  dplyr::filter(YEAR >= 1997)
+
+ebs_old_indicator_dat$DISPLAY_NAME[!grepl("Alaska", x = ebs_old_indicator_dat$DISPLAY_NAME) & !grepl("Pacific", x = ebs_old_indicator_dat$DISPLAY_NAME)] <- tolower(ebs_old_indicator_dat$DISPLAY_NAME[!grepl("Alaska", x = ebs_old_indicator_dat$DISPLAY_NAME) & !grepl("Pacific", x = ebs_old_indicator_dat$DISPLAY_NAME)])
+ebs_old_indicator_dat$DISPLAY_NAME[ebs_old_indicator_dat$DISPLAY_NAME == "age 1 walleye pollock"] <- "walleye pollock (100–250 mm)"
+ebs_old_indicator_dat$DISPLAY_NAME[ebs_old_indicator_dat$DISPLAY_NAME == "walleye pollock"] <- "walleye pollock (>250 mm)"
+
+# Load previous year's indicator and change names for plotting
+nbs_old_indicator_dat <- readr::read_csv(file = "2019_NBS_ESR_lwdata_by_year.csv") %>%
+  dplyr::rename(COMMON_NAME = sp.name,
+                YEAR = yrs) %>%
+  dplyr::mutate(DISPLAY_NAME = COMMON_NAME)
+
+nbs_old_indicator_dat$DISPLAY_NAME[!grepl("Alaska", x = nbs_old_indicator_dat$DISPLAY_NAME) & !grepl("Pacific", x = nbs_old_indicator_dat$DISPLAY_NAME)] <- tolower(nbs_old_indicator_dat$DISPLAY_NAME[!grepl("Alaska", x = nbs_old_indicator_dat$DISPLAY_NAME) & !grepl("Pacific", x = nbs_old_indicator_dat$DISPLAY_NAME)])
+nbs_old_indicator_dat$DISPLAY_NAME[nbs_old_indicator_dat$DISPLAY_NAME == "age 1 walleye pollock"] <- "walleye pollock (100–250 mm)"
+nbs_old_indicator_dat$DISPLAY_NAME[nbs_old_indicator_dat$DISPLAY_NAME == "walleye pollock"] <- "walleye pollock (>250 mm)"
 
 # Define ggplot themes for plotting
 theme_condition_index <- function() {
@@ -99,7 +132,6 @@ set_plot_order <- function(COMMON_NAME) {
 
 ```
 
-## Eastern and Northern Bering Sea Groundfish Condition
 Contributed by Sean Rohan^1^ and Ned Laman^1^   
 ^1^ Resource Assessment and Conservation Engineering Division, Alaska Fisheries Science Center, National Marine Fisheries Service, NOAA  
 **Contact**: sean.rohan@noaa.gov  
@@ -113,11 +145,11 @@ include_graphics("EBS_NBS_2019.png")
 
 Paired lengths and weights of individual fishes were collected from the Alaska Fisheries Science Center's Resource Assessment and Conservation Engineering (AFSC/RACE) - Groundfish Assessment Program's (GAP) bottom trawl surveys of the eastern Bering Sea (EBS) shelf and northern Bering Sea (NBS). Fish condition analyses were applied to walleye pollock (_Gadus chalcogrammus_), Pacific cod (_Gadus macrocephalus_), arrowtooth flounder (_Atheresthes stomias_), yellowfin sole (_Limanda aspera_), flathead sole (_Hippoglossoides elassodon_), northern rock sole (_Lepidopsetta polyxystra_), and Alaska Plaice (_Pleuronectes quadrituberculatus_) collected in bottom trawls at standard stations (Figure 1). For these analyses and results, survey strata 31 and 32 were combined as stratum 30; strata 41, 42, and 43 were combined as stratum 40; and strata 61 and 62 were combined as stratum 60. Corner stations and non-standard survey strata 82 and 90 were excluded from these analyses. Length-weight relationships for each species were estimated with a linear regression of log-transformed values over all years and areas where data were available (EBS: 1982–2019, NBS: 2010 & 2017–2019). A different slope was estimated for each stratum to account for spatial-temporal variation in growth and bottom trawl survey sampling. Length-weight relationships for 100-250 mm walleye pollock (corresponding with ages 1–2 years) were calculated independently. Bias-corrected weights-at-length (log scale) were estimated from the model and subtracted from observed weights to compute individual residuals per fish. Length-weight residuals were averaged for each stratum and weighted in proportion to total biomass in the region based on stratum-level area-swept expansion of bottom-trawl survey catch per unit effort (CPUE). Average length-weight residuals were compared by stratum and year on the EBS shelf to evaluate spatial variation in fish condition. The NBS was treated as a single stratum and used a different length-weight regression than the EBS. Combinations of stratum and year with <10 samples were used for length-weight calculations but excluded from indicator calculations.
 
-**Methodological changes**: The method used to calculate groundfish condition this year (2020) differs from previous years in that: 1) different regression slopes were estimated for each stratum, 2) a bias-correction was applied to predict weights prior to calculating residuals, 3) stratum mean residuals were weighted in proportion to stratum biomass, 4) stratum-year combinations with sample size < 10 were not used in indicator calculations, and 5) the NBS had its own length-weight regression. As in previous years, confidence intervals for the condition indicator reflect uncertainty based on length-weight residuals, but are larger due to differences in sample sizes and stratum biomasses among years. Confidence intervals do not account for uncertainty in stratum biomass estimates. Efforts are underway to redevelop the groundfish condition indicator for next year's (2021) ESR, using a spatio-temporal model with spatial random effects (VAST). The change is expected to allow more precise biomass expansion, improve estimates of uncertainty, and better account for variation in length-weight sampling from bottom trawl surveys. For 2021, revised indicators will be presented alongside a retrospective analysis that compares the historical and revised condition indicator. Currently, research is being planned across multiple AFSC programs to explore standardization of statistical methods for calculating condition indicators, and to examine relationships among morphometric condition indicators, bioenergetic indicators, and physiological measures of fish condition.
+**Methodological changes**: The method used to calculate groundfish condition this year (2020) differs from previous years in that: 1) different regression slopes were estimated for each stratum, 2) a bias-correction was applied to predict weights prior to calculating residuals, 3) stratum mean residuals were weighted in proportion to stratum biomass, 4) stratum-year combinations with sample size < 10 were not used in indicator calculations, and 5) the NBS had its own length-weight regression. As in previous years, confidence intervals for the condition indicator reflect uncertainty based on length-weight residuals, but are larger due to differences in sample sizes and stratum biomasses among years. Confidence intervals do not account for uncertainty in stratum biomass estimates. 
 
 **Status and Trends**: Fish condition, indicated by length-weight residuals, has varied over time for all species examined (Figure 2 & 3). The updated method for calculating groundfish condition has resulted in changes compared to last year's condition indicator. Last year, it was reported for the EBS that: "with the exception of age-1 [walleye] pollock [defined here as age 100–250 mm walleye pollock], length-weight residuals in 2019 were positive or have continued an upward trend that began in 2017 or 2018." Based on the new method, an upward trend was still evident for most species relative to 2017–2018 and weighted length-weight residuals were positive relative to historical averages for walleye pollock (>250 mm), northern rock sole, yellowfin sole, arrowtooth flounder, and Alaska plaice. in 2019 (Figure 2). Length-weight residuals were near historical averages for age 1–2 walleye pollock (100–250 mm), Pacific cod, and flathead sole.
 
-Last year, it was reported that: "trends in fish condition [for the NBS] are similar to those on the EBS shelf with length-weight residuals becoming more positive for adult pollock and Pacific cod, although length-weight residuals overall for adult pollock were negative." (Figure 4). Based on this year's method, positive residuals were observed in 2019 for walleye pollock (>250 mm), Pacific cod, yellowfin sole, and Alaska plaice. Residuals for walleye pollock (100–250 mm) were neutral.   
+Last year, it was reported that: "trends in fish condition [for the NBS] are similar to those on the EBS shelf with length-weight residuals becoming more positive for adult pollock and Pacific cod, although length-weight residuals overall for adult pollock were negative." (Figure 4). Based on this year's method with a separate length-weight regression for the NBS, positive residuals were observed in 2019 for walleye pollock (>250 mm), Pacific cod, yellowfin sole, and Alaska plaice. Residuals for walleye pollock (100–250 mm) were neutral.  
 
 ```{r figures 2-4 set up, include=FALSE, fig.height=4, fig.width=4, message=FALSE, warning=FALSE}
 #--------------------------------------
@@ -178,21 +210,26 @@ write.csv(ebs_ann_mean_resid_df, "EBS_annual_resids.csv", row.names = FALSE)
 
 ```
 
-```{r figure 2 grid, include=TRUE, echo=FALSE, fig.height=14,fig.width=12,fig.cap="\\label{fig:figs}Figure 2. Weighted length-weight residuals for seven groundfish species and age 1–2 walleye pollock (100–250 mm) collected during AFSC/RACE GAP standard summer bottom trawl surveys of the eastern Bering Sea shelf, 1997-2019. Error bars denote two standard errors.",  message=FALSE, warning=FALSE}
+```{r figure 2 grid, include=TRUE, echo=FALSE, fig.height=14,fig.width=12,fig.cap="\\label{fig:figs}Figure 2. Weighted length-weight residuals for seven groundfish species and age 1–2 walleye pollock (100–250 mm) collected during AFSC/RACE GAP standard summer bottom trawl surveys of the eastern Bering Sea shelf, 1997-2019. Filled bars denote weighted length-weight residuals using this year's indicator calculation, error bars denote two standard errors, points denote the mean of the unweighted length-weight residual from the 2019 ESR.",  message=FALSE, warning=FALSE}
 # Set factor levels for plotting order
 ebs_ann_mean_resid_df$DISPLAY_NAME <- set_plot_order(ebs_ann_mean_resid_df$COMMON_NAME)
 
-fig2 <- ggplot(data = ebs_ann_mean_resid_df, 
+fig2 <- ggplot() + 
+  geom_bar(data = ebs_ann_mean_resid_df, 
                aes(x = YEAR, 
-                   y = mean_wt_resid,
+                   y = mean_wt_resid),
+           stat = "identity", fill = "plum", color = "black") +
+  geom_errorbar(data = ebs_ann_mean_resid_df, 
+               aes(x = YEAR, 
                    ymax = mean_wt_resid + 2*se_wt_resid,
-                   ymin = mean_wt_resid - 2*se_wt_resid)) + 
-  geom_bar(stat = "identity", fill = "plum", color = "black") +
-  geom_errorbar() +
+                   ymin = mean_wt_resid - 2*se_wt_resid)) +
   geom_hline(yintercept = 0) +
+  geom_point(data = ebs_old_indicator_dat, 
+             aes(x = YEAR, 
+                 y = ymeans)) +
   facet_wrap(~DISPLAY_NAME, ncol = 2, scales = "free_y") +
   scale_x_continuous(name = "Year") +
-  scale_y_continuous(name = "Weighted length-weight residual") +
+  scale_y_continuous(name = "Length-weight residual") +
   theme_condition_index()
 print(fig2)
 ```
@@ -205,7 +242,7 @@ dev.off()
 ```
 
 
-```{r figure 3 grid, include=TRUE, echo=FALSE, fig.height=14,fig.width=12,fig.cap="\\label{fig:figs}Figure 3. Weighted length-weight residuals for groundfish species and age 1–2 walleye pollock (100–250 mm) collected during AFSC/RACE GAP summer bottom trawl surveys of the Northern Bering Sea, 2010 and 2017–2019. Error bars denote two standard errors.",  message=FALSE, warning=FALSE}
+```{r figure 3 grid, include=TRUE, echo=FALSE, fig.height=14,fig.width=12,fig.cap="\\label{fig:figs}Figure 3. Length-weight residuals for groundfish species and age 1–2 walleye pollock (100–250 mm) collected during AFSC/RACE GAP summer bottom trawl surveys of the Northern Bering Sea, 2010 and 2017–2019. Filled bars denote length-weight residuals using this year's indicator calculation, error bars denote two standard errors, points denote the mean of length-weight residual from the previous year's (2019) ESR.",  message=FALSE, warning=FALSE}
 #--------------------------------------
 # Northern Bering Sea
 #--------------------------------------
@@ -239,16 +276,22 @@ nbs_ann_mean_resid_df <- nbs_dat %>%
 
 nbs_ann_mean_resid_df$DISPLAY_NAME <- set_plot_order(nbs_ann_mean_resid_df$COMMON_NAME)
 
-fig3 <- ggplot(data = nbs_ann_mean_resid_df, 
-               aes(x = YEAR, y = mean_resid, 
-                   ymin = mean_resid - 2*se,
-                   ymax = mean_resid + 2*se)) +
+fig3 <- ggplot() + 
+  geom_bar(data = nbs_ann_mean_resid_df, 
+               aes(x = YEAR, 
+                   y = mean_resid),
+           stat = "identity", fill = "plum", color = "black") +
+  geom_errorbar(data = nbs_ann_mean_resid_df, 
+               aes(x = YEAR, 
+                   ymax = mean_resid + 2*se,
+                   ymin = mean_resid - 2*se)) +
   geom_hline(yintercept = 0) +
-  geom_bar(stat = "identity", fill = "plum", color = "black") +
-  geom_errorbar() +
+  geom_point(data = nbs_old_indicator_dat, 
+             aes(x = YEAR, 
+                 y = ymeans)) +
   facet_wrap(~DISPLAY_NAME, ncol = 2, scales = "free_y") +
-  scale_x_continuous(name = "Year", breaks = c(2010, 2015, 2020)) +
-  scale_y_continuous(name = "Length-weight weighted residual") +
+  scale_x_continuous(name = "Year", breaks = c(2010, 2015, 2020), limits = c(2009, 2020)) +
+  scale_y_continuous(name = "Length-weight residual") +
   theme_condition_index()
 print(fig3)
 
@@ -291,7 +334,7 @@ print(fig4 + theme_pngs())
 dev.off()
 ```
 
-**Factors influencing observed trends**: There are several factors that may inlfuence the observed temporal and spatial patterns in fish condition over the EBS and NBS shelf. Water temperature could explain some of the spatial and temporal variability in length-weight residuals. Water temperatures during the 1999 survey were particularly cold in the Bering Sea and this corresponded to a year of negative length-weight residuals for all groundfish examined where data existed. Despite the abundant large crustacean zooplankton and relatively high microzooplankton productivity present in 1999 (Hunt et al., 2008), temperature-dependent groundfish spatial distributions may have affected the spatial overlap of fish and their prey thereby impacting fish growth and condition in that year. Cold temperatures may have also affected fish energy requirements in that year. Conversely, recent and continuing warm temperatures across the Bering Sea shelf since the "Warm Blob" (Bond et al., 2015; Stabeno et al., 2019) may be influencing the present positive trend in fish condition for the species examined. 
+**Factors influencing observed trends**: There are several factors that may influence the observed temporal and spatial patterns in fish condition over the EBS and NBS shelf. Water temperature could explain some of the spatial and temporal variability in length-weight residuals. Water temperatures during the 1999 survey were particularly cold in the Bering Sea and this corresponded to a year of negative length-weight residuals for all groundfish examined where data existed. Despite the abundant large crustacean zooplankton and relatively high microzooplankton productivity present in 1999 (Hunt et al., 2008), temperature-dependent groundfish spatial distributions may have affected the spatial overlap of fish and their prey thereby impacting fish growth and condition in that year. Cold temperatures may have also affected fish energy requirements in that year. Conversely, recent and continuing warm temperatures across the Bering Sea shelf since the "Warm Blob" (Bond et al., 2015; Stabeno et al., 2019) may be influencing the present positive trend in fish condition for the species examined. 
 
 Other factors that could affect length-weight residuals include survey timing, stomach fullness, and fish movement patterns. The starting date of length-weight data collections has varied annually from late May to early June (except 1998, where the first data available were collected in late July). Variation in condition could relate to the timing of collection within stratum. Another consideration that cannot be addressed with the present data set is that the fish weights used in these analyses are typically inclusive of stomach weights so that gut fullness could influence the length-weight residuals. Since feeding conditions likely change over space and time, how much the fish ate at its last meal and the proportion of its total body weight attributable to the gut weight could be an important factor influencing the length-weight residuals. We can also expect some fish to exhibit seasonal or ontogenetic movement patterns during the survey months. For example, seasonal migrations of pollock occur from overwintering areas along the outer shelf to shallow waters (90–140 m) for spawning; Pacific cod concentrate on the shelf edge and upper slope (100–250 m) in the winter and move to shallower waters (generally <100 m) in the summer; and arrowtooth flounder are distributed throughout the continental shelf until age 4, when, at older ages, they disperse to occupy both the shelf and the slope (Witherell, 2000). It is important to note that the data and analyses reported here depict spatial and temporal variation of length-weight residuals for a small subset of the fish species collected in the AFSC/RACE GAP summer bottom trawl surveys of the EBS and NBS and that they do not inform the mechanisms or processes behind the observed patterns.  
 
@@ -299,3 +342,5 @@ Other factors that could affect length-weight residuals include survey timing, s
 
 
 The positive trend in fish condition observed over the last two to three AFSC/RACE GAP EBS and NBS bottom trawl surveys (i.e., increasingly positive length-weight residuals) could be related to concurrent trends in other ecosystem covariates and needs to be examined further. Trends such as warmer water temperatures following the "Warm Blob" event of 2014-15 (Bond et al., 2015) and reduced sea ice and cold pool areal extent in the eastern Bering Sea (Stabeno et al., 2019) may affect fish condition here in ways that are yet to be determined. As we continue to add years of fish condition indices to the record and expand on our knowledge of the relationships between condition, growth, production, survival, and the ecosystem, these data may increase our insight into the health of fish populations in the EBS and NBS. 
+
+**Research priorities**: Efforts are underway to redevelop the groundfish condition indicator for next year's (2021) ESR, using a spatio-temporal model with spatial random effects (VAST). The change is expected to allow more precise biomass expansion, improve estimates of uncertainty, and better account for spatial-temporal variation in length-weight samples from bottom trawl surveys due to methodological changes in sampling (e.g. transition from sex-and-length stratified sampling to random sampling). For 2021, revised indicators will be presented alongside a retrospective analysis that compares the historical and revised condition indicator. Currently, research is being planned across multiple AFSC programs to explore standardization of statistical methods for calculating condition indicators, and to examine relationships among morphometric condition indicators, bioenergetic indicators, and physiological measures of fish condition.
