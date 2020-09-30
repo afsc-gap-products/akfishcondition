@@ -111,6 +111,25 @@ calc_lw_residuals <- function(len,
       scale_fill_distiller(palette = "Purples", direction = 1) +
       theme_bw()
     
+    sample_prop_df <- data.frame(year, stratum) %>%
+      dplyr::group_by(year) %>%
+      dplyr::summarise(n_year  = n()) %>%
+      dplyr::inner_join(sample_size_df) %>%
+      dplyr::mutate(prop = n/n_year)
+    
+    sample_prop_plot <- ggplot(data = sample_prop_df,
+                               aes(x = year, 
+                                   y = factor(stratum),
+                                   fill = prop,
+                                   label = prop)) +
+      geom_tile() + 
+      geom_text() +
+      scale_x_continuous(name = "Year") +
+      scale_y_discrete(name = "Stratum") +
+      scale_fill_distiller(palette = "Purples", direction = 1) +
+      theme_bw()
+      
+    
     # RMSE by year and stratum
     rmse <- function(x) {
       return(mean(sqrt(x^2)))
@@ -142,6 +161,7 @@ calc_lw_residuals <- function(len,
     pdf(paste0(out_path, region[1], "_", species_code[1], "_diagnostic_plots.pdf"), 
         onefile = TRUE, width = 16, height = 8)
     print(sample_size_plot)
+    print(sample_prop_plot)
     print(rmse_plot)
     print(size_dist_plot) 
     dev.off()
