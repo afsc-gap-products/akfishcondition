@@ -115,19 +115,18 @@ calc_lw_residuals <- function(len,
       dplyr::group_by(year) %>%
       dplyr::summarise(n_year  = n()) %>%
       dplyr::inner_join(sample_size_df) %>%
-      dplyr::mutate(prop = round(100*n/n_year, 1))
+      dplyr::mutate(prop = round(100*n/n_year, 1),
+                    prop_raw = n/n_year)
     
     sample_prop_plot <- ggplot(data = sample_prop_df,
                                aes(x = year, 
-                                   y = factor(stratum),
-                                   fill = prop,
-                                   label = prop)) +
-      geom_tile() + 
-      geom_text() +
+                                   y = prop_raw, 
+                                   fill = factor(stratum))) +
+      geom_bar(position = "stack", stat = "identity") +
       scale_x_continuous(name = "Year") +
-      scale_y_discrete(name = "Stratum") +
-      scale_fill_distiller(palette = "Purples", direction = 1) +
+      scale_y_continuous(name = "Proportion") +
       theme_bw()
+      
       
     
     # RMSE by year and stratum
