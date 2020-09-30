@@ -68,16 +68,16 @@ old_indicator_dat$DISPLAY_NAME[old_indicator_dat$DISPLAY_NAME == "walleye polloc
 # Define ggplot themes for plotting
 theme_condition_index <- function() {
   theme_bw() %+replace%
-    theme(plot.title = element_text(size = 20, face = "bold"),
+    theme(plot.title = element_text(size = 18, face = "bold"),
           panel.grid.major = element_blank(),
-          axis.text.x = element_text(size = 20),
-          axis.text.y = element_text(size = 20),
-          axis.title.x = element_text(size = 20),
-          axis.title.y = element_text(size = 20, angle = 90),
-          legend.title = element_text(size = 20, face = "bold"),
-          legend.text = element_text(size = 20),
+          axis.text.x = element_text(size = 18),
+          axis.text.y = element_text(size = 18),
+          axis.title.x = element_text(size = 18),
+          axis.title.y = element_text(size = 18, angle = 90),
+          legend.title = element_text(size = 18, face = "bold"),
+          legend.text = element_text(size = 18),
           panel.grid.minor = element_blank(),
-          strip.text = element_text(size = 20),
+          strip.text = element_text(size = 18),
           strip.background = element_blank())
 } 
 
@@ -91,6 +91,7 @@ theme_pngs <- function() {
           axis.title.y = element_text(size = 12, angle = 90),
           legend.title = element_text(size = 12, face = "bold"),
           legend.text = element_text(size = 12),
+          legend.position = "right",
           panel.grid.minor = element_blank(),
           strip.text = element_text(size = 12),
           strip.background = element_blank())
@@ -194,6 +195,7 @@ ai_ann_mean_resid_df <- ai_stratum_resids %>%
 
 ```{r figure 2 grid, include = TRUE, echo = FALSE, fig.height = 14, fig.width = 12, fig.cap = "\\label{fig:figs}Figure 2. Biomass-weighted residual body condition index across survey years (1984--2018) for seven Aleutian Islands groundfish species collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center (AFSC) Resource Assessment and Conservation Engineering Groundfish Assessment Program (RACE-GAP) standard summer bottom trawl surve. Filled bars denote weighted length-weight residuals using this year's indicator calculation, error bars denote two standard errors, points denote the mean of the unweighted length-weight residual from the previous year's (2018) ESR.",  message = FALSE, warning = FALSE}
 ai_ann_mean_resid_df$DISPLAY_NAME <- set_plot_order(ai_ann_mean_resid_df$COMMON_NAME)
+old_indicator_dat$DISPLAY_NAME <- set_plot_order(old_indicator_dat$DISPLAY_NAME)
 
 fig2 <- ggplot() + 
 geom_bar(data = ai_ann_mean_resid_df, 
