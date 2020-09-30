@@ -115,7 +115,7 @@ calc_lw_residuals <- function(len,
       dplyr::group_by(year) %>%
       dplyr::summarise(n_year  = n()) %>%
       dplyr::inner_join(sample_size_df) %>%
-      dplyr::mutate(prop = n/n_year)
+      dplyr::mutate(prop = round(100*n/n_year, 1))
     
     sample_prop_plot <- ggplot(data = sample_prop_df,
                                aes(x = year, 
