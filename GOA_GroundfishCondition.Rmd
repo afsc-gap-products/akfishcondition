@@ -106,6 +106,15 @@ set_plot_order <- function(COMMON_NAME) {
                     "Pacific ocean perch")))
 }
 
+set_stratum_order <- function(STRATUM) {
+  return(factor(STRATUM,
+                levels = c("Shumagin",
+                           "Chirikof",
+                           "Kodiak", 
+                           "Yakutat", 
+                           "Southeastern")))
+}
+
 ```
 
 Contributed by Ned Laman^1^, Sean Rohan^1^  
@@ -121,7 +130,7 @@ include_graphics("MapGOA.png")
 
 Paired lengths and weights of individual fishes were examined from the Alaska Fisheries Science Center biennial Resource Assessment and Conservation Engineering (AFSC/RACE) - Groundfish Assessment Program’s (GAP) bottom trawl survey of the Gulf of Alaska (GOA). Analyses focused on walleye pollock (*Gadus chalcogrammus*), Pacific cod (*Gadus macrocephalus*), arrowtooth flounder (*Atheresthes stomias*), southern rock sole (*Lepidopsetta bilineata*), northern rockfish (*Sebastes polyspinis*), Pacific ocean perch (*Sebastes alutus*), and dusky rockfish (*Sebastes variabilis*) collected in trawls with satisfactory performance at standard survey stations. Data were combined in the International North Pacific Fisheries Commission (INPFC) strata; Shumagin, Chirikof, Kodiak, Yakutat and Southeast (Figure 1). 
 
-Length-weight relationships for each of the seven species were estimated within each stratum from a linear regression of log-transformed values across all years where data were available (1984--2019); the slopes of these relationships were estimated independently in each stratum to account for spatial-temporal variation in growth and bottom trawl survey sampling. Length-weight relationships for 100--250 mm fork length (1--2 year old) walleye pollock were established independent of the adult life history stages caught. Bias-corrected weights-at-length (log scale) were estimated from the model and subtracted from observed weights to compute individual residuals per fish. Length-weight residuals were averaged for each stratum and weighted in proportion to INPFC stratum biomass based on stratified area-swept expansion of summer bottom trawl survey catch per unit effort (CPUE). Average length-weight residuals were compared by stratum and year to evaluate spatial variation in fish condition. Combinations of stratum and year with <10 samples were used for length-weight relationships but excluded from indicator calculations.  
+Length-weight relationships for each of the seven species were estimated within each stratum across all years where data were available (1984–2019) from a linear regression of log-transformed exponential growth, W = aLb, where W is weight (g) and L is fork length (mm).   A different slope was estimated for each stratum to account for spatial-temporal variation in growth and bottom trawl survey sampling. Length-weight relationships for 100--250 mm fork length (1--2 year old) walleye pollock were established independent of the adult life history stages caught. Bias-corrected weights-at-length (log scale) were estimated from the model and subtracted from observed weights to compute individual residuals per fish. Length-weight residuals were averaged for each stratum and weighted in proportion to INPFC stratum biomass based on stratified area-swept expansion of summer bottom trawl survey catch per unit effort (CPUE). Average length-weight residuals were compared by stratum and year to evaluate spatial variation in fish condition. Combinations of stratum and year with <10 samples were used for length-weight relationships but excluded from indicator calculations.  
 
 **Methodological Changes**: The method used to calculate groundfish condition this year (2020) differs from previous years in that: 1) different regression slopes were estimated for each stratum, 2) a bias-correction was applied when predicting weights prior to calculating residuals, 3) stratum mean residuals were weighted in proportion to stratum biomass, and 4) stratum-year combinations with sample size <10 were not used in indicator calculations. As in previous years, confidence intervals for the condition indicator reflect uncertainty based on length-weight residuals, but are larger due to differences in sample sizes and stratum biomasses among years. Confidence intervals do not account for uncertainty in stratum biomass estimates.
 
@@ -203,7 +212,7 @@ fig2 <- ggplot() +
                  y = ymeans)) +
   facet_wrap(~DISPLAY_NAME, ncol = 2, scales = "free_y") +
   scale_x_continuous(name = "Year") +
-  scale_y_continuous(name = "Length-weight residual") +
+  scale_y_continuous(name = "Length-weight residual (ln(g))") +
   theme_condition_index()
 print(fig2)
 ```
@@ -231,12 +240,14 @@ The general patterns of above and below average residual body condition index ac
 goa_stratum_resids$DISPLAY_NAME <- set_plot_order(goa_stratum_resids$COMMON_NAME)
 
 fig3 <- ggplot(data = goa_stratum_resids, 
-               aes(x = YEAR, y = weighted_resid_mean, fill = factor(INPFC_STRATUM))) + 
+               aes(x = YEAR, 
+                   y = stratum_resid_mean, 
+                   fill = set_stratum_order(INPFC_STRATUM))) + 
   geom_hline(yintercept = 0) +
   geom_bar(stat = "identity", color = "black", position = "stack") +
   facet_wrap(~DISPLAY_NAME, ncol = 2, scales = "free_y") +
   scale_x_continuous(name = "Year") +
-  scale_y_continuous(name = "Length-weight weighted residual") +
+  scale_y_continuous(name = "Length-weight residual (ln(g))") +
   scale_fill_brewer(name = "Stratum", palette = "BrBG") +
   theme_condition_index()
 print(fig3)
