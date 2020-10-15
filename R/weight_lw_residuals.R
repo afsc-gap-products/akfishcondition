@@ -1,14 +1,13 @@
 #' A function to weight length-weight residuals by catch
 #'
-#' This function weights length-weight residuals by a catch column. This
-#' catch can be CPUE from the tow where the fish was caught (most common) or
-#' stratum CPUE or biomass. 
-#' @param residuals Residual that will be weighted by catch
-#' @param year Year of sample must be the same length as the residuals
-#' @param catch Catch for weighting residual (default = 1) must be the same length as residuals
-#' @param stratum Vector of strata for weighting
-#' @param stratum_biomass Biomass in kg for the stratum.
-#' @keywords length, weight, groundfish condition
+#' This function weights length-weight residuals by stratum biomass OR catch. 
+#' 
+#' @param residuals Vector of residuals residuals that will be weighted by stratum biomass or catch.
+#' @param year Vector of years Year of sample must be the same length as the residuals.
+#' @param stratum Vector of strata for weighting.
+#' @param stratum_biomass Vector of stratum biomass.
+#' @param catch Vector of catch for weighting residuals by haul (default = 1).
+#' @keywords length, weight, groundfish condition.
 #' @export
 
 weight_lw_residuals <- function(residuals, year, stratum = NA, stratum_biomass = NA, catch = 1) {
@@ -20,10 +19,10 @@ weight_lw_residuals <- function(residuals, year, stratum = NA, stratum_biomass =
   }
   
   if(is.na(stratum)[1]) {
+    # Calculate residuals by year with stratum weighting by catch (CNR's code)
     
     unique_years <- unique(year)
-    
-    # Calculate residuals by year with stratum weighting by catch (CNR's code)
+
     for(i in 1:length(unique_years)){
       year_ind <- which(year == unique_years[i])
       sel_resid <- residuals[year_ind]
@@ -34,7 +33,7 @@ weight_lw_residuals <- function(residuals, year, stratum = NA, stratum_biomass =
       wtlw.res[year_ind] <- var3
     }
   } else if(!is.na(stratum)[1] & is.na(stratum_biomass)) {
-    # Calculate residuals by stratum without biomass expansion by stratum area 
+    # Calculate residuals by stratum without biomass expansion
     unique_years_stratum <- expand.grid(year = unique(year), stratum = unique(stratum))
       for(i in 1:nrow(unique_years_stratum)) {
         ind <- which(year == unique_years_stratum['year'] & stratum == unique_years_stratum['stratum'])
@@ -46,12 +45,7 @@ weight_lw_residuals <- function(residuals, year, stratum = NA, stratum_biomass =
         wtlw.res[ind] <- var3
       }
   } else {
-    # 2020 ESR: Calculate residuals by stratum with biomass-weighted expansion (2020 ESR)
-    # stratum_biomass <- c(rep(0.5,4), c(0.25, 0.25, 1.5, 1.5))
-    # residuals <- c(c(0.05, 0.05, 0.5, 0.5), c(0.05, 0.05, 0.5, 0.5))
-    # year <- c(rep(2018,4), rep(2019,4))
-    # stratum <- c(c(1,1,2,2), c(1,1,2,2))
-    
+    # Weight residuals by stratum with biomass expansion (2020 ESR) 
     biomass_df <- data.frame(stratum_biomass, stratum, year) %>% 
       unique()
     

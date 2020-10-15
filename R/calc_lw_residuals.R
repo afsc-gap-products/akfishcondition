@@ -96,6 +96,11 @@ calc_lw_residuals <- function(len,
       dir.create(out_path)
     }
     
+    # Allow diagnostic plots for NA
+    if(is.na(stratum[1])) {
+      stratum <- rep("none", length(stratum))
+    }
+    
     # Sample sizes
     sample_size_df <- data.frame(year, stratum) %>%
       dplyr::group_by(year, stratum) %>%

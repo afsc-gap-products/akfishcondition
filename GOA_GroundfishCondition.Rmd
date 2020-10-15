@@ -188,7 +188,7 @@ goa_ann_mean_resid_df <- goa_stratum_resids %>%
   dplyr::summarise(mean_wt_resid = mean(weighted_resid_mean),
                    se_wt_resid = mean(weighted_resid_se))
 
-
+write.csv(goa_ann_mean_resid_df, "GOA_annual_resids.csv", row.names = FALSE)
 ```
 
 ```{r figure 2 grid, include = TRUE, echo = FALSE, fig.height = 14, fig.width = 12, fig.cap = "\\label{fig:figs}Figure 2. Biomass-weighted residual body condition index across survey years (1984-2019) for seven Gulf of Alaska groundfish species collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center (AFSC) Resource Assessment and Conservation Engineering Groundfish Assessment Program (RACE-GAP) standard summer bottom trawl survey. Filled bars denote weighted length-weight residuals using this year's indicator calculation, error bars denote two standard errors, points denote the mean of the unweighted length-weight residual from the previous year's (2019) ESR.",  message = FALSE, warning = FALSE}
