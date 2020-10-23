@@ -68,59 +68,6 @@ nbs_old_indicator_dat$DISPLAY_NAME[!grepl("Alaska", x = nbs_old_indicator_dat$DI
 nbs_old_indicator_dat$DISPLAY_NAME[nbs_old_indicator_dat$DISPLAY_NAME == "age 1 walleye pollock"] <- "walleye pollock (100–250 mm)"
 nbs_old_indicator_dat$DISPLAY_NAME[nbs_old_indicator_dat$DISPLAY_NAME == "walleye pollock"] <- "walleye pollock (>250 mm)"
 
-# Define ggplot themes for plotting
-theme_condition_index <- function() {
-  theme_bw() %+replace%
-    theme(plot.title = element_text(size = 18, face = "bold"),
-          panel.grid.major = element_blank(),
-          axis.text.x = element_text(size = 18),
-          axis.text.y = element_text(size = 18),
-          axis.title.x = element_text(size = 18),
-          axis.title.y = element_text(size = 18, angle = 90),
-          legend.title = element_text(size = 18, face = "bold"),
-          legend.text = element_text(size = 18),
-          legend.position = "right",
-          panel.grid.minor = element_blank(),
-          strip.text = element_text(size = 18, face = "bold"),
-          strip.background = element_blank())
-} 
-
-theme_pngs <- function() {
-  theme_bw() %+replace%
-    theme(plot.title = element_text(size = 12, face = "bold"),
-          panel.grid.major = element_blank(),
-          axis.text.x = element_text(size = 12),
-          axis.text.y = element_text(size = 12),
-          axis.title.x = element_text(size = 12),
-          axis.title.y = element_text(size = 12, angle = 90),
-          legend.title = element_text(size = 12, face = "bold"),
-          legend.text = element_text(size = 12),
-          panel.grid.minor = element_blank(),
-          strip.text = element_text(size = 12, face = "bold"),
-          strip.background = element_blank())
-} 
-
-# Function to set plotting order
-set_plot_order <- function(COMMON_NAME) {
-  return(factor(COMMON_NAME, 
-         levels = c("walleye pollock (>250 mm)",
-                    "walleye pollock (100–250 mm)",
-                    "Pacific cod",
-                    "northern rock sole",
-                    "yellowfin sole",
-                    "arrowtooth flounder",
-                    "Alaska plaice",
-                    "flathead sole"),
-         labels = c("walleye pollock (>250 mm)",
-                    "walleye pollock (100–250 mm)",
-                    "Pacific cod",
-                    "northern rock sole",
-                    "yellowfin sole",
-                    "arrowtooth flounder",
-                    "Alaska plaice",
-                    "flathead sole")))
-}
-
 
 ```
 
@@ -204,8 +151,8 @@ write.csv(ebs_ann_mean_resid_df, "EBS_annual_resids.csv", row.names = FALSE)
 
 ```{r figure 2 grid, include=TRUE, echo=FALSE, fig.height=14,fig.width=12,fig.cap="\\label{fig:figs}Figure 2. Weighted length-weight residuals for seven groundfish species and age 1–2 walleye pollock (100–250 mm) collected during AFSC/RACE GAP standard summer bottom trawl surveys of the eastern Bering Sea shelf, 1997-2019. Filled bars denote weighted length-weight residuals using this year's indicator calculation, error bars denote two standard errors, points denote the mean of the unweighted length-weight residual from the 2019 ESR.",  message=FALSE, warning=FALSE}
 # Set factor levels for plotting order
-ebs_ann_mean_resid_df$DISPLAY_NAME <- set_plot_order(ebs_ann_mean_resid_df$COMMON_NAME)
-ebs_old_indicator_dat$DISPLAY_NAME <- set_plot_order(ebs_old_indicator_dat$DISPLAY_NAME)
+ebs_ann_mean_resid_df$DISPLAY_NAME <- set_plot_order(ebs_ann_mean_resid_df$COMMON_NAME, REGION = "BS")
+ebs_old_indicator_dat$DISPLAY_NAME <- set_plot_order(ebs_old_indicator_dat$DISPLAY_NAME, REGION = "BS")
 
 fig2 <- ggplot() + 
   geom_bar(data = ebs_ann_mean_resid_df, 
@@ -267,8 +214,8 @@ nbs_ann_mean_resid_df <- nbs_dat %>%
                    n = n()) %>%
   dplyr::filter(n >=10)
 
-nbs_ann_mean_resid_df$DISPLAY_NAME <- set_plot_order(nbs_ann_mean_resid_df$COMMON_NAME)
-nbs_old_indicator_dat$DISPLAY_NAME <- set_plot_order(nbs_old_indicator_dat$DISPLAY_NAME)
+nbs_ann_mean_resid_df$DISPLAY_NAME <- set_plot_order(nbs_ann_mean_resid_df$COMMON_NAME, REGION = "BS")
+nbs_old_indicator_dat$DISPLAY_NAME <- set_plot_order(nbs_old_indicator_dat$DISPLAY_NAME, REGION = "BS")
 
 fig3 <- ggplot() + 
   geom_bar(data = nbs_ann_mean_resid_df, 
@@ -304,7 +251,7 @@ In previous years, stratum length-weight residuals were strongly influenced by t
 With this year's change, all species and strata now show switches between positive and negative residuals over time (Figure 4). Pacific cod condition was generally negative on the outer and northern shelf (Strata 40, 50, and 60) from 2010-2019 and positive from 2001–2005. Large walleye pollock (>250 mm) condition was negative on the inner shelf (strata 10 and 20) from 2015–2019 and positive from 2006–2014. Small walleye pollock (100–250 mm) condition was generally positive on the inner shelf from 2014–2019 and negative from 2006–2013. In 2019, positive residuals occurred in all strata for northern rock sole, yellowfin sole, and arrowtooth flounder. Other species had a mix of positive and negative residuals among strata.
 
 ```{r figure 4 set up, include=FALSE, fig.height=4, fig.width=4, message=FALSE, warning=FALSE}
-ebs_stratum_resids$DISPLAY_NAME <- set_plot_order(ebs_stratum_resids$COMMON_NAME)
+ebs_stratum_resids$DISPLAY_NAME <- set_plot_order(ebs_stratum_resids$COMMON_NAME, REGION = "BS")
 
 fig4 <- ggplot(data = ebs_stratum_resids, 
                aes(x = YEAR, 
@@ -312,7 +259,7 @@ fig4 <- ggplot(data = ebs_stratum_resids,
                    fill = factor(STRATUM))) + 
   geom_hline(yintercept = 0) +
   geom_bar(stat = "identity", color = "black", position = "stack") +
-  facet_wrap(~DISPLAY_NAME, ncol = 2, scales = "free_y") +
+  facet_wrap(~set_plot_order(DISPLAY_NAME, REGION = "BS"), ncol = 2, scales = "free_y") +
   scale_x_continuous(name = "Year") +
   scale_y_continuous(name = "Length-weight residual  (ln(g))") +
   scale_fill_brewer(name = "Stratum", palette = "BrBG") +
@@ -328,6 +275,38 @@ print(fig4)
 png("EBS_condition_by_stratum.png", width = 6, height = 7, units = "in", res = 300)
 print(fig4 + theme_pngs())
 dev.off()
+
+for(i in 1:length(unique(ebs_stratum_resids$DISPLAY_NAME))) {
+  png(paste0("./output/EBS_NBS_condition_", gsub(">", "gt", 
+                                                 unique(ebs_stratum_resids$DISPLAY_NAME)[i]), ".png"), 
+      width = 6, height = 7, units = "in", res = 300)
+  print(
+    ggplot(data = nbs_ann_mean_resid_df %>% 
+             dplyr::mutate(STRATUM = "NBS",
+                           stratum_resid_mean = mean_resid,
+                           stratum_resid_se = se) %>%
+             rbind.fill(ebs_stratum_resids) %>% 
+             dplyr::filter(DISPLAY_NAME == unique(ebs_stratum_resids$DISPLAY_NAME)[i]),
+           aes(x = YEAR, 
+               y = stratum_resid_mean, 
+               fill = STRATUM,
+               ymin = stratum_resid_mean - 2*stratum_resid_se,
+               ymax = stratum_resid_mean + 2*stratum_resid_se)) +
+      geom_hline(yintercept = 0) +
+      ggtitle(unique(ebs_stratum_resids$DISPLAY_NAME)[i]) +
+      geom_bar(stat = "identity", color = "black", position = "stack") +
+      geom_errorbar() +
+      facet_wrap(~STRATUM, 
+                 ncol = 2, 
+                 scales = "free_y") +
+      scale_x_continuous(name = "Year") +
+      scale_y_continuous(name = "Length-weight residual (ln(g))") +
+      scale_fill_brewer(name = "Stratum", palette = "BrBG", drop = FALSE) +
+      theme_pngs() + 
+      theme(legend.position = "none",
+            title = element_text(hjust = 0.5)))
+  dev.off()
+}
 ```
 
 **Factors influencing observed trends**: There are several factors that may influence the observed temporal and spatial patterns in fish condition over the EBS and NBS shelf. Water temperature could explain some of the spatial and temporal variability in length-weight residuals. Water temperatures during the 1999 survey were particularly cold in the Bering Sea and this corresponded to a year of negative length-weight residuals for all groundfish examined where data existed. Despite the abundant large crustacean zooplankton and relatively high microzooplankton productivity present in 1999 (Hunt et al., 2008), temperature-dependent groundfish spatial distributions may have affected the spatial overlap of fish and their prey thereby impacting fish growth and condition in that year. Cold temperatures may have also affected fish energy requirements in that year. Conversely, recent and continuing warm temperatures across the Bering Sea shelf since the "Warm Blob" (Bond et al., 2015; Stabeno et al., 2019) may be influencing the present positive trend in fish condition for the species examined. 

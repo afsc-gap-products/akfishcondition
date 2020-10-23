@@ -13,22 +13,20 @@ weight_lw_residuals(
 )
 }
 \arguments{
-\item{residuals}{Residual that will be weighted by catch}
+\item{residuals}{Vector of residuals residuals that will be weighted by stratum biomass or catch.}
 
-\item{year}{Year of sample must be the same length as the residuals}
+\item{year}{Vector of years Year of sample must be the same length as the residuals.}
 
-\item{stratum}{Vector of strata for weighting}
+\item{stratum}{Vector of strata for weighting.}
 
-\item{stratum_biomass}{Biomass in kg for the stratum.}
+\item{stratum_biomass}{Vector of stratum biomass.}
 
-\item{catch}{Catch for weighting residual (default = 1) must be the same length as residuals}
+\item{catch}{Vector of catch for weighting residuals by haul (default = 1).}
 }
 \description{
-This function weights length-weight residuals by a catch column. This
-catch can be CPUE from the tow where the fish was caught (most common) or
-stratum CPUE or biomass.
+This function weights length-weight residuals by stratum biomass OR catch.
 }
-\keyword{condition}
+\keyword{condition.}
 \keyword{groundfish}
 \keyword{length,}
 \keyword{weight,}
