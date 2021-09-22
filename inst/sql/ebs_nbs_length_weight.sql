@@ -1,8 +1,6 @@
 /* Query to retrieve length and weight samples for EBS continental shelf and northern Bering Sea strata.
-
 Omits corner stations from EBS shelf and does not include strata 82 and 90, following approach used by Chris Rooper prior to 2018, 
-
-Prepared by Ned Laman (ned.laman@noaa.gov) - AFSC/GAP. 
+Prepared by: Ned Laman (ned.laman@noaa.gov), AFSC/RACE/GAP 
 Query updated: September 22, 2021 
 
 like '%-%' eliminates corner stations which don't have a dash in the stationid

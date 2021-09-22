@@ -1,4 +1,5 @@
-/* Query to retrieve stratum biomass for combined Northern Bering Sea shelf strata using tables prepared by Rebecca Haehn (rebecca.haehn@noaa.gov) - AFSC/GAP. 
+/* Query to retrieve stratum biomass for combined Northern Bering Sea shelf strata using tables prepared by Rebecca Haehn (rebecca.haehn@noaa.gov), AFSC/RACE/GAP.
+Prepared by: Sean Rohan (sean.rohan@noaa.gov), AFSC/RACE/GAP 
 Query updated: September 22, 2021 
 
 README by Rebecca Haehn
@@ -6,7 +7,7 @@ README by Rebecca Haehn
 Here are biomass/population tables for various species.  These tables have been computed 
 without fishing-power corrections for all years.  
 
- The HAULCOUNT will indicate the total hauls within each stratum or subarea. If a stratum 
+The HAULCOUNT will indicate the total hauls within each stratum or subarea. If a stratum 
 is not listed for a particular year, then no hauls/stations were conducted in that stratum during that year.
 
 

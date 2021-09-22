@@ -1,6 +1,6 @@
 /* Query to retrieve stratum biomass for combined EBS continental shelf strata using tables prepared by Rebecca Haehn (rebecca.haehn@noaa.gov) - AFSC/GAP. 
+Prepared by: Sean Rohan (sean.rohan@noaa.gov), AFSC/RACE/GAP
 Query updated: September 22, 2021 
-
 --- 
 
 README by Rebecca Haehn

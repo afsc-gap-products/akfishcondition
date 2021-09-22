@@ -1,6 +1,5 @@
 /* Query to retrieve length-weight samples for Gulf of Alaska bottom trawl surveys
-
-Prepared by Ned Laman (ned.laman@noaa.gov) - AFSC/GAP. 
+Prepared by: Ned Laman (ned.laman@noaa.gov), AFSC/RACE/GAP 
 Query updated: September 22, 2021 
 */
 

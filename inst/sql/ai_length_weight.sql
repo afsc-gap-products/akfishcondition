@@ -1,6 +1,5 @@
 /* Query to retrieve length-weight samples for Aleutian Islands bottom trawl surveys
-
-Prepared by Ned Laman (ned.laman@noaa.gov) - AFSC/GAP. 
+Prepared by: Ned Laman (ned.laman@noaa.gov), AFSC/RACE/GAP 
 Query updated: September 22, 2021 
 */
 

@@ -1,7 +1,5 @@
 /* Query to retrieve stratum biomass for Gulf of Alaska INPFC strata 
-
-Prepared by Ned Laman (ned.laman@noaa.gov) - AFSC/GAP. 
-
+Prepared by: Ned Laman (ned.laman@noaa.gov), AFSC/RACE/GAP
 Query updated: September 22, 2021 */
 
 select a.year, a.species_code, a.haul_count, a.catch_count, a.area_biomass, a.biomass_var, b.inpfc_area inpfc_stratum, b.inpfc_stratum_area
