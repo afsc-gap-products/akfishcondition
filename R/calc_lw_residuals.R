@@ -11,6 +11,7 @@
 #' @param species_code Species code (provide if make_diagnostics = TRUE)
 #' @param region Region (provide if make_diagnostics = TRUE)
 #' @param year Year (provide if make_diagnostics = TRUE)
+#' @param include_ci Include upper and lower estimates for the 95% confidence interval of residuals in the output.
 #' @keywords length, weight, groundfish condition
 #' @references Brodziak, J.2012. Fitting length-weight relationships with linear regression using the log-transformed allometric model with bias-correction. Pacific Islands Fish. Sci. Cent., Natl. Mar. Fish. Serv., NOAA, Honolulu, HI 96822-2396. Pacific Islands Fish. Sci. Cent. Admin. Rep. H-12-03, 4 p.
 #' @export

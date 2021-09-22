@@ -1,7 +1,7 @@
 Package: akfishcondition
 Type: Package
 Title: Groundfish condition index
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre"))
 Maintainer: Sean Rohan <sean.rohan@noaa.gov>
 Depends: R (>= 3.5),
@@ -10,7 +10,7 @@ Depends: R (>= 3.5),
     magrittr,
     plyr,
     reshape
-Description: This package calculates length-weight condition indices in Alaska. Functions based on GroundfishCondition package by Christoper N. Rooper (github.com/rooperc4/GroundfishCondition)
+Description: This package calculates groundfish condition based on length-weight regressions.
 License: GPL (>=2)
 Encoding: UTF-8
 LazyData: false
