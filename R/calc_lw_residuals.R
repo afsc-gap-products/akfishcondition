@@ -15,7 +15,6 @@
 #' @keywords length, weight, groundfish condition
 #' @references Brodziak, J.2012. Fitting length-weight relationships with linear regression using the log-transformed allometric model with bias-correction. Pacific Islands Fish. Sci. Cent., Natl. Mar. Fish. Serv., NOAA, Honolulu, HI 96822-2396. Pacific Islands Fish. Sci. Cent. Admin. Rep. H-12-03, 4 p.
 #' @export
-#' 
 
 calc_lw_residuals <- function(len, 
                               wt, 
@@ -39,7 +38,6 @@ calc_lw_residuals <- function(len,
     } else {
       stratum <- factor(stratum)
       lw.mod <- lm(logwt~loglen:stratum, na.action = na.exclude)
-      # fitted_wt <- predict(lw.mod, newdata = data.frame(len = len, stratum = stratum))
       fitted_df <- predict(lw.mod, newdata = data.frame(len = len), se.fit = TRUE) %>% 
         as.data.frame()
     }
