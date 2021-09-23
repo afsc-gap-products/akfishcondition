@@ -30,6 +30,8 @@ calc_lw_residuals(
 
 \item{region}{Region (provide if make_diagnostics = TRUE)}
 
+\item{include_ci}{Include upper and lower estimates for the 95% confidence interval of residuals in the output.}
+
 \item{length}{Set of individual fish lengths.}
 
 \item{weight}{Corresponding set of individual fish weights.}
