@@ -11,7 +11,7 @@ sql_to_rqry <- function(sql_path) {
   in_string <- sub("/*.*/", "", in_string)
   out_string <- stringr::str_replace_all(in_string, pattern = "\r\n", replacement = " ")
   
-  return(in_string)
+  return(out_string)
 }
 
 
