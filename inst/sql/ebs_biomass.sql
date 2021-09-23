@@ -69,7 +69,6 @@ CATCOUNT (no. hauls with catch weights)
 NUMCOUNT (no. hauls with catch numbers)
 LENCOUNT  (no. hauls with lengths) 
 */
-
 SELECT HAEHNR.BIOMASS_EBS_PLUSNW.SPECIES_CODE, 
 HAEHNR.BIOMASS_EBS_PLUSNW.COMMON_NAME, 
 HAEHNR.BIOMASS_EBS_PLUSNW.YEAR, 

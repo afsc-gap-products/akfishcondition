@@ -2,7 +2,6 @@
 Prepared by: Ned Laman (ned.laman@noaa.gov), AFSC/RACE/GAP 
 Query updated: September 22, 2021 
 */
-
 select a.haul, a.vessel, a.cruise, b.species_code, a.region, a.start_time, c.inpfc_area,
 a.stratum, a.stationid, a.bottom_depth, a.start_latitude, a.start_longitude, d.specimenid,
 e.common_name, d.sex, d.length, d.weight, b.weight catch_weight, floor(a.cruise/100) year

@@ -67,7 +67,6 @@ HAULCOUNT (no. hauls conducted in stratum)
 CATCOUNT (no. hauls with catch weights)
 NUMCOUNT (no. hauls with catch numbers)
 LENCOUNT  (no. hauls with lengths) */
-
 SELECT HAEHNR.BIOMASS_NBS_SAFE.SPECIES_CODE, 
 HAEHNR.BIOMASS_NBS_SAFE.COMMON_NAME, 
 HAEHNR.BIOMASS_NBS_SAFE.YEAR, 

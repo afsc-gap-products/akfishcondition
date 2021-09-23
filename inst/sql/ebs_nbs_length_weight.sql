@@ -8,7 +8,6 @@ survey_definition_id != 78 eliminates Bering Slope stations
 decode to combine strata  and stratum range between 10 and 99 per original intent
 stratum not in (82, 90) because these are non-standard strata and were excluded a priori
 */
-
 select a.haul, a.vessel, a.cruise, b.species_code, a.region, a.start_time,
 decode(a.stratum, 31, 30, 32, 30, 61, 60, 62, 60, 41, 40, 42, 40, 43, 40, a.stratum) stratum, 
 a.stationid, a.bottom_depth, a.start_latitude, a.start_longitude, d.specimenid,
