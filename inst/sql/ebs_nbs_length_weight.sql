@@ -11,7 +11,7 @@ stratum not in (82, 90) because these are non-standard strata and were excluded 
 select a.haul, a.vessel, a.cruise, b.species_code, a.region, a.start_time,
 decode(a.stratum, 31, 30, 32, 30, 61, 60, 62, 60, 41, 40, 42, 40, 43, 40, a.stratum) stratum, 
 a.stationid, a.bottom_depth, a.start_latitude, a.start_longitude, d.specimenid,
-e.common_name, d.sex, d.length, d.weight, b.weight catch_weight, floor(a.cruise/100) year
+e.common_name, d.sex, d.length, d.weight, b.weight catch_weight
 from racebase.haul a, racebase.catch b, racebase.specimen d , racebase.species e, race_data.v_cruises c
 where a.region = 'BS' and a.cruise >= 199900 and a.stationid like '%-%'
 and b.species_code in (21740, 21741, 21720, 10110, 10210, 10130, 10261, 10285)

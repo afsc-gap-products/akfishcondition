@@ -1,4 +1,4 @@
-/* Query to retrieve stratum biomass for combined EBS continental shelf strata using tables prepared by Rebecca Haehn (rebecca.haehn@noaa.gov) - AFSC/GAP. 
+/* Query to retrieve stratum biomass for combined EBS continental shelf strata 10-62 from tables prepared by Rebecca Haehn (rebecca.haehn@noaa.gov), AFSC/RACE/GAP. Does not include northwest strata 82 and 90. 
 Prepared by: Sean Rohan (sean.rohan@noaa.gov), AFSC/RACE/GAP
 Query updated: September 22, 2021 
 --- 
