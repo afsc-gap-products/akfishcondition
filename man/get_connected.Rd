@@ -2,13 +2,16 @@
 % Please edit documentation in R/utils.R
 \name{get_connected}
 \alias{get_connected}
-\title{Connect to Oracle using RODBC}
+\title{Create a database connection using RODBC}
 \usage{
 get_connected(schema = NA)
 }
 \arguments{
-\item{schema}{Oracle dsn as a character vector.}
+\item{schema}{Data source name (DSN) as a character vector.}
+}
+\value{
+An RODBC class ODBC connection.
 }
 \description{
-This function connects to oracle using RODBC.
+A function that accepts a data source name, username, and password to establish returns an Oracle DataBase Connection (ODBC) as an RODBC class in R.
 }

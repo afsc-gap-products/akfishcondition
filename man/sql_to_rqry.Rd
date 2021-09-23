@@ -9,6 +9,9 @@ sql_to_rqry(sql_path)
 \arguments{
 \item{sql_path}{File path to .sql file as a character vector.}
 }
+\value{
+Returns an SQL statement as a character vector, which can be executed on a database connection using functions in the RODBC or ROracle packages.
+}
 \description{
-This function extracts a query strings from simple .sql file that only contain a comment block describing an SQL query and the query itself.
+This function extracts a query string from simple .sql file. The SQL file should only contain a comment block at the top and the SQL query itself.
 }

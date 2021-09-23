@@ -1,10 +1,10 @@
 #' Retrieve SQL query string from .sql files
 #' 
-#' This function extracts a query strings from simple .sql file that only contain a comment block describing an SQL query and the query itself.
+#' This function extracts a query string from simple .sql file. The SQL file should only contain a comment block at the top and the SQL query itself.
 #' 
 #' @param sql_path File path to .sql file as a character vector.
+#' @return Returns an SQL statement as a character vector, which can be executed on a database connection using functions in the RODBC or ROracle packages.
 #' @export
-
 
 sql_to_rqry <- function(sql_path) {
   in_string <- readr::read_file(sql_path)
@@ -15,11 +15,12 @@ sql_to_rqry <- function(sql_path) {
 }
 
 
-#' Connect to Oracle using RODBC
+#' Create a database connection using RODBC
 #' 
-#' This function connects to oracle using RODBC.
+#' A function that accepts a data source name, username, and password to establish returns an Oracle DataBase Connection (ODBC) as an RODBC class in R.
 #' 
-#' @param schema Oracle dsn as a character vector.
+#' @param schema Data source name (DSN) as a character vector.
+#' @return An RODBC class ODBC connection. 
 #' @export
 
 get_connected <- function(schema = NA){
