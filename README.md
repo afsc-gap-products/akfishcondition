@@ -1,7 +1,7 @@
 # akfishcondition
 This repository contains a package to calculate morphometric condition indicators (length-weight residuals) based on length-weight relationships. It also contains R markdown files for generating the Groundfish Condition Indicator chapters for the Aleutian Islands, Bering Sea, and Gulf of Alaska Ecosystem Status Report and juvenile and adult condition indicators for Ecosystem and Socioeconomic Profiles. 
 
-The most recent version of this package was built in R 4.0.2.
+The most recent version of this package was built in R 4.1.1.
 
 # Installation
 
