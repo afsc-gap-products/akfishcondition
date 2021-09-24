@@ -1,7 +1,4 @@
-# Test queries for akfishcondition
-
-library(devtools)
-devtools::install_github("sean-rohan-noaa/akfishcondition")
+# Queries to retrieve data for ESR and ESP contributions
 
 library(akfishcondition)
 
