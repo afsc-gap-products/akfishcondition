@@ -73,7 +73,7 @@ nbs_dat$COMMON_NAME[nbs_dat$SPECIES_CODE == 21740] <- "walleye pollock (>250 mm)
 
 Contributed by Sean Rohan^1^ and Bianca Prohaska^1^   
 ^1^ Resource Assessment and Conservation Engineering Division, Alaska Fisheries Science Center, National Marine Fisheries Service, NOAA  
-**Contact**: sean.rohan@noaa.gov  
+**Contact**: sean.rohan@noaa.gov
 **Last updated**:  October 2021
 
 **Description of Indicator**: Length-weight residuals represent how heavy a fish is per unit body length and are an indicator of somatic growth variability (Brodeur et al., 2004). Therefore, length-weight residuals can be considered an indicator of prey availability and growth conditions. Positive length-weight residuals indicate better condition (i.e., heavier per unit length) and negative residuals indicate poorer condition (i.e., lighter per unit length). Fish condition calculated in this way reflects fish growth trajectories which can have implications for biological productivity due to growth, reproduction, and mortality (Paul and Paul, 1999; Boldt and Haldorson, 2004).
