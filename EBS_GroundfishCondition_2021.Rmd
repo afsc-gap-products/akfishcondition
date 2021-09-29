@@ -16,16 +16,6 @@ addr:
 ```{r setup, include=FALSE}
 # Load packages
 library(knitr)
-library(ggplot2)
-library(devtools)
-library(readr)
-library(viridis)
-
-# Check the akfishcondition package is installed
-if(!("akfishcondition" %in% installed.packages())) {
-  devtools::install_github("sean-rohan-NOAA/akfishcondition")
-}
-
 library(akfishcondition)
 pkg_version <- packageVersion("akfishcondition")
 
@@ -36,6 +26,10 @@ unzip(system.file("extdata/2021_ESR.zip", package = "akfishcondition"))
 ebs_ann_mean_resid_df <- akfishcondition:::EBS_INDICATOR$FULL_REGION
 ebs_stratum_resids_df <- akfishcondition:::EBS_INDICATOR$STRATUM
 nbs_ann_mean_resid_df <- akfishcondition:::NBS_INDICATOR$FULL_REGION
+
+if(!dir.exists("plots")) {
+  dir.create("plots")
+}
 
 ```
 
@@ -80,7 +74,7 @@ print(fig2)
 ```
 
 ```{r figure 2 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png("EBS_condition.png",width=6,height=7,units="in",res=300)
+png(here::here("plots", "EBS_condition.png"),width=6,height=7,units="in",res=300)
 print(fig2 + theme_pngs())
 dev.off()
 
@@ -88,7 +82,7 @@ dev.off()
 
 
 ```{r figure 3 grid, include=TRUE, echo=FALSE, fig.height=14,fig.width=12,fig.cap="\\label{fig:figs}Figure 3. Length-weight residuals for groundfish species and age 1–2 walleye pollock (100–250 mm) collected during AFSC/RACE GAP summer bottom trawl surveys of the Northern Bering Sea, 2010 and 2017–2021. Error bars denote two standard errors.",  message=FALSE, warning=FALSE}
-ebs_ann_mean_resid_df$DISPLAY_NAME <- set_plot_order(nbs_ann_mean_resid_df$COMMON_NAME, REGION = "BS")
+nbs_ann_mean_resid_df$DISPLAY_NAME <- set_plot_order(nbs_ann_mean_resid_df$COMMON_NAME, REGION = "BS")
 
 fig3 <- ggplot() + 
   geom_bar(data = nbs_ann_mean_resid_df, 
@@ -100,7 +94,7 @@ fig3 <- ggplot() +
                    ymax = mean_resid + 2*se,
                    ymin = mean_resid - 2*se)) +
   geom_hline(yintercept = 0) +
-  facet_wrap(~COMMON_NAME, ncol = 2, scales = "free_y") +
+  facet_wrap(~DISPLAY_NAME, ncol = 2, scales = "free_y") +
   scale_x_continuous(name = "Year", breaks = c(2010, 2015, 2020), limits = c(2009, 2021)) +
   scale_y_continuous(name = "Length-weight residual (ln(g))") +
   theme_condition_index()
@@ -109,7 +103,7 @@ print(fig3)
 ```
 
 ```{r figure 3 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png("NBS_condition.png",width=6,height=7,units="in",res=300)
+png(here::here("plots", "NBS_condition.png"),width=6,height=7,units="in",res=300)
 print(fig3 + theme_pngs())
 dev.off()
 ```
@@ -140,9 +134,41 @@ print(fig4)
 ```
 
 ```{r figure 4 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png("EBS_condition_by_stratum.png", width = 6, height = 7, units = "in", res = 300)
+png(here::here("plots", "EBS_condition_by_stratum.png"), width = 6, height = 7, units = "in", res = 300)
 print(fig4 + theme_pngs())
 dev.off()
+
+for(i in 1:length(unique(ebs_stratum_resids_df$DISPLAY_NAME))) {
+  png(paste0("./plots/EBS_NBS_condition_", gsub(">", "gt", 
+                                                 unique(ebs_stratum_resids_df$DISPLAY_NAME)[i]), ".png"), 
+      width = 6, height = 7, units = "in", res = 300)
+  print(
+    ggplot(data = nbs_ann_mean_resid_df %>% 
+             dplyr::mutate(STRATUM = "NBS",
+                           stratum_resid_mean = mean_resid,
+                           stratum_resid_se = se) %>%
+             rbind.fill(ebs_stratum_resids_df) %>% 
+             dplyr::filter(DISPLAY_NAME == unique(ebs_stratum_resids_df$DISPLAY_NAME)[i]),
+           aes(x = YEAR, 
+               y = stratum_resid_mean, 
+               fill = STRATUM,
+               ymin = stratum_resid_mean - 2*stratum_resid_se,
+               ymax = stratum_resid_mean + 2*stratum_resid_se)) +
+      geom_hline(yintercept = 0) +
+      ggtitle(unique(ebs_stratum_resids_df$DISPLAY_NAME)[i]) +
+      geom_bar(stat = "identity", color = "black", position = "stack") +
+      geom_errorbar() +
+      facet_wrap(~STRATUM, 
+                 ncol = 2, 
+                 scales = "free_y") +
+      scale_x_continuous(name = "Year") +
+      scale_y_continuous(name = "Length-weight residual (ln(g))") +
+      scale_fill_brewer(name = "Stratum", palette = "BrBG", drop = FALSE) +
+      theme_pngs() + 
+      theme(legend.position = "none",
+            title = element_text(hjust = 0.5)))
+  dev.off()
+}
 ```
 
 **Factors influencing observed trends**: There are several factors that may influence the observed temporal and spatial patterns in fish condition over the EBS and NBS shelf. Water temperature could explain some of the spatial and temporal variability in length-weight residuals. Water temperatures during the 1999 survey were particularly cold in the Bering Sea and this corresponded to a year of negative length-weight residuals for all groundfish examined where data existed. Despite the abundant large crustacean zooplankton and relatively high microzooplankton productivity present in 1999 (Hunt et al., 2008), temperature-dependent groundfish spatial distributions may have affected the spatial overlap of fish and their prey thereby impacting fish growth and condition in that year. Cold temperatures may have also affected fish energy requirements in that year. Conversely, recent and continuing warm temperatures across the Bering Sea shelf since the "Warm Blob" (Bond et al., 2015; Stabeno et al., 2019) may be influencing the present positive trend in fish condition for the species examined. 

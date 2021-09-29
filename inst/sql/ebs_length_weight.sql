@@ -3,7 +3,6 @@ Omits corner stations from EBS shelf and does not include strata 82 and 90, foll
 Prepared by: Ned Laman (ned.laman@noaa.gov), AFSC/RACE/GAP 
 Query updated: September 22, 2021 
 
-like '%-%' eliminates corner stations which don't have a dash in the stationid
 survey_definition_id != 78 eliminates Bering Slope stations
 decode to combine strata  and stratum range between 10 and 99 per original intent
 stratum not in (82, 90) because these are non-standard strata and were excluded a priori
