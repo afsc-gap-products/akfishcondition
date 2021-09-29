@@ -95,7 +95,7 @@ fig3 <- ggplot() +
                    ymin = mean_resid - 2*se)) +
   geom_hline(yintercept = 0) +
   facet_wrap(~DISPLAY_NAME, ncol = 2, scales = "free_y") +
-  scale_x_continuous(name = "Year", breaks = c(2010, 2015, 2020), limits = c(2009, 2021)) +
+  scale_x_continuous(name = "Year", breaks = c(2010, 2015, 2020), limits = c(2009, 2022)) +
   scale_y_continuous(name = "Length-weight residual (ln(g))") +
   theme_condition_index()
 print(fig3)
