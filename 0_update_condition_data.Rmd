@@ -15,7 +15,10 @@ addr:
 
 # Introduction
 
-This file contains code and instructions for retrieving and updating AFSC/RACE/GAP data in the akfishcondition package. The data in the package are used to calculate the summer groundfish morphometric condition indicators that are used in Ecosystem Status Reports (ESRs) and Ecosystem and Socioeconomic Profiles (ESPs) for the eastern Bering Sea continental shelf, northern Bering Sea, Aleutian Islands, and Gulf of Alaska regions. Data and indicators in the akfishcondition package are intended to be updated annually for each stock assessment cycle.
+This file contains code and instructions for retrieving and updating AFSC/RACE/GAP data in the akfishcondition package. It is intended to be run locally from a clone of the akfishcondition repository and with a connection to AFSC's database.
+
+
+The data in the package are used to calculate the summer groundfish morphometric condition indicators that are used in Ecosystem Status Reports (ESRs) and Ecosystem and Socioeconomic Profiles (ESPs) for the eastern Bering Sea continental shelf, northern Bering Sea, Aleutian Islands, and Gulf of Alaska regions. Data and indicators in the akfishcondition package are intended to be updated annually for each stock assessment cycle.
 
 ```{r get_connected, message=FALSE, warning=FALSE}
 library(akfishcondition)
@@ -622,7 +625,6 @@ save(EBS_INDICATOR,
 ```
 
 # 4. Update documentation, install, and restart
-
 Update version number in DESCRIPTION and update documentation using:
 ```{r updater, eval=FALSE, include=FALSE}
 devtools::document(roclets = c('rd', 'collate', 'namespace'))
