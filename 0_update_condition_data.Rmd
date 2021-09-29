@@ -638,8 +638,8 @@ Rcmd.exe INSTALL --no-multiarch --with-keep.source cold_pool
 # 5. Check that data appears correctly
 Check that the updated cold pool index data is included in the package.
 ```{r qaqc, eval = TRUE, include =FALSE}
-print(akfishcondition::AI_dat$LAST_UPDATE)
-print(akfishcondition::GOA_dat$LAST_UPDATE)
-print(akfishcondition::EBS_dat$LAST_UPDATE)
-print(akfishcondition::NBS_dat$LAST_UPDATE)
+print(akfishcondition::AI_INDICATOR$LAST_UPDATE)
+print(akfishcondition::GOA_INDICATOR$LAST_UPDATE)
+print(akfishcondition::EBS_INDICATOR$LAST_UPDATE)
+print(akfishcondition::NBS_INDICATOR$LAST_UPDATE)
 ```
