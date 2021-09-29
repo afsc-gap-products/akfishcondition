@@ -52,6 +52,9 @@ AI_raw <- list(LW = ai_lw,
                BIOMASS = ai_biomass,
               AKFISHCONDITION_VERSION = utils::packageVersion("akfishcondition"),
               LAST_UPDATE = Sys.Date())
+
+# Subset for ESP
+pcod_ai_dat <- ai_dat %>% dplyr::filter(SPECIES_CODE == 21720)
 ```
 
 ## 1.2 Gulf of Alaska
@@ -82,6 +85,9 @@ GOA_raw <- list(LW = goa_lw,
                 BIOMASS = goa_biomass,
                 AKFISHCONDITION_VERSION = utils::packageVersion("akfishcondition"),
                 LAST_UPDATE = Sys.Date())
+
+# Subset for ESP
+pcod_goa_dat <- goa_dat %>% dplyr::filter(SPECIES_CODE == 21720)
 ```
 
 ## 1.3 Eastern Bering Sea continental shelf
@@ -111,6 +117,9 @@ EBS_raw <- list(LW = ebs_lw,
                 BIOMASS = ebs_biomass,
                 AKFISHCONDITION_VERSION = utils::packageVersion("akfishcondition"),
                 LAST_UPDATE = Sys.Date())
+
+# Subset for ESP
+pcod_ebs_dat <- ebs_dat %>% dplyr::filter(SPECIES_CODE == 21720)
 ```
 
 
@@ -131,6 +140,9 @@ print(paste0("Year range: ", min(nbs_dat$YEAR), "-",  max(nbs_dat$YEAR)))
 NBS_raw <- list(LW = nbs_dat,
                 biomass = NA,
                 LAST_UPDATE = Sys.Date())
+
+# Subset for ESP
+pcod_nbs_dat <- nbs_dat %>% dplyr::filter(SPECIES_CODE == 21720)
 ```
 # 2. Save raw data to inst/extdata
 
@@ -142,7 +154,7 @@ save(AI_raw,
      file = here::here("inst", "extdata", "raw_lw_bio.rda"))
 ```
 
-# 3. Update indicator
+# 3. Update regional indicators for ESR and species-specific indictors for ESP
 
 ## 2.1 Aleutian Islands
 ```{r update_ai, message=FALSE, warning=FALSE}
@@ -364,46 +376,266 @@ nbs_ann_mean_resid_df <- nbs_dat %>%
   dplyr::filter(n >= 10)
 ```
 
+## 2.5 ESP Pacific cod
+
+```{r update_esp_cod}
+# Split into adult and subadult based on Stark (2007)
+pcod_ebs_dat$SPECIES_CODE[pcod_ebs_dat$SPECIES_CODE == 21720  & pcod_ebs_dat$LENGTH < 460] <- 21721
+pcod_ebs_dat$COMMON_NAME[pcod_ebs_dat$SPECIES_CODE == 21720] <- "Pacific cod (>460 mm)"
+pcod_ebs_dat$COMMON_NAME[pcod_ebs_dat$SPECIES_CODE == 21721] <- "Pacific cod (\u2264460 mm)"
+
+pcod_nbs_dat$SPECIES_CODE[pcod_nbs_dat$SPECIES_CODE == 21720  & pcod_nbs_dat$LENGTH < 460] <- 21721
+pcod_nbs_dat$COMMON_NAME[pcod_nbs_dat$SPECIES_CODE == 21720] <- "Pacific cod (>460 mm)"
+pcod_nbs_dat$COMMON_NAME[pcod_nbs_dat$SPECIES_CODE == 21721] <- "Pacific cod (\u2264460 mm)"
+
+pcod_ai_dat$SPECIES_CODE[pcod_ai_dat$SPECIES_CODE == 21720  & pcod_ai_dat$LENGTH < 460] <- 21721
+pcod_ai_dat$COMMON_NAME[pcod_ai_dat$SPECIES_CODE == 21720] <- "Pacific cod (>460 mm)"
+pcod_ai_dat$COMMON_NAME[pcod_ai_dat$SPECIES_CODE == 21721] <- "Pacific cod (\u2264460 mm)"
+
+pcod_goa_dat$SPECIES_CODE[pcod_goa_dat$SPECIES_CODE == 21720 & pcod_goa_dat$LENGTH < 420] <- 21721
+pcod_goa_dat$COMMON_NAME[pcod_goa_dat$SPECIES_CODE == 21720] <- "Pacific cod (>420 mm)"
+pcod_goa_dat$COMMON_NAME[pcod_goa_dat$SPECIES_CODE == 21721] <- "Pacific cod (\u2264420 mm)"
+
+pcod_ebs_spp_vec <- unique(pcod_ebs_dat$SPECIES_CODE)
+
+# Calculate length weight residuals
+for(i in 1:length(pcod_ebs_spp_vec)) {
+  # Separate slope for each stratum. Bias correction according to Brodziak, no outlier detection.
+  pcod_ebs_df <- akfishcondition::calc_lw_residuals(len = pcod_ebs_dat$LENGTH[pcod_ebs_dat$SPECIES_CODE == pcod_ebs_spp_vec[i]], 
+                                               wt = pcod_ebs_dat$WEIGHT[pcod_ebs_dat$SPECIES_CODE == pcod_ebs_spp_vec[i]], 
+                                               year = pcod_ebs_dat$YEAR[pcod_ebs_dat$SPECIES_CODE == pcod_ebs_spp_vec[i]],
+                                               stratum = pcod_ebs_dat$STRATUM[pcod_ebs_dat$SPECIES_CODE == pcod_ebs_spp_vec[i]],
+                                               make_diagnostics = TRUE, # Make diagnostics
+                                               bias.correction = TRUE, # Bias correction turned on
+                                               outlier.rm = FALSE, # Outlier removal turned on
+                                               region = "EBS_PCOD",
+                                               species_code = pcod_ebs_dat$SPECIES_CODE[pcod_ebs_dat$SPECIES_CODE == pcod_ebs_spp_vec[i]])
+  
+  pcod_ebs_dat$resid_mean[pcod_ebs_dat$SPECIES_CODE == pcod_ebs_spp_vec[i]] <- pcod_ebs_df$lw.res_mean
+  pcod_ebs_dat$resid_lwr[pcod_ebs_dat$SPECIES_CODE == pcod_ebs_spp_vec[i]] <- pcod_ebs_df$lw.res_lwr
+  pcod_ebs_dat$resid_upr[pcod_ebs_dat$SPECIES_CODE == pcod_ebs_spp_vec[i]] <- pcod_ebs_df$lw.res_upr
+  
+}
+
+# Estimate mean and std. err for each stratum, filter out strata with less than 10 samples
+pcod_ebs_stratum_resids <- pcod_ebs_dat %>% 
+  dplyr::group_by(COMMON_NAME, SPECIES_CODE, YEAR, STRATUM, BIOMASS) %>%
+  dplyr::summarise(stratum_resid_mean = mean(resid_mean),
+                   stratum_resid_sd = sd(resid_mean),
+                   n = n()) %>%
+  dplyr::filter(n >= 10) %>%
+  dplyr::mutate(stratum_resid_se = stratum_resid_sd/sqrt(n))
+
+# Weight strata by biomass
+for(i in 1:length(pcod_ebs_spp_vec)) {
+  pcod_ebs_stratum_resids$weighted_resid_mean[pcod_ebs_stratum_resids$SPECIES_CODE == pcod_ebs_spp_vec[i]] <- 
+    akfishcondition::weight_lw_residuals(residuals = pcod_ebs_stratum_resids$stratum_resid_mean[pcod_ebs_stratum_resids$SPECIES_CODE == pcod_ebs_spp_vec[i]], 
+                                         year = pcod_ebs_stratum_resids$YEAR[pcod_ebs_stratum_resids$SPECIES_CODE == pcod_ebs_spp_vec[i]], 
+                                         stratum = pcod_ebs_stratum_resids$STRATUM[pcod_ebs_stratum_resids$SPECIES_CODE == pcod_ebs_spp_vec[i]], 
+                                         stratum_biomass = pcod_ebs_stratum_resids$BIOMASS[pcod_ebs_stratum_resids$SPECIES_CODE == pcod_ebs_spp_vec[i]])
+  pcod_ebs_stratum_resids$weighted_resid_se[pcod_ebs_stratum_resids$SPECIES_CODE == pcod_ebs_spp_vec[i]] <- 
+    akfishcondition::weight_lw_residuals(residuals = pcod_ebs_stratum_resids$stratum_resid_se[pcod_ebs_stratum_resids$SPECIES_CODE == pcod_ebs_spp_vec[i]], 
+                                         year = pcod_ebs_stratum_resids$YEAR[pcod_ebs_stratum_resids$SPECIES_CODE == pcod_ebs_spp_vec[i]], 
+                                         stratum = pcod_ebs_stratum_resids$STRATUM[pcod_ebs_stratum_resids$SPECIES_CODE == pcod_ebs_spp_vec[i]], 
+                                         stratum_biomass = pcod_ebs_stratum_resids$BIOMASS[pcod_ebs_stratum_resids$SPECIES_CODE == pcod_ebs_spp_vec[i]])
+}
+
+# Biomass-weighted residual and SE by year
+pcod_ebs_ann_mean_resid_df <- pcod_ebs_stratum_resids %>% 
+  dplyr::group_by(YEAR, COMMON_NAME) %>%
+  dplyr::summarise(mean_wt_resid = mean(weighted_resid_mean),
+                   se_wt_resid = mean(weighted_resid_se))
+
+#--------------------------------------
+# Northern Bering Sea
+#--------------------------------------
+# Get unique species code combinations
+pcod_nbs_spp_vec <- unique(pcod_nbs_dat$SPECIES_CODE)
+
+# Calculate residuals and weighted residuals
+for(i in 1:length(pcod_nbs_spp_vec)) {
+  
+  # Separate slope for each stratum. Bias correction according to Brodziak, no outlier detection.
+  pcod_nbs_dat$resid[pcod_nbs_dat$SPECIES_CODE == pcod_nbs_spp_vec[i]] <- 
+    akfishcondition::calc_lw_residuals(len = pcod_nbs_dat$LENGTH[pcod_nbs_dat$SPECIES_CODE == pcod_nbs_spp_vec[i]], 
+                                       wt = pcod_nbs_dat$WEIGHT[pcod_nbs_dat$SPECIES_CODE == pcod_nbs_spp_vec[i]], 
+                                       year = pcod_nbs_dat$YEAR[pcod_nbs_dat$SPECIES_CODE == pcod_nbs_spp_vec[i]],
+                                       stratum = NA, # Strata are combined for the NBS
+                                       make_diagnostics = FALSE, # Make diagnostics
+                                       bias.correction = TRUE, # Bias correction turned on
+                                       outlier.rm = FALSE, # Outlier removal turned off
+                                       include_ci = FALSE,
+                                       region = "NBS_PCOD",
+                                       species_code = pcod_nbs_dat$SPECIES_CODE[pcod_nbs_dat$SPECIES_CODE == pcod_nbs_spp_vec[i]])
+}
+
+# Biomass-weighted residuals by year
+pcod_nbs_ann_mean_resid_df <- pcod_nbs_dat %>% 
+  dplyr::group_by(COMMON_NAME, YEAR, SPECIES_CODE) %>%
+  dplyr::summarise(mean_resid = mean(resid, na.rm = TRUE),
+                   se = sd(resid, na.rm = TRUE)/n(),
+                   n = n()) %>%
+  dplyr::filter(n >=10)
+
+#--------------------------------------
+# Gulf of Alaska
+#--------------------------------------
+
+pcod_goa_spp_vec <- unique(pcod_goa_dat$SPECIES_CODE)
+
+# Calculate length weight residuals
+for(i in 1:length(pcod_goa_spp_vec)) {
+  # Separate slope for each stratum. Bias correction according to Brodziak, no outlier detection.
+  pcod_goa_df <- akfishcondition::calc_lw_residuals(len = pcod_goa_dat$LENGTH[pcod_goa_dat$SPECIES_CODE == pcod_goa_spp_vec[i]], 
+                                               wt = pcod_goa_dat$WEIGHT[pcod_goa_dat$SPECIES_CODE == pcod_goa_spp_vec[i]], 
+                                               year = pcod_goa_dat$YEAR[pcod_goa_dat$SPECIES_CODE == pcod_goa_spp_vec[i]],
+                                               stratum = pcod_goa_dat$INPFC_STRATUM[pcod_goa_dat$SPECIES_CODE == pcod_goa_spp_vec[i]],
+                                               make_diagnostics = TRUE, # Make diagnostics
+                                               bias.correction = TRUE, # Bias correction turned on
+                                               outlier.rm = FALSE, # Outlier removal turned off
+                                               region = "GOA_PCOD",
+                                               species_code = pcod_goa_dat$SPECIES_CODE[pcod_goa_dat$SPECIES_CODE == pcod_goa_spp_vec[i]])
+  
+  pcod_goa_dat$resid_mean[pcod_goa_dat$SPECIES_CODE == pcod_goa_spp_vec[i]] <- pcod_goa_df$lw.res_mean
+  pcod_goa_dat$resid_lwr[pcod_goa_dat$SPECIES_CODE == pcod_goa_spp_vec[i]] <- pcod_goa_df$lw.res_lwr
+  pcod_goa_dat$resid_upr[pcod_goa_dat$SPECIES_CODE == pcod_goa_spp_vec[i]] <- pcod_goa_df$lw.res_upr
+  
+}
+
+# Estimate mean and std. err for each stratum, filter out strata with less than 10 samples
+pcod_goa_stratum_resids <- pcod_goa_dat %>% 
+  dplyr::group_by(COMMON_NAME, SPECIES_CODE, YEAR, INPFC_STRATUM, AREA_BIOMASS) %>%
+  dplyr::summarise(stratum_resid_mean = mean(resid_mean),
+                   stratum_resid_sd = sd(resid_mean),
+                   n = n()) %>%
+  dplyr::filter(n >= 10) %>%
+  dplyr::mutate(stratum_resid_se = stratum_resid_sd/sqrt(n))
+
+# Weight strata by biomass
+for(i in 1:length(pcod_goa_spp_vec)) {
+  pcod_goa_stratum_resids$weighted_resid_mean[pcod_goa_stratum_resids$SPECIES_CODE == pcod_goa_spp_vec[i]] <- 
+    akfishcondition::weight_lw_residuals(residuals = pcod_goa_stratum_resids$stratum_resid_mean[pcod_goa_stratum_resids$SPECIES_CODE == pcod_goa_spp_vec[i]], 
+                                         year = pcod_goa_stratum_resids$YEAR[pcod_goa_stratum_resids$SPECIES_CODE == pcod_goa_spp_vec[i]], 
+                                         stratum = pcod_goa_stratum_resids$INPFC_STRATUM[pcod_goa_stratum_resids$SPECIES_CODE == pcod_goa_spp_vec[i]], 
+                                         stratum_biomass = pcod_goa_stratum_resids$AREA_BIOMASS[pcod_goa_stratum_resids$SPECIES_CODE == pcod_goa_spp_vec[i]])
+  pcod_goa_stratum_resids$weighted_resid_se[pcod_goa_stratum_resids$SPECIES_CODE == pcod_goa_spp_vec[i]] <- 
+    akfishcondition::weight_lw_residuals(residuals = pcod_goa_stratum_resids$stratum_resid_se[pcod_goa_stratum_resids$SPECIES_CODE == pcod_goa_spp_vec[i]], 
+                                         year = pcod_goa_stratum_resids$YEAR[pcod_goa_stratum_resids$SPECIES_CODE == pcod_goa_spp_vec[i]], 
+                                         stratum = pcod_goa_stratum_resids$INPFC_STRATUM[pcod_goa_stratum_resids$SPECIES_CODE == pcod_goa_spp_vec[i]], 
+                                         stratum_biomass = pcod_goa_stratum_resids$AREA_BIOMASS[pcod_goa_stratum_resids$SPECIES_CODE == pcod_goa_spp_vec[i]])
+}
+
+# Biomass-weighted residual and SE by year
+pcod_goa_ann_mean_resid_df <- pcod_goa_stratum_resids %>% 
+  dplyr::group_by(YEAR, COMMON_NAME) %>%
+  dplyr::summarise(mean_wt_resid = mean(weighted_resid_mean),
+                   se_wt_resid = mean(weighted_resid_se))
+
+#--------------------------------------
+# Aleutian Islands
+#--------------------------------------
+
+pcod_ai_spp_vec <- unique(pcod_ai_dat$SPECIES_CODE)
+
+# Calculate length weight residuals
+for(i in 1:length(pcod_ai_spp_vec)) {
+  # Separate slope for each stratum. Bias correction according to Brodziak, no outlier detection.
+  pcod_ai_df <- akfishcondition::calc_lw_residuals(len = pcod_ai_dat$LENGTH[pcod_ai_dat$SPECIES_CODE == pcod_ai_spp_vec[i]], 
+                                               wt = pcod_ai_dat$WEIGHT[pcod_ai_dat$SPECIES_CODE == pcod_ai_spp_vec[i]], 
+                                               year = pcod_ai_dat$YEAR[pcod_ai_dat$SPECIES_CODE == pcod_ai_spp_vec[i]],
+                                               stratum = pcod_ai_dat$INPFC_STRATUM[pcod_ai_dat$SPECIES_CODE == pcod_ai_spp_vec[i]],
+                                               make_diagnostics = TRUE, # Make diagnostics
+                                               bias.correction = TRUE, # Bias correction turned on
+                                               outlier.rm = FALSE, # Outlier removal turned off
+                                               region = "AI_PCOD",
+                                               species_code = pcod_ai_dat$SPECIES_CODE[pcod_ai_dat$SPECIES_CODE == pcod_ai_spp_vec[i]])
+  
+  pcod_ai_dat$resid_mean[pcod_ai_dat$SPECIES_CODE == pcod_ai_spp_vec[i]] <- pcod_ai_df$lw.res_mean
+  pcod_ai_dat$resid_lwr[pcod_ai_dat$SPECIES_CODE == pcod_ai_spp_vec[i]] <- pcod_ai_df$lw.res_lwr
+  pcod_ai_dat$resid_upr[pcod_ai_dat$SPECIES_CODE == pcod_ai_spp_vec[i]] <- pcod_ai_df$lw.res_upr
+  
+}
+
+# Estimate mean and std. err for each stratum, filter out strata with less than 10 samples
+pcod_ai_stratum_resids <- pcod_ai_dat %>% 
+  dplyr::group_by(COMMON_NAME, SPECIES_CODE, YEAR, INPFC_STRATUM, AREA_BIOMASS) %>%
+  dplyr::summarise(stratum_resid_mean = mean(resid_mean),
+                   stratum_resid_sd = sd(resid_mean),
+                   n = n()) %>%
+  dplyr::filter(n >= 10) %>%
+  dplyr::mutate(stratum_resid_se = stratum_resid_sd/sqrt(n))
+
+# Weight strata by biomass
+for(i in 1:length(pcod_ai_spp_vec)) {
+  pcod_ai_stratum_resids$weighted_resid_mean[pcod_ai_stratum_resids$SPECIES_CODE == pcod_ai_spp_vec[i]] <- 
+    akfishcondition::weight_lw_residuals(residuals = pcod_ai_stratum_resids$stratum_resid_mean[pcod_ai_stratum_resids$SPECIES_CODE == pcod_ai_spp_vec[i]], 
+                                         year = pcod_ai_stratum_resids$YEAR[pcod_ai_stratum_resids$SPECIES_CODE == pcod_ai_spp_vec[i]], 
+                                         stratum = pcod_ai_stratum_resids$INPFC_STRATUM[pcod_ai_stratum_resids$SPECIES_CODE == pcod_ai_spp_vec[i]], 
+                                         stratum_biomass = pcod_ai_stratum_resids$AREA_BIOMASS[pcod_ai_stratum_resids$SPECIES_CODE == pcod_ai_spp_vec[i]])
+  pcod_ai_stratum_resids$weighted_resid_se[pcod_ai_stratum_resids$SPECIES_CODE == pcod_ai_spp_vec[i]] <- 
+    akfishcondition::weight_lw_residuals(residuals = pcod_ai_stratum_resids$stratum_resid_se[pcod_ai_stratum_resids$SPECIES_CODE == pcod_ai_spp_vec[i]], 
+                                         year = pcod_ai_stratum_resids$YEAR[pcod_ai_stratum_resids$SPECIES_CODE == pcod_ai_spp_vec[i]], 
+                                         stratum = pcod_ai_stratum_resids$INPFC_STRATUM[pcod_ai_stratum_resids$SPECIES_CODE == pcod_ai_spp_vec[i]], 
+                                         stratum_biomass = pcod_ai_stratum_resids$AREA_BIOMASS[pcod_ai_stratum_resids$SPECIES_CODE == pcod_ai_spp_vec[i]])
+}
+
+# Biomass-weighted residual and SE by year
+pcod_ai_ann_mean_resid_df <- pcod_ai_stratum_resids %>% 
+  dplyr::group_by(YEAR, COMMON_NAME) %>%
+  dplyr::summarise(mean_wt_resid = mean(weighted_resid_mean),
+                   se_wt_resid = mean(weighted_resid_se))
+```
+
 # 3. Update version in DESCRIPTION file
 
 Update sysdata.rda with raw data for the condition indicator and write raw data to inst/extdata.
 
 ```{r save_to_sysdata, message=FALSE, warning=FALSE}
-EBS_INDICATOR <- list(FULL_AREA = as.data.frame(ebs_ann_mean_resid_df),
+EBS_INDICATOR <- list(FULL_REGION = as.data.frame(ebs_ann_mean_resid_df),
                       STRATUM = as.data.frame(ebs_stratum_resids),
                       LAST_UPDATE = Sys.Date())
-NBS_INDICATOR <- list(FULL_AREA = as.data.frame(nbs_ann_mean_resid_df),
+NBS_INDICATOR <- list(FULL_REGION = as.data.frame(nbs_ann_mean_resid_df),
                       STRATUM = NA,
                       LAST_UPDATE = Sys.Date())
-GOA_INDICATOR <- list(FULL_AREA = as.data.frame(goa_ann_mean_resid_df),
+GOA_INDICATOR <- list(FULL_REGION = as.data.frame(goa_ann_mean_resid_df),
                       STRATUM = as.data.frame(goa_stratum_resids),
                       LAST_UPDATE = Sys.Date())
-AI_INDICATOR <- list(FULL_AREA = as.data.frame(ai_ann_mean_resid_df),
+AI_INDICATOR <- list(FULL_REGION = as.data.frame(ai_ann_mean_resid_df),
                      STRATUM = as.data.frame(ai_stratum_resids),
                      LAST_UPDATE = Sys.Date())
+PCOD_ESP <- list(FULL_REGION_EBS = as.data.frame(pcod_ebs_ann_mean_resid_df),
+                 FULL_REGION_GOA = as.data.frame(pcod_goa_ann_mean_resid_df),
+                 FULL_REGION_AI = as.data.frame(pcod_ai_ann_mean_resid_df),
+                 FULL_REGION_NBS = as.data.frame(pcod_nbs_ann_mean_resid_df),
+                 STRATUM_EBS = as.data.frame(pcod_ebs_stratum_resids),
+                 STRATUM_GOA = as.data.frame(pcod_goa_stratum_resids),
+                 STRATUM_AI = as.data.frame(pcod_ai_stratum_resids),
+                 STRATUM_NBS = NA,
+                 LAST_UPDATE = Sys.Date())
 
 save(EBS_INDICATOR, 
      NBS_INDICATOR, 
      GOA_INDICATOR,
      AI_INDICATOR,
+     PCOD_ESP,
      file = here::here("R", "sysdata.rda"))
 ```
 
 # 4. Update documentation, install, and restart
 
 Update version number in DESCRIPTION and update documentation using:
-```{r updater, eval=FALSE, include=TRUE}
+```{r updater, eval=FALSE, include=FALSE}
 devtools::document(roclets = c('rd', 'collate', 'namespace'))
 ```
 
 After updating, reinstall the coldpool package:
-```{r install, eval=FALSE, include = TRUE}
+```{r install, eval=FALSE, include=FALSE}
 Rcmd.exe INSTALL --no-multiarch --with-keep.source cold_pool
 ```
 
 # 5. Check that data appears correctly
 Check that the updated cold pool index data is included in the package.
-```{r qaqc, eval = TRUE, include = TRUE}
+```{r qaqc, eval = TRUE, include =FALSE}
 print(akgfmaps::AI_dat$LAST_UPDATE)
 print(akgfmaps::GOA_dat$LAST_UPDATE)
 print(akgfmaps::EBS_dat$LAST_UPDATE)
