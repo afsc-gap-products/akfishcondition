@@ -29,41 +29,27 @@ if(length(which_not_installed) > 1){
 # load the packages from the list
 lapply(list_rpackage, require, character.only = TRUE)
 
-# pkg_version <- packageVersion("akfishcondition")
+# Unzip map files
+unzip(system.file("extdata/2021_ESR.zip", package = "akfishcondition"))
 
-# Unzip packaged csv and map files
-unzip(system.file("data/2021_ESR.zip", package = "akfishcondition"))
+if(!dir.exists("plots")) {
+  dir.create("plots")
+}
 
 # Load data
-goa_dat <- readr::read_csv(file = "2020_08_20_goa_condition_data_2019_ESR.csv")
-
-# Convert 10-25 cm lengths to age-1
-goa_dat$SPECIES_CODE[goa_dat$SPECIES_CODE == 21740  & goa_dat$LENGTH >= 100 & goa_dat$LENGTH <= 250] <- 21741
-goa_dat$COMMON_NAME[goa_dat$SPECIES_CODE == 21740] <- "walleye pollock (>250 mm)"
-goa_dat$COMMON_NAME[goa_dat$SPECIES_CODE == 21741] <- "walleye pollock (100–250 mm)"
-
-# Load previous year's indicator and change names for plotting
-# old_indicator_dat <- readr::read_csv(file = "2019_GOA_ESR_lwdata_by_year.csv") %>%
-#   dplyr::rename(SPECIES_CODE = GOA.species.i.,
-#                 YEAR = yrs) %>%
-#   dplyr::inner_join(goa_dat %>% dplyr::select(COMMON_NAME, SPECIES_CODE)) %>%
-#   dplyr::mutate(DISPLAY_NAME = COMMON_NAME)
-# 
-# old_indicator_dat$DISPLAY_NAME[!grepl("Alaska", x = old_indicator_dat$DISPLAY_NAME) & !grepl("Pacific", x = old_indicator_dat$DISPLAY_NAME)] <- tolower(old_indicator_dat$DISPLAY_NAME[!grepl("Alaska", x = old_indicator_dat$DISPLAY_NAME) & !grepl("Pacific", x = old_indicator_dat$DISPLAY_NAME)])
-# old_indicator_dat$DISPLAY_NAME[old_indicator_dat$DISPLAY_NAME == "age 1 walleye pollock"] <- "walleye pollock (100–250 mm)"
-# old_indicator_dat$DISPLAY_NAME[old_indicator_dat$DISPLAY_NAME == "walleye pollock"] <- "walleye pollock (>250 mm)"
-
+goa_ann_mean_resid_df <- akfishcondition:::GOA_INDICATOR$FULL_REGION
+goa_stratum_resids_df <- akfishcondition:::GOA_INDICATOR$STRATUM
 ```
 
-Contributed by Ned Laman^1^, Sean Rohan^1^  
+Contributed by 
 ^1^ Resource Assessment and Conservation Engineering Division, Groundfish Assessment Program, Alaska Fisheries Science Center, National Marine Fisheries Service, NOAA, Seattle, WA  
-**Contact**: ned.laman@noaa.gov  
-**Last updated**:  September 2021
+**Contact**: 
+**Last updated**:  October 2021
 
 **Description of Indicator**: Residual body condition computed from a long-term average of length-weight-based body condition is an indicator of variability in somatic growth (Brodeur et al., 2004) and represents how heavy a fish is per unit body length. As such, it can be considered an indicator of ecosystem productivity. Positive residual body condition is interpreted to indicate fish in better condition (heavier per unit length) than those with negative residual body condition indicating poorer condition (lighter per unit length). Overall body condition of fishes likely reflects fish growth which can have implications for their subsequent survival (Paul and Paul, 1999; Boldt and Haldorson, 2004).
 
 ```{r map, include = TRUE, out.width = "200%", fig.cap = "\\label{fig:figs}Figure 1. National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center (AFSC) Resource Assessment and Conservation Engineering Groundfish Assessment Program (RACE-GAP) Gulf of Alaska summer bottom trawl survey area with International North Pacific Fisheries Commission (INPFC) statistical fishing strata delineated by the red lines.",  echo = FALSE}
-include_graphics("MapGOA.png") 
+knitr::include_graphics("MapGOA.png") 
 ```
 
 Paired lengths and weights of individual fishes were examined from the Alaska Fisheries Science Center biennial Resource Assessment and Conservation Engineering (AFSC/RACE) - Groundfish Assessment Program’s (GAP) bottom trawl survey of the Gulf of Alaska (GOA). Analyses focused on walleye pollock (*Gadus chalcogrammus*), Pacific cod (*Gadus macrocephalus*), arrowtooth flounder (*Atheresthes stomias*), southern rock sole (*Lepidopsetta bilineata*), northern rockfish (*Sebastes polyspinis*), Pacific ocean perch (*Sebastes alutus*), and dusky rockfish (*Sebastes variabilis*) collected in trawls with satisfactory performance at standard survey stations. Data were combined in the International North Pacific Fisheries Commission (INPFC) strata; Shumagin, Chirikof, Kodiak, Yakutat and Southeast (Figure 1). 
@@ -74,65 +60,8 @@ Length-weight relationships for each of the seven species were estimated within 
 
 **Status and Trends**: Residual body condition varied amongst survey years for all species considered (Figure 2). The updated computational methods used to calculate this year’s residual body condition indexes returned different values than those reported last year (Laman 2019). The patterns of above or below average residual condition observed in 2019 largely match those generated here from the updated computations, but with a notable reduction in magnitude for most years. The lower magnitude results come from using stratum-specific regression coefficients and samples weighted in proportion to biomass which reduces the influence of spatio-temporal variation in sampling intensity on the residuals. Some exceptions are 2009 southern rock sole, reported to have above average condition in 2019, shifted to neutral or slightly negative here and, for 2003 northern rockfish, residual condition calculated with the updated method here was higher above the long-term condition average than was reported in 2019. Based on these new methods, body condition is still below average for most species since 2015 (e.g., large walleye pollock, arrowtooth flounder, dusky rockfish) with some species trending downward over that time period (e.g., northern rockfish and possibly Pacific ocean perch). Residual body condition of Pacific cod and southern rock sole is trending upward over the same time, although southern rock sole remain below average. Prior to 2011, residual body condition indexes of these GOA species vary from survey to survey, cycling between negative and positive residuals with no clear temporal trends. Residual body condition of 100–250 mm walleye pollock in the GOA is strikingly positive during early years in the time series, but has remained mostly neutral or slightly negative since the early 1990s.
 
-```{r figure 2 set up, include = FALSE, fig.height = 4, fig.width = 4, message = FALSE, warning = FALSE}
-## Calculations and figures
-goa_spp_vec <- unique(goa_dat$SPECIES_CODE)
-
-# Calculate length weight residuals
-for(i in 1:length(goa_spp_vec)) {
-  # Separate slope for each stratum. Bias correction according to Brodziak, no outlier detection.
-  goa_df <- akfishcondition::calc_lw_residuals(len = goa_dat$LENGTH[goa_dat$SPECIES_CODE == goa_spp_vec[i]], 
-                                               wt = goa_dat$WEIGHT[goa_dat$SPECIES_CODE == goa_spp_vec[i]], 
-                                               year = goa_dat$YEAR[goa_dat$SPECIES_CODE == goa_spp_vec[i]],
-                                               stratum = goa_dat$INPFC_STRATUM[goa_dat$SPECIES_CODE == goa_spp_vec[i]],
-                                               make_diagnostics = TRUE, # Make diagnostics
-                                               bias.correction = TRUE, # Bias correction turned on
-                                               outlier.rm = FALSE, # Outlier removal turned off
-                                               region = "GOA",
-                                               species_code = goa_dat$SPECIES_CODE[goa_dat$SPECIES_CODE == goa_spp_vec[i]])
-  
-  goa_dat$resid_mean[goa_dat$SPECIES_CODE == goa_spp_vec[i]] <- goa_df$lw.res_mean
-  goa_dat$resid_lwr[goa_dat$SPECIES_CODE == goa_spp_vec[i]] <- goa_df$lw.res_lwr
-  goa_dat$resid_upr[goa_dat$SPECIES_CODE == goa_spp_vec[i]] <- goa_df$lw.res_upr
-  
-}
-
-# Estimate mean and std. err for each stratum, filter out strata with less than 10 samples
-goa_stratum_resids <- goa_dat %>% 
-  dplyr::group_by(COMMON_NAME, SPECIES_CODE, YEAR, INPFC_STRATUM, AREA_BIOMASS) %>%
-  dplyr::summarise(stratum_resid_mean = mean(resid_mean),
-                   stratum_resid_sd = sd(resid_mean),
-                   n = n()) %>%
-  dplyr::filter(n >= 10) %>%
-  dplyr::mutate(stratum_resid_se = stratum_resid_sd/sqrt(n))
-
-# Weight strata by biomass
-for(i in 1:length(goa_spp_vec)) {
-  goa_stratum_resids$weighted_resid_mean[goa_stratum_resids$SPECIES_CODE == goa_spp_vec[i]] <- 
-    akfishcondition::weight_lw_residuals(residuals = goa_stratum_resids$stratum_resid_mean[goa_stratum_resids$SPECIES_CODE == goa_spp_vec[i]], 
-                                         year = goa_stratum_resids$YEAR[goa_stratum_resids$SPECIES_CODE == goa_spp_vec[i]], 
-                                         stratum = goa_stratum_resids$INPFC_STRATUM[goa_stratum_resids$SPECIES_CODE == goa_spp_vec[i]], 
-                                         stratum_biomass = goa_stratum_resids$AREA_BIOMASS[goa_stratum_resids$SPECIES_CODE == goa_spp_vec[i]])
-  goa_stratum_resids$weighted_resid_se[goa_stratum_resids$SPECIES_CODE == goa_spp_vec[i]] <- 
-    akfishcondition::weight_lw_residuals(residuals = goa_stratum_resids$stratum_resid_se[goa_stratum_resids$SPECIES_CODE == goa_spp_vec[i]], 
-                                         year = goa_stratum_resids$YEAR[goa_stratum_resids$SPECIES_CODE == goa_spp_vec[i]], 
-                                         stratum = goa_stratum_resids$INPFC_STRATUM[goa_stratum_resids$SPECIES_CODE == goa_spp_vec[i]], 
-                                         stratum_biomass = goa_stratum_resids$AREA_BIOMASS[goa_stratum_resids$SPECIES_CODE == goa_spp_vec[i]])
-}
-
-# Biomass-weighted residual and SE by year
-goa_ann_mean_resid_df <- goa_stratum_resids %>% 
-  dplyr::group_by(YEAR, COMMON_NAME) %>%
-  dplyr::summarise(mean_wt_resid = mean(weighted_resid_mean),
-                   se_wt_resid = mean(weighted_resid_se))
-
-write.csv(goa_ann_mean_resid_df, "GOA_annual_resids.csv", row.names = FALSE)
-write.csv(goa_stratum_resids, "GOA_stratum_resids.csv", row.names = FALSE)
-```
-
 ```{r figure 2 grid, include = TRUE, echo = FALSE, fig.height = 14, fig.width = 12, fig.cap = "\\label{fig:figs}Figure 2. Biomass-weighted residual body condition index across survey years (1984-2019) for seven Gulf of Alaska groundfish species collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center (AFSC) Resource Assessment and Conservation Engineering Groundfish Assessment Program (RACE-GAP) standard summer bottom trawl survey. Filled bars denote weighted length-weight residuals using this year's indicator calculation, error bars denote two standard errors, points denote the mean of the unweighted length-weight residual from the previous year's (2019) ESR.",  message = FALSE, warning = FALSE}
 goa_ann_mean_resid_df$DISPLAY_NAME <- set_plot_order(goa_ann_mean_resid_df$COMMON_NAME, REGION = "GOA")
-old_indicator_dat$DISPLAY_NAME <- set_plot_order(old_indicator_dat$DISPLAY_NAME, REGION = "GOA")
 
 fig2 <- ggplot() + 
   geom_bar(data = goa_ann_mean_resid_df, 
@@ -140,11 +69,13 @@ fig2 <- ggplot() +
                    y = mean_wt_resid), 
            stat = "identity", 
            fill = "plum", 
-           color = "black") +
+           color = "black",
+           width = 0.8) +
   geom_errorbar(data = goa_ann_mean_resid_df, 
                aes(x = YEAR, 
                    ymax = mean_wt_resid + 2*se_wt_resid,
-                   ymin = mean_wt_resid - 2*se_wt_resid)) +
+                   ymin = mean_wt_resid - 2*se_wt_resid),
+           width = 0.8) +
   geom_hline(yintercept = 0) +
     # geom_point(data = old_indicator_dat, 
     #          aes(x = YEAR, 
@@ -157,7 +88,7 @@ print(fig2)
 ```
 
 ```{r figure 2 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png("GOAbyyear.png",width=6,height=7,units="in",res=300)
+png(here::here("plots", "GOAbyyear.png"),width=6,height=7,units="in",res=300)
 print(fig2 + theme_pngs())
 dev.off()
 ```
@@ -165,14 +96,16 @@ dev.off()
 The general patterns of above and below average residual body condition index across recent survey years for the Gulf of Alaska as described above was also apparent in the spatial condition indicators across INPFC strata (Figure 3). The relative contribution of stratum-specific residual body condition to the overall trends (indicated by the height of each colored bar segment) does not demonstrate a clear pattern. Although, for many species, the direction of residual body condition (positive or negative) was synchronous amongst strata within years. Patterns of fish distribution are also apparent in the stratum condition indexes. For example, Northern rockfish have primarily been collected from the Shumagin and Chirikof strata in recent surveys. The trend of increasingly positive Pacific cod residuals appears to be largely driven by a shift in residual body condition in the Kodiak and Shumagin strata. 
 
 ```{r figure 3 grid, include = TRUE, echo = FALSE, fig.height = 14, fig.width = 12, fig.cap = "\\label{fig:figs}Figure 3. Residual body condition index for seven Gulf of Alaska groundfish species collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center (AFSC) Resource Assessment and Conservation Engineering Groundfish Assessment Program (RACE-GAP) standard summer bottom trawl survey (1984--2019) grouped by International North Pacific Fisheries Commission (INPFC) statistical sampling strata.", message = FALSE, warning = FALSE}
-goa_stratum_resids$DISPLAY_NAME <- set_plot_order(goa_stratum_resids$COMMON_NAME, REGION = "GOA")
-
-fig3 <- ggplot(data = goa_stratum_resids, 
+goa_stratum_resids_df$DISPLAY_NAME <- set_plot_order(goa_stratum_resids_df$COMMON_NAME, REGION = "GOA")
+fig3 <- ggplot(data = goa_stratum_resids_df, 
                aes(x = YEAR, 
                    y = stratum_resid_mean, 
-                   fill = set_stratum_order(INPFC_STRATUM, REGION = "GOA"))) + 
+                   fill = set_stratum_order(trimws(INPFC_STRATUM), REGION = "GOA"))) + 
   geom_hline(yintercept = 0) +
-  geom_bar(stat = "identity", color = "black", position = "stack") +
+  geom_bar(stat = "identity", 
+           color = "black",
+           position = "stack",
+           width = 0.8) +
   facet_wrap(~DISPLAY_NAME, ncol = 2, scales = "free_y") +
   scale_x_continuous(name = "Year") +
   scale_y_continuous(name = "Length-weight residual (ln(g))") +
@@ -182,28 +115,28 @@ print(fig3)
 ```
 
 ```{r figure 3 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png("goa_condition_by_stratum.png",width=6,height=7,units="in",res=300)
+png(here::here("plots", "goa_condition_by_stratum.png"),width=6,height=7,units="in",res=300)
 print(fig3 + theme_pngs())
 dev.off()
 
-for(i in 1:length(unique(goa_stratum_resids$DISPLAY_NAME))) {
+for(i in 1:length(unique(goa_stratum_resids_df$DISPLAY_NAME))) {
   
-  png(paste0("./output/GOA_condition_", gsub(">", "gt", unique(goa_stratum_resids$DISPLAY_NAME)[i]), ".png"), width = 6, height = 7, units = "in", res = 300)
+  png(paste0("./plots/GOA_condition_", gsub(">", "gt", unique(goa_stratum_resids_df$DISPLAY_NAME)[i]), ".png"), width = 6, height = 7, units = "in", res = 300)
   print(
-    ggplot(data = goa_stratum_resids %>% 
-             dplyr::filter(DISPLAY_NAME == unique(goa_stratum_resids$DISPLAY_NAME)[i]),
+    ggplot(data = goa_stratum_resids_df %>% 
+             dplyr::filter(DISPLAY_NAME == unique(goa_stratum_resids_df$DISPLAY_NAME)[i]),
            aes(x = YEAR, 
                y = stratum_resid_mean, 
-               fill = set_stratum_order(INPFC_STRATUM, REGION = "GOA"),
+               fill = set_stratum_order(trimws(INPFC_STRATUM), REGION = "GOA"),
                ymin = stratum_resid_mean - 2*stratum_resid_se,
                ymax = stratum_resid_mean + 2*stratum_resid_se)) +
       geom_hline(yintercept = 0) +
-      geom_bar(stat = "identity", color = "black", position = "stack", width = 0.7) +
-      geom_errorbar(width = 0.7) +
-      facet_wrap(~set_stratum_order(INPFC_STRATUM, REGION = "GOA"), 
+      geom_bar(stat = "identity", color = "black", position = "stack", width = 0.8) +
+      geom_errorbar(width = 0.8) +
+      facet_wrap(~set_stratum_order(trimws(INPFC_STRATUM), REGION = "GOA"), 
                  ncol = 2, 
                  scales = "free_y") +
-      ggtitle(unique(goa_stratum_resids$DISPLAY_NAME)[i]) +
+      ggtitle(unique(goa_stratum_resids_df$DISPLAY_NAME)[i]) +
       scale_x_continuous(name = "Year") +
       scale_y_continuous(name = "Length-weight residual (ln(g))") +
       scale_fill_brewer(name = "Stratum", palette = "BrBG", drop = FALSE) +
@@ -212,7 +145,6 @@ for(i in 1:length(unique(goa_stratum_resids$DISPLAY_NAME))) {
             title = element_text(hjust = 0.5)))
   dev.off()
 }
-
 ```
 
 **Factors causing observed trends**: Factors that could affect residual fish body condition presented here include temperature, trawl survey timing, stomach fullness, movement in or out of the survey area, or variable somatic growth. Since the Warm Blob in 2014 (Bond et al., 2015; Stabeno et al., 2019), there has been a general trend of warming ocean temperatures in the survey area through 2018 that could be affecting fish growth conditions there. Changing ocean conditions along with normal patterns of movement can cause the proportion of the population resident in the sampling area during the annual bottom trawl survey to vary. The date that the first length-weight data are collected is generally in late May and the bottom trawl survey is conducted throughout the summer months moving from west to east so that spatial and temporal trends in fish growth over the season become confounded with survey progress. In addition, spatial variability in residual condition may also reflect local environmental features which can influence growth and prey availability in the areas surveyed (e.g., warm core eddies in the central Gulf of Alaska; Atwood et al., 2010). The updated condition analyses presented here begin to, but do not wholly account for spatio-temporal variability in the underlying populations sampled. 
