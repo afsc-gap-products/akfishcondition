@@ -1,4 +1,4 @@
-/* Query to retrieve length and weight samples for EBS continental shelf and northern Bering Sea strata.
+/* Query to retrieve length and weight samples for eastern Bering Sea continental shelf strata 10-62.
 Omits corner stations from EBS shelf and does not include strata 82 and 90, following approach used by Chris Rooper prior to 2018, 
 Prepared by: Ned Laman (ned.laman@noaa.gov), AFSC/RACE/GAP 
 Query updated: September 22, 2021 
@@ -18,4 +18,4 @@ and b.species_code in (21740, 21741, 21720, 10110, 10210, 10130, 10261, 10285)
 and a.hauljoin = b.hauljoin and b.hauljoin = d.hauljoin
 and b.species_code = e.species_code and b.species_code = d.species_code and d.length != 0 and d.weight != 0
 and a.cruisejoin = c.cruisejoin and c.survey_definition_id != 78 and a.stratum not in (82, 90)
-and a.stratum between 10 and 99
+and a.stratum between 10 and 62

@@ -8,7 +8,7 @@ author:
 output: word_document
 fontsize: 12pt
 addr: 
-  l1: 7600 Sand Point Way, NE
+  l1: 7600 Sand Point Way NE
   l2: NMFS RACE Division, Groundfish Assessment Program
   l3: Seattle, WA 98115
 ---

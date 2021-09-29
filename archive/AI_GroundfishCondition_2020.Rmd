@@ -138,6 +138,7 @@ ai_ann_mean_resid_df <- ai_stratum_resids %>%
   dplyr::group_by(YEAR, COMMON_NAME) %>%
   dplyr::summarise(mean_wt_resid = mean(weighted_resid_mean),
                    se_wt_resid = mean(weighted_resid_se))
+
 write.csv(ai_ann_mean_resid_df, "AI_annual_resids.csv", row.names = FALSE)
 
 ```
