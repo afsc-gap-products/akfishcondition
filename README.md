@@ -13,15 +13,19 @@ devtools::install_github("sean-rohan-noaa/akfishcondition")
 
 # Instructions for generating ESR chapters
 
-To generate the chapters:
+Groundfish morphometric condition indicators are included in this repository as R Markdown (.Rmd) files. To generate ESR chapters from ESR files:
 
-1. Install the akfishcondition package by following the installation intructions above.
-2. Download the .rmd files from the akfishcondition repository.
+1. Install the akfishcondition package by following the installation instructions above.
+2. Download the chapter .rmd file from the akfishcondition repository.
 3. Set your working directory to the folder containing the .rmd files.
 4. Knit .rmd files to .docx.
 
-If the. rmd knits successfully, the working directory will contain the following:
-* Comma separated value (.csv) files containing data (length-weight and design-based index stratum biomass) used to calculated the condition indicator. 
-* Model summaries and diagnostics in ~/output/.
-* Length-weight residual figures and .csvs containing residuals.
-* For 2020: Unweighted residuals for the EBS/NBS (2019), GOA (2019), AI (2018).
+# Instruction for updating condition indicators and akfishcondition package
+
+1. Clone the akfishcondition package to a local directory.
+2. Set up an R Studio project in the local directory.
+3. Open 0_update_condition_data.Rmd and follow instructions for updating akfishcondition with new data.
+4. Update ESR condition indicator chapters (.Rmds) and ESP files.
+5. Update DESCRIPTION with new version number.
+6. Push akfishcondition update to GitHub.
+7. Create new version, with version number corresponding with the version listed in DESCRIPTION.
