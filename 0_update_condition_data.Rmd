@@ -630,8 +630,9 @@ Update version number in DESCRIPTION and update documentation using:
 devtools::document(roclets = c('rd', 'collate', 'namespace'))
 ```
 
-After updating, reinstall the coldpool package:
+After updating, reinstall the coldpool package.
 ```{r install, eval=FALSE, include=FALSE}
+knitr::knit_exit()
 Rcmd.exe INSTALL --no-multiarch --with-keep.source cold_pool
 ```
 
