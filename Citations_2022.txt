@@ -5,3 +5,8 @@ Barbeaux, S.J., K. Holsman, and S. Zador. 2020 Marine heatwave stress test of ec
 Brosset, P., J.-M. Fromentin, E. Van Beveren, J. Lloret, V. Marques, G. Basilone, A. Bonanno, P. Carpi, F. Donato, A. De Felice, R. Ferreri, D. Gašparevic, A. Giráldez, A. Gücü, M. Iglesias, I. Leonori, I. Palomera, S. Somarakis, P. Torres, A. Ventero, B. Zorica, F. Ménard, and C. Saraux. 2015. Influence of environmental variability and age on the body condition of small pelagic fish in the Gulf of Lions. Mar. Ecol. Prog. Ser. 529:219-231. doi: 10.1016/j.pocean.2016.12.002.
 
 NOAA 2021 (Cecilia?)
+
+Suryan et al. (Cecilia?)
+
+Thorson, J. T., & Barnett, L. A. K. (2017). Comparing estimates of abundance trends and distribution shifts using single-and multispecies models of fishes and biogenic habitat. ICES J. Mar. Sci. 74(5):1311–1321.
+https://doi.org/10.1093/icesj ms/fsw193
