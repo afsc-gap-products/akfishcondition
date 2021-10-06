@@ -97,12 +97,13 @@ pcod_goa_dat <- goa_dat %>% dplyr::filter(SPECIES_CODE == 21720)
 
 ```{r get_ebs, message=FALSE, warning=FALSE}
 # Retrieve EBS biomass for aggregated strata (1=10, 2=20, 3=31-32, 4=41-43, 5=50, 6=61-62)
-ebs_biomass <- RODBC::sqlQuery(channel, akfishcondition::sql_to_rqry(system.file("./sql/ebs_biomass.sql", package = "akfishcondition")))
+ebs_biomass <- RODBC::sqlQuery(channel, akfishcondition::sql_to_rqry(system.file("./sql/ebs_biomass.sql", package = "akfishcondition"))) %>%
+  dplyr::mutate(STRATUM = STRATUM*10) # Convert aggregate stratum table names to match EBS strata
 
 # Retrieve EBS length-weight, update STRATUM field and create YEAR field.
 ebs_lw <- RODBC::sqlQuery(channel, akfishcondition::sql_to_rqry(system.file("./sql/ebs_length_weight.sql", package = "akfishcondition"))) %>%
   dplyr::mutate(YEAR = floor(CRUISE/100),
-                STRATUM = floor(STRATUM/10),
+                STRATUM = floor(STRATUM/10)*10,
                 ID = paste(CRUISE, VESSEL, HAUL, SPECIMENID, sep = "_")) %>%
   dplyr::select(ID, YEAR, REGION, STRATUM, SPECIMENID, COMMON_NAME, SPECIES_CODE, SEX, LENGTH, WEIGHT)
 
