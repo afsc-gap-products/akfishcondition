@@ -1,13 +1,15 @@
 ---
-title: Update condition data
-author: 
+title: "Update condition data"
+author:
 - affiliation: RACE
   description: Research Fish Biologist
   email: sean.rohan@noaa.gov
   name: Sean Rohan
-output: word_document
 fontsize: 12pt
-addr: 
+output:
+  html_document:
+    df_print: paged
+addr:
   l1: 7600 Sand Point Way NE
   l2: NMFS RACE Division, Groundfish Assessment Program
   l3: Seattle, WA 98115
@@ -627,7 +629,7 @@ save(EBS_INDICATOR,
 
 # 4. Update documentation, install, and restart
 Update version number in DESCRIPTION and update documentation using:
-```{r updater, eval=FALSE, include=FALSE}
+```{r updater, eval=TRUE, include=FALSE}
 devtools::document(roclets = c('rd', 'collate', 'namespace'))
 ```
 
