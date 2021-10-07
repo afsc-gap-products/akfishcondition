@@ -10,3 +10,5 @@ Suryan et al. (Cecilia?)
 
 Thorson, J. T., & Barnett, L. A. K. (2017). Comparing estimates of abundance trends and distribution shifts using single-and multispecies models of fishes and biogenic habitat. ICES J. Mar. Sci. 74(5):1311–1321.
 https://doi.org/10.1093/icesj ms/fsw193
+
+Hurst, T.P., C.A. O'Leary, S.K. Rohan, E.C. Siddon, J.T. Thorson, and J.J. Vollenweider. 2021. Inventory, management uses, and recommendations for fish and crab condition information from the 2021 AFSC Condition Congress. AFSC Processed Rep. 2021-04, 39 p. Alaska Fish. Sci. Cent., NOAA, Nat. Mar. Fish. Serv., 7600 Sand Point Way NE, Seattle, WA 98115
