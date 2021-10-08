@@ -37,3 +37,7 @@ Meta
 *.png
 /output/
 *.csv
+
+# Local .csl and .bib
+*.bib
+*.csl
