@@ -387,20 +387,20 @@ nbs_ann_mean_resid_df <- nbs_dat %>%
 ```{r update_esp_cod}
 # Split into adult and subadult based on Stark (2007)
 pcod_ebs_dat$SPECIES_CODE[pcod_ebs_dat$SPECIES_CODE == 21720  & pcod_ebs_dat$LENGTH < 460] <- 21721
-pcod_ebs_dat$COMMON_NAME[pcod_ebs_dat$SPECIES_CODE == 21720] <- "Pacific cod (>460 mm)"
-pcod_ebs_dat$COMMON_NAME[pcod_ebs_dat$SPECIES_CODE == 21721] <- "Pacific cod (\u2264460 mm)"
+pcod_ebs_dat$COMMON_NAME[pcod_ebs_dat$SPECIES_CODE == 21720] <- "Pacific cod adult"
+pcod_ebs_dat$COMMON_NAME[pcod_ebs_dat$SPECIES_CODE == 21721] <- "Pacific cod juvenile"
 
 pcod_nbs_dat$SPECIES_CODE[pcod_nbs_dat$SPECIES_CODE == 21720  & pcod_nbs_dat$LENGTH < 460] <- 21721
-pcod_nbs_dat$COMMON_NAME[pcod_nbs_dat$SPECIES_CODE == 21720] <- "Pacific cod (>460 mm)"
-pcod_nbs_dat$COMMON_NAME[pcod_nbs_dat$SPECIES_CODE == 21721] <- "Pacific cod (\u2264460 mm)"
+pcod_nbs_dat$COMMON_NAME[pcod_nbs_dat$SPECIES_CODE == 21720] <- "Pacific cod adult"
+pcod_nbs_dat$COMMON_NAME[pcod_nbs_dat$SPECIES_CODE == 21721] <- "Pacific cod juvenile"
 
 pcod_ai_dat$SPECIES_CODE[pcod_ai_dat$SPECIES_CODE == 21720  & pcod_ai_dat$LENGTH < 460] <- 21721
-pcod_ai_dat$COMMON_NAME[pcod_ai_dat$SPECIES_CODE == 21720] <- "Pacific cod (>460 mm)"
-pcod_ai_dat$COMMON_NAME[pcod_ai_dat$SPECIES_CODE == 21721] <- "Pacific cod (\u2264460 mm)"
+pcod_ai_dat$COMMON_NAME[pcod_ai_dat$SPECIES_CODE == 21720] <- "Pacific cod adult"
+pcod_ai_dat$COMMON_NAME[pcod_ai_dat$SPECIES_CODE == 21721] <- "Pacific cod juvenile"
 
 pcod_goa_dat$SPECIES_CODE[pcod_goa_dat$SPECIES_CODE == 21720 & pcod_goa_dat$LENGTH < 420] <- 21721
-pcod_goa_dat$COMMON_NAME[pcod_goa_dat$SPECIES_CODE == 21720] <- "Pacific cod (>420 mm)"
-pcod_goa_dat$COMMON_NAME[pcod_goa_dat$SPECIES_CODE == 21721] <- "Pacific cod (\u2264420 mm)"
+pcod_goa_dat$COMMON_NAME[pcod_goa_dat$SPECIES_CODE == 21720] <- "Pacific cod adult"
+pcod_goa_dat$COMMON_NAME[pcod_goa_dat$SPECIES_CODE == 21721] <- "Pacific cod juvenile"
 
 pcod_ebs_spp_vec <- unique(pcod_ebs_dat$SPECIES_CODE)
 

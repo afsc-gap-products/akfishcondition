@@ -1,0 +1,96 @@
+---
+title: ESP Pacific cod morphometric condition
+author: 
+- affiliation: RACE
+  description: Research Fisheries Biologist
+  email: Sean.Rohan@NOAA.gov
+  name: Sean Rohan
+output: word_document
+fontsize: 12pt
+addr: 
+  l1: 7600 Sand Point Way NE
+  l2: NMFS RACE Division, Groundfish Assessment Program
+  l3: Seattle, WA 98115
+---
+
+# Update ESP
+
+This code updates Gulf of Alaska and Eastern Bering Sea Pacific cod juvenile and adult morphometric condition indicators for the ESP. 
+
+```{r write_pacific_cod_esp, include=FALSE}
+library(akfishcondition)
+
+akfishcondition:::PCOD_ESP$FULL_REGION_EBS %>%
+  dplyr::filter(COMMON_NAME == "Pacific cod juvenile") %>%
+  dplyr::mutate(INDICATOR_NAME = "Summer_Pacific_Cod_Condition_Juvenile_EBS_Survey",
+                DATA_VALUE = mean_wt_resid) %>%
+  dplyr::select(YEAR, INDICATOR_NAME, DATA_VALUE) %>%
+  write.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Juvenile_EBS_Survey.csv"),
+                   row.names = FALSE)
+  
+akfishcondition:::PCOD_ESP$FULL_REGION_EBS %>%
+  dplyr::filter(COMMON_NAME == "Pacific cod adult") %>%
+  dplyr::mutate(INDICATOR_NAME = "Summer_Pacific_Cod_Condition_Adult_EBS_Survey",
+                DATA_VALUE = mean_wt_resid) %>%
+  dplyr::select(YEAR, INDICATOR_NAME, DATA_VALUE) %>%
+  write.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Adult_EBS_Survey.csv"),
+                   row.names = FALSE)
+
+akfishcondition:::PCOD_ESP$FULL_REGION_GOA %>%
+  dplyr::filter(COMMON_NAME == "Pacific cod juvenile") %>%
+  dplyr::mutate(INDICATOR_NAME = "Summer_Pacific_Cod_Condition_Juvenile_GOA_Survey",
+                DATA_VALUE = mean_wt_resid) %>%
+  dplyr::select(YEAR, INDICATOR_NAME, DATA_VALUE) %>%
+  write.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Juvenile_GOA_Survey.csv"),
+                   row.names = FALSE)
+
+akfishcondition:::PCOD_ESP$FULL_REGION_GOA %>%
+  dplyr::filter(COMMON_NAME == "Pacific cod adult") %>%
+  dplyr::mutate(INDICATOR_NAME = "Summer_Pacific_Cod_Condition_Adult_GOA_Survey",
+                DATA_VALUE = mean_wt_resid) %>%
+  dplyr::select(YEAR, INDICATOR_NAME, DATA_VALUE) %>%
+  write.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Adult_GOA_Survey.csv"),
+                   row.names = FALSE)
+
+print(paste0("Last Update: ", akfishcondition:::EBS_INDICATOR$LAST_UPDATE))
+```
+
+```{r plot_indicator, include=FALSE, message=FALSE}
+esp_pcod_df <- dplyr::bind_rows(
+  read.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Juvenile_EBS_Survey.csv")),
+  read.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Adult_EBS_Survey.csv")),
+  read.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Juvenile_GOA_Survey.csv")),
+  read.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Adult_GOA_Survey.csv")))
+
+esp_pcod_df %>%
+  reshape::cast(formula = YEAR ~ INDICATOR_NAME)
+
+esp_pcod_summary_df <- esp_pcod_df %>%
+  dplyr::group_by(INDICATOR_NAME) %>%
+  dplyr::summarize(MEAN_DATA_VALUE = mean(DATA_VALUE),
+                SD_DATA_VALUE = sd(DATA_VALUE))
+
+ggplot() +
+  geom_point(data = esp_pcod_df,
+             aes(x = YEAR, y = DATA_VALUE)) +
+  geom_hline(data = esp_pcod_summary_df,
+             aes(yintercept = MEAN_DATA_VALUE)) +
+    geom_hline(data = esp_pcod_summary_df,
+             aes(yintercept = MEAN_DATA_VALUE + SD_DATA_VALUE),
+             linetype = 2) +
+      geom_hline(data = esp_pcod_summary_df,
+             aes(yintercept = MEAN_DATA_VALUE - SD_DATA_VALUE),
+             linetype = 2) +
+        geom_hline(data = esp_pcod_summary_df,
+             aes(yintercept = MEAN_DATA_VALUE + 2*SD_DATA_VALUE),
+             linetype = 3) +
+        geom_hline(data = esp_pcod_summary_df,
+             aes(yintercept = MEAN_DATA_VALUE - 2*SD_DATA_VALUE),
+             linetype = 3) +
+  scale_x_continuous(name = "Year") +
+  scale_y_continuous(name = "Length-weight residual") +
+  theme_bw() +
+  facet_wrap(~INDICATOR_NAME, nrow = 4,
+             scales = "free_y")
+
+```
