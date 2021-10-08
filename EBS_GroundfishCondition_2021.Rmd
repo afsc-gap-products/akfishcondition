@@ -115,12 +115,7 @@ Resource Assessment and Conservation Engineering Division, Alaska Fisheries Scie
 **Description of Indicator**: Length-weight residuals represent how heavy a fish is per unit body length and are an indicator of somatic growth variability (Brodeur et al., 2004). Therefore, length-weight residuals can be considered indicators of prey availability, growth, general health, and habitat condition (Blackwell et al., 2000; Froese, 2006). Positive length-weight residuals indicate better condition (i.e., heavier per unit length) and negative residuals indicate poorer condition (i.e., lighter per unit length) (Froese, 2006). Fish condition calculated in this way reflects realized outcomes of intrinsic and extrinsic processes that affect fish growth which can have implications for biological productivity through direct effects on growth and indirect effects on demographic processes such as, reproduction, and mortality (e.g., Rodgveller, 2019; Barbeaux et al.,2020).
 
 ```{r map, include=TRUE,out.width="200%",fig.cap="\\label{fig:figs}Figure 1. AFSC/RACE GAP summer bottom trawl survey strata (10-90) and station locations (x) on the eastern Bering Sea Shelf and in the Northern Bering Sea. ",  echo=FALSE}
-if(make_map) {
   knitr::include_graphics(path = here::here("plots", "ebs_nbs_survey_area.png"))
-} else {
-  include_graphics("EBS_NBS_2019.png")  
-}
-
 ```
 
 The groundfish morphometric condition indicator is calculated from paired fork lengths (mm) and weights (g) of individual fishes that were collected during bottom trawl surveys of the eastern Bering Sea (EBS) shelf and northern Bering Sea (NBS) which were conducted by the Alaska Fisheries Science Center’s Resource Assessment and Conservation Engineering (AFSC/RACE) Groundfish Assessment Program (GAP). Fish condition analyses were applied to walleye pollock (_Gadus chalcogrammus_), Pacific cod (_Gadus macrocephalus_), arrowtooth flounder (_Atheresthes stomias_), yellowfin sole (_Limanda aspera_), flathead sole (_Hippoglossoides elassodon_), northern rock sole (_Lepidopsetta polyxystra_), and Alaska Plaice (_Pleuronectes quadrituberculatus_) collected in bottom trawls at standard survey stations (Figure 1). For these analyses and results, survey strata 31 and 32 were combined as stratum 30; strata 41, 42, and 43 were combined as stratum 40; and strata 61 and 62 were combined as stratum 60. Northwest survey strata 82 and 90 were excluded from these analyses.
