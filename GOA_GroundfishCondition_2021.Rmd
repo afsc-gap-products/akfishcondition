@@ -45,7 +45,7 @@ Contributed by Cecilia O'Leary^1^, Sean Rohan^1^, and Ned Laman^1^
 
 ^1^ Resource Assessment and Conservation Engineering Division, Groundfish Assessment Program, Alaska Fisheries Science Center, National Marine Fisheries Service, NOAA, Seattle, WA  
 **Contact**: 
-**Last updated**:  October 2021
+**Last updated**:  October 2020
 
 **Description of Indicator**: Length-weight residuals represent how heavy a fish is per unit body length and are an indicator of somatic growth variability (Brodeur et al., 2004). Therefore, length-weight residuals represent an integration of prior prey availability and growth conditions. Positive length-weight residuals indicate better condition (i.e., heavier per unit length) and negative residuals indicate poorer condition (i.e., lighter per unit length). Fish condition calculated as length-weight residuals reflects fish growth trajectories which can have implications for biological productivity due to growth, reproduction, and mortality (Paul and Paul, 1999; Boldt and Haldorson, 2004). In addition, variability in growth and consequent body condition can act as a key indicator of population health reflecting how populations respond to environmental and anthropogenic factors (Brosset et al., 2017).
 
