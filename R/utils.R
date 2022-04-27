@@ -48,6 +48,10 @@ get_connected <- function(channel = NULL, schema = NA){
 
 get_condition_data <- function(channel = NULL) {
   
+  if(!dir.exists("data")) {
+    dir.create("data")
+  }
+  
   channel <- akfishcondition:::get_connected(channel = channel)
   
   for(i in c("goa","ebs", "nbs", "ai")){
@@ -90,3 +94,34 @@ get_condition_data <- function(channel = NULL) {
     
   }
 }
+
+#' Select species
+#' 
+#' Select length, weight, and CPUE (kg/km2) from csv files based on region and species code.
+#' 
+#' @param species_code RACE species code as a 1L numeric vector
+#' @param region Region as a character vector. One of "GOA", "AI", "NBS", "EBS")
+#' @export
+
+select_species <- function(species_code, region){
+  
+  if(file.exists(paste0(getwd(),"/data/", region, "_all_species.csv"))) {
+    all_species <- read.csv(paste0(getwd(),"/data/", region, "_all_species.csv"))
+  } else {
+    stop(paste0("select_species: Species file not found (", getwd(),"/data/", region, "_all_species.csv)"))
+  }
+  
+  all_species$latitude <- as.numeric(all_species$latitude)
+  all_species$longitude <- as.numeric(all_species$longitude)
+  all_species$year <- as.numeric(all_species$year)
+  all_species$cpue_kg_km2 <- as.numeric(all_species$cpue_kg_km2)
+  
+  specimen_sub <- all_species[which(all_species$species_code == species_code),]
+  
+  if(!(nrow(specimen_sub) > 1)) {
+    stop(paste0("select_species: Species code", species_code, "not found for region ", region))
+  }
+  
+  saveRDS(specimen_sub, paste0(getwd(),"/data/",species_code,"_Data_Geostat.Rds"))
+  return(specimen_sub)
+}  

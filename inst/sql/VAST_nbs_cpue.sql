@@ -8,5 +8,5 @@ select a.hauljoin, a.start_latitude latitude, a.start_longitude longitude, a.sta
                         and a.cruisejoin = c.cruisejoin
                         and c.survey_definition_id = 143
                         and b.species_code = d.species_code
-                        and b.species_code in (21740, 21720, 10210, 10130, 10285)
+                        and b.species_code in (21740, 21720, 10210, 10285)
                         order by hauljoin
