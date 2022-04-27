@@ -4,7 +4,7 @@
 #' 
 #' @param sql_path File path to .sql file as a character vector.
 #' @return Returns an SQL statement as a character vector, which can be executed on a database connection using functions in the RODBC or ROracle packages.
-#' @export
+#' @noRd
 
 sql_to_rqry <- function(sql_path) {
   in_string <- readr::read_file(sql_path)
