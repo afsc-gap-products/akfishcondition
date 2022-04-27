@@ -26,7 +26,3 @@ weight_lw_residuals(
 \description{
 This function weights length-weight residuals by stratum biomass OR catch.
 }
-\keyword{condition.}
-\keyword{groundfish}
-\keyword{length,}
-\keyword{weight,}

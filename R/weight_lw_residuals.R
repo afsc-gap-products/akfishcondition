@@ -7,7 +7,6 @@
 #' @param stratum Vector of strata for weighting.
 #' @param stratum_biomass Vector of stratum biomass.
 #' @param catch Vector of catch for weighting residuals by haul (default = 1).
-#' @keywords length, weight, groundfish condition.
 #' @export
 
 weight_lw_residuals <- function(residuals, year, stratum = NA, stratum_biomass = NA, catch = 1) {
