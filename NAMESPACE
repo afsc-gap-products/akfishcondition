@@ -2,6 +2,7 @@
 
 export(calc_lw_residuals)
 export(get_condition_data)
+export(select_species)
 export(set_plot_order)
 export(set_stratum_order)
 export(theme_condition_index)
