@@ -9,7 +9,8 @@ Depends: R (>= 3.5),
     ggplot2,
     magrittr,
     plyr,
-    reshape
+    reshape,
+    readr
 Description: This package calculates groundfish condition based on length-weight regressions.
 License: GPL (>=2)
 Encoding: UTF-8
