@@ -8,7 +8,7 @@ The most recent version of this package was built in R 4.1.1.
 akfishcondition can be installed using the following code:
 
 ```{r}
-devtools::install_github("sean-rohan-noaa/akfishcondition")
+devtools::install_github("afsc-gap-products/akfishcondition")
 ```
 
 # Instructions for generating ESR chapters
