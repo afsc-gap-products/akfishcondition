@@ -30,7 +30,7 @@ calc_lw_residuals(
 
 \item{region}{Region (provide if make_diagnostics = TRUE)}
 
-\item{include_ci}{Include upper and lower estimates for the 95% confidence interval of residuals in the output.}
+\item{include_ci}{Include upper and lower estimates for the 95 pct confidence interval of residuals in the output.}
 
 \item{length}{Set of individual fish lengths.}
 
@@ -41,10 +41,6 @@ calc_lw_residuals(
 \description{
 This function makes a log-log regression of length and weight for individual fish and then calculates a residual. A Bonferroni-corrected outlier correction can be applied to remove outliers. Option to use separate covariates for different strata.
 }
-\references{
+\details{
 Brodziak, J.2012. Fitting length-weight relationships with linear regression using the log-transformed allometric model with bias-correction. Pacific Islands Fish. Sci. Cent., Natl. Mar. Fish. Serv., NOAA, Honolulu, HI 96822-2396. Pacific Islands Fish. Sci. Cent. Admin. Rep. H-12-03, 4 p.
 }
-\keyword{condition}
-\keyword{groundfish}
-\keyword{length,}
-\keyword{weight,}
