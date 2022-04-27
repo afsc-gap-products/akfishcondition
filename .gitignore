@@ -36,6 +36,7 @@ doc
 Meta
 *.png
 /output/
+/data/
 *.csv
 0_update_condition_data.html
 

@@ -36,16 +36,16 @@ theme_pngs <- function() {
 } 
 
 #' Set species plotting order
-#' @param COMMON_NAME Vector of common names
-#' @param REGION Character vector of length one indicating whether the region is AI, GOA, or BS
+#' @param common_name Vector of common names
+#' @param region Character vector of length one indicating whether the region is AI, GOA, or BS
 #' @export
 
-set_plot_order <- function(COMMON_NAME, REGION) {
-  if(!(REGION %in% c("AI", "GOA", "BS"))) {
+set_plot_order <- function(common_name, region) {
+  if(!(region %in% c("AI", "GOA", "BS"))) {
     stop("Region must be either: AI, BS, or GOA")
   }
-  if(REGION == "AI") {
-    return(factor(COMMON_NAME, 
+  if(region == "AI") {
+    return(factor(common_name, 
                   levels = c("walleye pollock (>250 mm)",
                              "walleye pollock (100–250 mm)",
                              "Pacific cod",
@@ -62,8 +62,8 @@ set_plot_order <- function(COMMON_NAME, REGION) {
                              "Atka mackerel",
                              "northern rockfish",
                              "Pacific ocean perch")))
-  } else if(REGION == "GOA") {
-  return(factor(COMMON_NAME,
+  } else if(region == "GOA") {
+  return(factor(common_name,
                 levels = c("walleye pollock (>250 mm)",
                            "walleye pollock (100–250 mm)",
                            "Pacific cod",
@@ -80,8 +80,8 @@ set_plot_order <- function(COMMON_NAME, REGION) {
                            "dusky rockfish",
                            "northern rockfish",
                            "Pacific ocean perch")))
-  } else if(REGION == "BS") {
-    return(factor(COMMON_NAME, 
+  } else if(region == "BS") {
+    return(factor(common_name, 
                   levels = c("walleye pollock (>250 mm)",
                              "walleye pollock (100–250 mm)",
                              "Pacific cod",
@@ -102,23 +102,23 @@ set_plot_order <- function(COMMON_NAME, REGION) {
 }
 
 #' Set stratum plotting order
-#' @param COMMON_NAME Vector of stratum names
-#' @param REGION Character vector of length one indicating whether the region is AI, GOA, or BS
+#' @param common_name Vector of stratum names
+#' @param region Character vector of length one indicating whether the region is AI, GOA, or BS
 #' @export
 
-set_stratum_order <- function(STRATUM, REGION) {
-  if(!(REGION %in% c("AI", "GOA"))) {
+set_stratum_order <- function(stratum, region) {
+  if(!(region %in% c("AI", "GOA"))) {
     stop("Region must be either: AI or GOA")
   }
-  if(REGION == "GOA") {
-    return(factor(STRATUM,
+  if(region == "GOA") {
+    return(factor(stratum,
                   levels = c("Shumagin",
                              "Chirikof",
                              "Kodiak",
                              "Yakutat",
                              "Southeastern")))
-  } else if(REGION == "AI") {
-    return(factor(STRATUM,
+  } else if(region == "AI") {
+    return(factor(stratum,
                   levels = c("Southern Bering Sea", 
                              "Eastern Aleutians",
                              "Central Aleutians",

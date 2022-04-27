@@ -48,6 +48,10 @@ get_connected <- function(channel = NULL, schema = NA){
 
 get_condition_data <- function(channel = NULL) {
   
+  if(!dir.exists("data")) {
+    dir.create("data")
+  }
+  
   channel <- akfishcondition:::get_connected(channel = channel)
   
   for(i in c("goa","ebs", "nbs", "ai")){

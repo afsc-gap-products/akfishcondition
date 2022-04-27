@@ -1,6 +1,7 @@
 /* Query to retrieve length and weight samples for all eastern Bering Sea continental shelf strata for VAST. */
-select a.hauljoin, floor(a.cruise/100) year, a.start_latitude latitude, a.start_longitude longitude, 
-	b.species_code, c.common_name, b.length length_mm, b.weight weight_g
+
+select a.hauljoin, a.vessel, a.cruise, a.haul, a.stratum, floor(a.cruise/100) year, a.start_latitude latitude, a.start_longitude longitude, 
+	b.species_code, b.specimenid, c.common_name, b.length length_mm, b.weight weight_g
 	from racebase.haul a, racebase.specimen b, racebase.species c, race_data.v_cruises d
 	where a.hauljoin = b.hauljoin
 	and a.cruise >= 199900

@@ -1,0 +1,157 @@
+---
+title: ESP Pacific cod morphometric condition
+author: 
+- affiliation: RACE
+  description: Research Fisheries Biologist
+  email: Sean.Rohan@NOAA.gov
+  name: Sean Rohan
+output: word_document
+fontsize: 12pt
+addr: 
+  l1: 7600 Sand Point Way NE
+  l2: NMFS RACE Division, Groundfish Assessment Program
+  l3: Seattle, WA 98115
+---
+
+# Update ESP
+
+This code updates Gulf of Alaska and Eastern Bering Sea Pacific cod juvenile and adult morphometric condition indicators for the ESP. 
+
+```{r write_pacific_cod_esp, include=FALSE}
+library(akfishcondition)
+
+akfishcondition:::PCOD_ESP$FULL_REGION_EBS %>%
+  dplyr::filter(COMMON_NAME == "Pacific cod juvenile") %>%
+  dplyr::mutate(INDICATOR_NAME = "Summer_Pacific_Cod_Condition_Juvenile_EBS_Survey",
+                DATA_VALUE = mean_wt_resid) %>%
+  dplyr::select(YEAR, INDICATOR_NAME, DATA_VALUE) %>%
+  write.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Juvenile_EBS_Survey.csv"),
+                   row.names = FALSE)
+  
+akfishcondition:::PCOD_ESP$FULL_REGION_EBS %>%
+  dplyr::filter(COMMON_NAME == "Pacific cod adult") %>%
+  dplyr::mutate(INDICATOR_NAME = "Summer_Pacific_Cod_Condition_Adult_EBS_Survey",
+                DATA_VALUE = mean_wt_resid) %>%
+  dplyr::select(YEAR, INDICATOR_NAME, DATA_VALUE) %>%
+  write.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Adult_EBS_Survey.csv"),
+                   row.names = FALSE)
+
+akfishcondition:::PCOD_ESP$FULL_REGION_GOA %>%
+  dplyr::filter(COMMON_NAME == "Pacific cod juvenile") %>%
+  dplyr::mutate(INDICATOR_NAME = "Summer_Pacific_Cod_Condition_Juvenile_GOA_Survey",
+                DATA_VALUE = mean_wt_resid) %>%
+  dplyr::select(YEAR, INDICATOR_NAME, DATA_VALUE) %>%
+  write.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Juvenile_GOA_Survey.csv"),
+                   row.names = FALSE)
+
+akfishcondition:::PCOD_ESP$FULL_REGION_GOA %>%
+  dplyr::filter(COMMON_NAME == "Pacific cod adult") %>%
+  dplyr::mutate(INDICATOR_NAME = "Summer_Pacific_Cod_Condition_Adult_GOA_Survey",
+                DATA_VALUE = mean_wt_resid) %>%
+  dplyr::select(YEAR, INDICATOR_NAME, DATA_VALUE) %>%
+  write.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Adult_GOA_Survey.csv"),
+                   row.names = FALSE)
+
+print(paste0("Last Update: ", akfishcondition:::EBS_INDICATOR$LAST_UPDATE))
+```
+
+```{r setup_data, include=FALSE, message=FALSE}
+esp_pcod_df <- dplyr::bind_rows(
+  read.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Juvenile_EBS_Survey.csv")) %>%
+    dplyr::mutate(REGION = "EBS", STAGE = "Juvenile"),
+  read.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Adult_EBS_Survey.csv")) %>%
+    dplyr::mutate(REGION = "EBS", STAGE = "Adult"),
+  read.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Juvenile_GOA_Survey.csv")) %>%
+    dplyr::mutate(REGION = "GOA", STAGE = "Juvenile"),
+  read.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Adult_GOA_Survey.csv")) %>%
+    dplyr::mutate(REGION = "GOA", STAGE = "Adult"))
+
+esp_pcod_summary_df <- esp_pcod_df %>%
+  dplyr::group_by(INDICATOR_NAME, REGION, STAGE) %>%
+  dplyr::summarize(MEAN_DATA_VALUE = mean(DATA_VALUE),
+                SD_DATA_VALUE = sd(DATA_VALUE))
+
+esp_pcod_df <- esp_pcod_df %>% 
+  dplyr::inner_join(esp_pcod_summary_df) %>%
+  dplyr::mutate(sd_level = cut((DATA_VALUE-MEAN_DATA_VALUE)/SD_DATA_VALUE, breaks = c(-3,-2,-1,0,1,2,3,Inf)))
+
+cor(esp_pcod_df$DATA_VALUE[esp_pcod_df$INDICATOR_NAME == "Summer_Pacific_Cod_Condition_Adult_EBS_Survey"],
+    esp_pcod_df$DATA_VALUE[esp_pcod_df$INDICATOR_NAME == "Summer_Pacific_Cod_Condition_Juvenile_EBS_Survey"])
+
+cor(esp_pcod_df$DATA_VALUE[esp_pcod_df$INDICATOR_NAME == "Summer_Pacific_Cod_Condition_Adult_GOA_Survey"],
+    esp_pcod_df$DATA_VALUE[esp_pcod_df$INDICATOR_NAME == "Summer_Pacific_Cod_Condition_Juvenile_GOA_Survey"])
+
+```
+
+```{r figure, echo=FALSE, message=FALSE, fig.height=6, fig.width=6}
+print(ggplot() +
+  geom_point(data = esp_pcod_df,
+             aes(x = YEAR, 
+                 y = DATA_VALUE,
+                 fill = sd_level),
+             size = rel(3),
+             shape = 21) +
+  geom_hline(data = esp_pcod_summary_df,
+             aes(yintercept = MEAN_DATA_VALUE)) +
+    geom_hline(data = esp_pcod_summary_df,
+             aes(yintercept = MEAN_DATA_VALUE + SD_DATA_VALUE),
+             linetype = 2) +
+      geom_hline(data = esp_pcod_summary_df,
+             aes(yintercept = MEAN_DATA_VALUE - SD_DATA_VALUE),
+             linetype = 2) +
+        geom_hline(data = esp_pcod_summary_df,
+             aes(yintercept = MEAN_DATA_VALUE + 2*SD_DATA_VALUE),
+             linetype = 3) +
+        geom_hline(data = esp_pcod_summary_df,
+             aes(yintercept = MEAN_DATA_VALUE - 2*SD_DATA_VALUE),
+             linetype = 3) +
+  scale_x_continuous(name = "Year") +
+  scale_y_continuous(name = "Length-weight residual") +
+  scale_fill_brewer(name = "Std. dev.", palette = "BrBG") +
+  theme_bw() +
+    theme(legend.position = "bottom") +
+  facet_wrap(REGION ~ STAGE, nrow = 2, scales = "free_y"))
+```
+
+# Eastern Bering Sea Pacific cod
+
+## Adults (&geq;46 cm FL)
+
+*Status and Trends:* In 2021, the morphometric condition of adult Pacific cod in the EBS was neutral (within one standard deviation of the time series mean), which continues the trend of neutral morphometric condition during the prior two survey years (2018–2019). Morphometric condition near the times series average in recent years (2018–2021) represents an increase in morphometric condition after three consecutive years with negative morphometric condition in 2015–2017. Historically, the morphometric condition of adult Pacific cod increased from the time series minimum in 1999 (a ‘cold’ year with an early survey start) to the time series maximum in 2003. After 2003, morphometric condition decreased towards the time series mean and has fluctuated within one standard deviation of the time series mean from 2006–2021, except for 2012, 2015, and 2017, years with morphometric condition >1 standard deviation below the mean.
+
+## Juveniles (<46 cm FL)
+
+*Status and Trends:* In 2021, the morphometric condition of juvenile Pacific cod in the EBS was neutral (within one standard deviation of the time series mean), which continues the trend of neutral morphometric condition during the prior two survey years (2018–2019). Neutral morphometric condition in recent years (2018–2021) represents a departure from negative condition in 2017 (~ 1 standard deviation below the mean) and highly positive condition in 2016 (~2 standard deviations above the mean). Historically, the morphometric condition of juvenile Pacific cod increased from the time series minimum in 1999 (a ‘cold’ year with an early survey start) to the second highest value in 2003. After 2003, morphometric condition decreased towards the time series mean and has fluctuated within one standard deviation of the time series mean from 2006–2021, except for 2009 (>1 standard deviation below the mean) and the record high in 2016 (>2 standard deviations above the mean).
+
+## Influential Factors
+
+*Influential Factors:* Many factors contribute to variation in morphometric condition so it is unclear which specific factors contributed to neutral condition of adult Pacific cod in the EBS in 2021. Factors that may contribute to variation in morphometric condition include environmental conditions that affect prey quality and temperature-dependent metabolic rates, survey timing, stomach fullness of individual fish, fish migration patterns, and the distribution of samples within survey strata. Temperature is an important factor that can influence the morphometric condition of Pacific cod by influencing metabolic rates, prey availability, and prey quality. Historically in the eastern Bering Sea (EBS), ‘cold’ years (with a small cold pool) were associated with negative morphometric condition (e.g., 1999, 2012) and warm years (e.g., 2002-2005) were associated with positive morphometric condition. However, during recent (2018–2021) exceptionally warm recent years, the morphometric condition of Pacific cod has been neutral for adult and juvenile Pacific cod in the EBS. Temperature can negatively affect growth rates if prey resources are insufficient to make up for increased metabolic demand. In GOA, elevated temperatures during the 2014–2016 marine heatwave in the Gulf of Alaska were associated with lower growth rates of Pacific cod and lower morphometric condition in 2015 (adults and juveniles combined), likely because diminished prey resources during the heatwave were insufficient to make up for increased metabolic demand (Barbeaux et al., 2020). Additional information about the groundfish morphometric condition indicator and factors that can influence estimates of morphometric condition based on length-weight residuals in the Gulf of Alaska are described in Rohan and Prohaska (In prep).
+
+
+
+# Gulf of Alaska Pacific cod
+
+## Adults (&geq;42 cm FL)
+
+**Status and Trends:* In 2021, the morphometric condition of adult Pacific cod in the GOA was neutral (within one standard deviation of the time series mean), which continues the trend of neutral morphometric condition during the prior two survey years (2017, 2019). Neutral morphometric condition in recent years (2018–2021) represents an increase from negative condition in 2015 (~ 1 standard deviation below the mean), a year which coincided with the 2015 marine heat wave in the Gulf of Alaska. Historically, the morphometric condition of adult Pacific cod in the GOA was more than one standard deviation above the mean in 1984 (2–3 standard deviations above the mean) and more than one standard deviation below the mean in 1987, 2003, 2005, and 2015.
+
+## Juveniles (<42 cm FL)
+
+*Status and Trends:* In 2021, the morphometric condition of juvenile Pacific cod in the GOA was neutral (within one standard deviation of the time series mean), which continues the trend of neutral morphometric condition since 1990. For most of the time series, the morphometric condition of juvenile Pacific cod in the GOA has fluctuated within one standard deviation of the time series mean, except for in 1990 (>3 standard deviations above the grand mean) and 1987 (>1 standard deviation below the grand mean). Historically, the morphometric condition of juvenile Pacific cod increased from the time series minimum in 1999 (a ‘cold’ year with an early survey start) to the second highest value in 2003. After 2003, morphometric condition decreased towards the time series mean and has fluctuated within one standard deviation of the time series mean from 2006–2021, except for 2009 (>1 standard deviation below the mean) and the record high in 2016 (>2 standard deviations above the mean). 
+
+## Influential Factors
+
+*Influential Factors:* Many factors contribute to variation in morphometric condition and it is unclear which specific factors contributed to neutral condition in of adult Pacific cod in the GOA in 2021. Factors that may contribute to variation in morphometric condition include environmental conditions that affect prey quality and temperature-dependent metabolic rates, survey timing, stomach fullness of individual fish, fish migration patterns, and the distribution of samples within survey strata. Temperature is an important factor that can influence the morphometric condition of Pacific cod by influencing metabolic rates, prey availability, and prey quality. Historically in the eastern Bering Sea (EBS), ‘cold’ years (with a small cold pool) were associated with negative morphometric condition (e.g., 1999, 2012) and warm years (e.g., 2002-2005) were associated with positive morphometric condition. However, during recent (2018–2021) exceptionally warm recent years, the morphometric condition of Pacific cod has been neutral for adult and juvenile Pacific cod in the EBS. Temperature can negatively affect growth rates if prey resources are insufficient to make up for increased metabolic demand. In GOA, elevated temperatures during the 2014–2016 marine heatwave in the Gulf of Alaska were associated with lower growth rates of Pacific cod and lower morphometric condition in 2015 (adults and juveniles combined), likely because diminished prey resources during the heatwave were insufficient to make up for increased metabolic demand (Barbeaux et al., 2020). Additional information about the morphometric condition indicator and factors that can influence estimates of morphometric condition based on length-weight residuals in the Gulf of Alaska are described in O'Leary et al. (In prep).
+
+
+```{r make_table, include=FALSE, message=FALSE}
+print(esp_pcod_df)
+```
+
+# References
+
+Barbeaux, S.J., Holsman, K., Zador, S., 2020. Marine heatwave stress test of ecosystem-based fisheries management in the Gulf of Alaska Pacific cod fishery. Front. Mar. Sci. 7, 1–21. https://doi.org/10.3389/fmars.2020.00703
+
+O'Leary, C., Laman, N., Rohan, S. In preparation. Gulf of Alaska groundfish condition. In Ferriss, B. 2021. Ecosystem Status Report 2021: Gulf of Alaska, Stock Assessment and Fishery Evaluation Report, North Pacific Fishery Management Council, 605 W 4th Ave, Suite 306, Anchorage, AK 99501.
+
+Rohan, S., Prohaska., B. In preparation. Eastern and northern Bering Sea groundfish condition. In Siddon, E. 2021. Ecosystem Status Report 2021: Gulf of Alaska, Stock Assessment and Fishery Evaluation Report, North Pacific Fishery Management Council, 605 W 4th Ave, Suite 306, Anchorage, AK 99501.

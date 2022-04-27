@@ -4,12 +4,12 @@
 \alias{set_plot_order}
 \title{Set species plotting order}
 \usage{
-set_plot_order(COMMON_NAME, REGION)
+set_plot_order(common_name, region)
 }
 \arguments{
-\item{COMMON_NAME}{Vector of common names}
+\item{common_name}{Vector of common names}
 
-\item{REGION}{Character vector of length one indicating whether the region is AI, GOA, or BS}
+\item{region}{Character vector of length one indicating whether the region is AI, GOA, or BS}
 }
 \description{
 Set species plotting order
