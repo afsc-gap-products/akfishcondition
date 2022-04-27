@@ -3,8 +3,8 @@ Type: Package
 Title: Groundfish condition index
 Version: 2.0.0
 Authors@R: c(person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre")),
-person("Ned", "Laman", email = "ned.laman@noaa.gov", role = c("ctb")),
-person("Cecilia", "O'Leary", email = "cecilia.oleary@noaa.gov", role = c("ctb"))
+    person("Ned", "Laman", email = "ned.laman@noaa.gov", role = c("ctb")),
+    person("Cecilia", "O'Leary", email = "cecilia.oleary@noaa.gov", role = c("ctb")))
 Maintainer: Sean Rohan <sean.rohan@noaa.gov>
 Depends: R (>= 3.5),
     dplyr,
