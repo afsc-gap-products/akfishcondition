@@ -1,6 +1,6 @@
 /* Query to retrieve CPUE in kilograms per square kilometer from all northern Bering Sea strata for VAST. */
 
-select a.hauljoin, a.start_latitude latitude, a.start_longitude longitude, a.stationid, b.species_code, b.year, (b.wgtcpue/100) cpue_kg_km2, d.common_name
+select a.hauljoin, a.start_latitude latitude, a.start_longitude longitude, a.stationid, b.species_code, b.year, b.wgtcpue cpue_kg_km2, d.common_name
                         from racebase.haul a, haehnr.nbs_cpue b, race_data.v_cruises c, racebase.species d 
                         where b.year > 2009
                         and a.hauljoin = b.hauljoin
