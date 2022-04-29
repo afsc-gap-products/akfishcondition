@@ -29,10 +29,10 @@ channel <- akfishcondition:::get_connected(schema = "AFSC")
 
 akfishcondition::get_condition_data(channel = channel)
 
-make_data_summary(dat_csv = here::here("data", "nbs_all_species.csv"), region = "NBS")
-make_data_summary(dat_csv = here::here("data", "ebs_all_species.csv"), region = "EBS")
-make_data_summary(dat_csv = here::here("data", "ai_all_species.csv"), region = "AI")
-make_data_summary(dat_csv = here::here("data", "goa_all_species.csv"), region = "GOA")
+akfishcondition:::make_data_summary(dat_csv = here::here("data", "nbs_all_species.csv"), region = "NBS")
+akfishcondition:::make_data_summary(dat_csv = here::here("data", "ebs_all_species.csv"), region = "EBS")
+akfishcondition:::make_data_summary(dat_csv = here::here("data", "ai_all_species.csv"), region = "AI")
+akfishcondition:::make_data_summary(dat_csv = here::here("data", "goa_all_species.csv"), region = "GOA")
 ```
 
 

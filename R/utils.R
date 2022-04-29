@@ -151,7 +151,7 @@ make_data_summary <- function(dat_csv, region) {
                 dplyr::filter(!is.na(cpue_kg_km2)) |>
                 dplyr::group_by(common_name, year) |>
                 dplyr::summarise(n = n()) |>
-                tidyr::pivot_wider(names_from = c("common_name"), values_from = "n") |>
+                tidyr::pivot_wider(names_from = c("common_name"), values_from = "n", values_fill = 0) |>
                 data.frame(),
               n_specimen_by_year = n_spp_by_year|>
                 tidyr::pivot_wider(names_from = c("common_name"), values_from = "n", values_fill = 0) |>
@@ -202,6 +202,8 @@ make_data_summary <- function(dat_csv, region) {
     dev.off()
   }
   
+  ecdf_files <- list.files(here::here('output', region), pattern = 'ecdf_samples_by_year', full.names = TRUE)
+  
   # Make summary docx
   make_figs <- ""
   for(ii in 1:length(ecdf_files)) {
@@ -219,7 +221,6 @@ output: word_document
 ---\n
 ```{r include=FALSE}
 library(akfishcondition)
-ecdf_files <- list.files(here::here('output', '", region, "'), pattern = 'ecdf_samples_by_year', full.names = TRUE)
 out <- readRDS(here::here('output','", region, "', paste0('", region, "' ,'_sample_tables.rds')))
 ```\n\n", make_figs, "
 ```{r echo=FALSE, fig.cap='\\\\label{fig:figs}Annual samples by species.'}
