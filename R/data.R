@@ -28,6 +28,7 @@
 #'      }
 #' }
 #' @source \url{https://www.fisheries.noaa.gov/contact/groundfish-assessment-program}
+#' @export
 "AI_INDICATOR"
 
 #' Gulf of Alaska (1984-2021)
@@ -60,6 +61,7 @@
 #'      }
 #' }
 #' @source \url{https://www.fisheries.noaa.gov/contact/groundfish-assessment-program}
+#' @export
 "GOA_INDICATOR"
 
 #' Eastern Bering Sea continental shelf (1999-2021)
@@ -92,6 +94,7 @@
 #'      }
 #' }
 #' @source \url{https://www.fisheries.noaa.gov/contact/groundfish-assessment-program}
+#' @export
 "EBS_INDICATOR"
 
 #' Northern Bering Sea (2010-2021)
@@ -124,6 +127,7 @@
 #'      }
 #' }
 #' @source \url{https://www.fisheries.noaa.gov/contact/groundfish-assessment-program}
+#' @export
 "NBS_INDICATOR"
 
 #' Pacific cod Ecosystem and Socioeconomic Profile (ESP) indicator
@@ -156,4 +160,5 @@
 #'      }
 #' }
 #' @source \url{https://www.fisheries.noaa.gov/contact/groundfish-assessment-program}
+#' @export
 "PCOD_ESP"
