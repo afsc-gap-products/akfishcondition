@@ -20,5 +20,5 @@ LazyData: false
 RoxygenNote: 7.1.2
 Imports: colorspace,
     viridis
-Suggests: knitr, rmarkdown, RODBC, getPass, stringr, VAST
+Suggests: knitr, rmarkdown, RODBC, getPass, stringr, VAST (>= 3.9.0), FishStatsUtils (>= 2.11.0), tictoc
 VignetteBuilder: knitr
