@@ -1,15 +1,8 @@
-/* Query to retrieve length and weight samples for northern Bering Sea strata.
-Prepared by: Ned Laman (ned.laman@noaa.gov), AFSC/RACE/GAP 
-Query updated: September 22, 2021 
+/* Query to retrieve length and weight samples for northern Bering Sea strata. */
 
-like '%-%' eliminates corner stations which don't have a dash in the stationid
-survey_definition_id != 78 eliminates Bering Slope stations
-decode to combine strata  and stratum range between 10 and 99 per original intent
-stratum not in (82, 90) because these are non-standard strata and were excluded a priori
-*/
 select a.haul, a.vessel, a.cruise, floor(a.cruise/100) year,  b.species_code, a.region,
 decode(a.stratum, 31, 30, 32, 30, 61, 60, 62, 60, 41, 40, 42, 40, 43, 40, a.stratum) stratum, 
-a.start_latitude latitude, a.start_longitude longitude, d.specimenid,
+a.start_latitude latitude, a.start_longitude longitude, a.start_time, d.specimenid,
 e.common_name, d.sex, d.length length_mm, d.weight weight_g
 from racebase.haul a, racebase.catch b, racebase.specimen d , racebase.species e, race_data.v_cruises c
 where a.region = 'BS' and a.cruise >= 201000
