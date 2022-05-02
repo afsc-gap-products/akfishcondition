@@ -180,7 +180,7 @@ make_data_summary <- function(dat_csv, region) {
           geom_point() +
           geom_line() +
           scale_x_continuous(name = "Year") +
-          scale_color_colorblind() +
+          ggthemes::scale_color_colorblind() +
           facet_wrap(~common_name, scales = "free_y") +
           theme_bw() +
           theme(legend.position = "none"))
@@ -193,11 +193,11 @@ make_data_summary <- function(dat_csv, region) {
                  aes(x = yday, color = common_name)) +
             stat_ecdf(size = rel(1.2)) +
             facet_wrap(~year) +
-            scale_color_colorblind() +
+            ggthemes::scale_color_colorblind() +
             scale_y_continuous(name = "Cumulative proportion of samples") +
             scale_x_continuous(name = "Day of Year",
                                limits = yday_range) +
-            theme_few() +
+            ggthemes::theme_few() +
             theme(legend.title = element_blank()))
     dev.off()
   }
