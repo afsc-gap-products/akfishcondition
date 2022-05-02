@@ -1,7 +1,7 @@
 /* Query to retrieve CPUE in kilograms per square kilometer from all Aleutian Islands strata for VAST. */
 
 select a.hauljoin, a.year, c.start_latitude latitude, c.start_longitude longitude, c.start_time,
-	b.species_code, b.common_name, a.wgtcpue cpue_kg_km2
+	b.species_code, b.common_name, a.number_fish, a.effort, a.wgtcpue cpue_kg_km2
 	from ai.cpue a, racebase.species b, racebase.haul c, race_data.cruises f, race_data.surveys g
 	where a.species_code = b.species_code
 	and f.survey_id = g.survey_id
