@@ -33,54 +33,11 @@ run_condition_doy <- function(species_code,
     m1 <- rstanarm::stan_lm(formula = form, prior = NULL, data = lw_dat.sub)
     se_m1 <- m1$ses[grepl("yday", x = names(m1$ses))]
   }
-
-  # Predict-----------------------------------------------------------------------------------------
-  # lw_predict <- expand.grid(yday = c(180,181), 
-  #                           length_cm = c(25),
-  #                           year = unique(lw_dat.sub$year))
-  # 
-  # lw_predict$loglendoy <- log(lw_predict$length_cm)*lw_predict$yday
-  # 
-  # lw_predict$fit <- exp(predict(m1, newdata = lw_predict, type = "response"))
-  # lw_predict$se.fit <- predict(m1, newdata = lw_predict, type = "response", se.fit = TRUE)$se.fit
-  # 
-  # lw_predict <- lw_predict |>
-  #   dplyr::select(-loglendoy) |>
-  #   dplyr::mutate(upr = fit + se.fit*2,
-  #                 lwr = fit - se.fit*2)
-  # 
-  # gg_per_day <- dplyr::inner_join(lw_predict |>
-  #                                       tidyr::pivot_wider(id_cols = c(year, length_cm),
-  #                                                          values_from = c(fit),
-  #                                                          names_from = c(yday)) |>
-  #                                       dplyr::mutate(gg_per_day_mean = (`181`-`180`)/`180`) |>
-  #                                       dplyr::select(-`180`, -`181`),
-  #                                     lw_predict |>
-  #                                       tidyr::pivot_wider(id_cols = c(year, length_cm),
-  #                                                          values_from = c(upr),
-  #                                                          names_from = c(yday)) |>
-  #                                       dplyr::mutate(gg_per_day_upr = (`181`-`180`)/`180`) |>
-  #                                       dplyr::select(-`180`, -`181`), 
-  #                                     by = "year") |>
-  #   dplyr::inner_join(
-  #     lw_predict |>
-  #       tidyr::pivot_wider(id_cols = c(year, length_cm),
-  #                          values_from = c(lwr),
-  #                          names_from = c(yday)) |>
-  #       dplyr::mutate(gg_per_day_lwr = (`181`-`180`)/`180`) |>
-  #       dplyr::select(-`180`, -`181`), 
-  #     by = "year") |>
-  #   dplyr::arrange(year)
-  
   
   return(list(coef_summary = data.frame(species_code = spp_code,
                                         region = region,
                                         year = sort(unique(lw_dat.sub$year)),
                                         coef = m1$coefficients[grepl("yday", x = names(m1$coefficients))],
-                                        # gg_per_day_mean = gg_per_day$gg_per_day_mean,
-                                        # gg_per_day_lwr = gg_per_day$gg_per_day_lwr,
-                                        # gg_per_day_upr = gg_per_day$gg_per_day_upr,
                                         se_coef = se_m1),
-              # fit = lw_predict,
               dat = lw_dat.sub))
 }
