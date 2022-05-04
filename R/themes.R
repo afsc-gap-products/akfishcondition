@@ -41,7 +41,7 @@ theme_pngs <- function() {
 #' @export
 
 set_plot_order <- function(common_name, region) {
-  if(!(region %in% c("AI", "GOA", "BS"))) {
+  if(!(region %in% c("AI", "GOA", "BS", "EBS"))) {
     stop("Region must be either: AI, BS, or GOA")
   }
   if(region == "AI") {
