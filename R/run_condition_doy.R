@@ -11,8 +11,6 @@ run_condition_doy <- function(species_code,
                               method = "lm", 
                               form = log(weight_g)~log(length_cm):factor(sex)+yday:factor(year)) {
   
-  print(paste0(species_code, "-", region))
-  
   spp_code <- species_code
   
   lw_dat.sub <- read.csv(file = here::here("data", paste0(region, "_all_species.csv"))) |>
@@ -27,7 +25,7 @@ run_condition_doy <- function(species_code,
   # Linear regression-------------------------------------------------------------------------------
   if(method == "lm") {
     m1 <- lm(formula = form, data = lw_dat.sub)
-    se_m1<- coef(summary(m1))[, "Std. Error"][grepl("yday", x = names(coef(summary(m1))[, "Std. Error"]))]
+    se_m1 <- coef(summary(m1))[, "Std. Error"][grepl("yday", x = names(coef(summary(m1))[, "Std. Error"]))]
     
   } else if(method == "stan_lm") {
     m1 <- rstanarm::stan_lm(formula = form, prior = NULL, data = lw_dat.sub)
