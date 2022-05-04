@@ -80,7 +80,7 @@ set_plot_order <- function(common_name, region) {
                            "dusky rockfish",
                            "northern rockfish",
                            "Pacific ocean perch")))
-  } else if(region == "BS") {
+  } else if(region %in% c("BS", "EBS")) {
     return(factor(common_name, 
                   levels = c("walleye pollock (>250 mm)",
                              "walleye pollock (100–250 mm)",
