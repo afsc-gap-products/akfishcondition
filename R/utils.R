@@ -204,6 +204,45 @@ make_data_summary <- function(dat_csv, region) {
   
   ecdf_files <- list.files(here::here('output', region), pattern = 'ecdf_samples_by_year', full.names = TRUE)
   
+  if(region == "EBS") {
+    map_region <- "sebs"
+  } else {
+    map_region <- region
+  }
+  
+  map_layers <- akgfmaps::get_base_layers(select.region = tolower(map_region), 
+                                          set.crs = "EPSG:3338")
+  
+  lw_dat.sub <- read.csv(file = here::here("data", paste0(region, "_all_species.csv"))) |>
+    dplyr::filter(!is.na(length_mm)) |>
+    dplyr::select(year, species_code, latitude, longitude, common_name) |>
+    unique() |>
+    akgfmaps::transform_data_frame_crs(coords = c("longitude", "latitude"), 
+                                       in.crs = "+proj=longlat", 
+                                       out.crs = "EPSG:3338")
+  
+  unique_spp <- unique(lw_dat.sub$common_name)
+  
+  pdf(file = here::here("output", region, paste0(region, "_lw_sample_maps.pdf")), onefile = TRUE, width = 12, height = 8)
+  for(ii in unique_spp) {
+    print(
+      ggplot() +
+        geom_sf(data = map_layers$survey.area, 
+                fill = NA,
+                size = 0.7) +
+        geom_point(data = lw_dat.sub |>
+                     dplyr::filter(common_name == ii),
+                   aes(x = longitude, y = latitude),
+                   size = 0.4,
+                   color = "red") +
+        ggtitle(label = ii) +
+        facet_wrap(~year, ncol = 4) +
+        theme_minimal() +
+        theme(axis.title = element_blank())
+    )
+  }
+  dev.off()
+  
   # Make summary docx
   make_figs <- ""
   for(ii in 1:length(ecdf_files)) {
