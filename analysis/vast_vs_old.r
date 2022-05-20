@@ -23,6 +23,7 @@ for(jj in 1:length(spp_paths)) {
     dplyr::bind_rows(
       read.csv(file = here::here("results", "goa", spp_folders[jj], "index.csv")) |>
         dplyr::filter(Category == "Condition (grams per cm^power)", Time %in% unique(old_condition_df$year)) |>
+        dplyr::filter(Estimate < 0.9) |>
         dplyr::mutate(species_code = as.numeric(spp_folders[jj])) %>%  
         dplyr::rename(year = Time) %>%
         dplyr::mutate(scaled_condition = scale(Estimate)[,1])
