@@ -69,6 +69,152 @@ get_condition_data <- function(channel = NULL) {
     dat_cpue <- RODBC::sqlQuery(channel = channel, query = readr::read_file(qry_cpue))
     dat_biomass <- RODBC::sqlQuery(channel = channel, query = readr::read_file(qry_stratum_biomass))
     
+    if(i == "goa") {  survey_definition_id = 47; min_cruise = 198400; cod_juv_mm = 420}
+    if(i == "ebs") { survey_definition_id = 98; min_cruise = 199900; cod_juv_mm = 460}
+    if(i == "nbs") { survey_definition_id = 143; min_cruise = 201000; cod_juv_mm = 460}
+    if(i == "ai") { survey_definition_id = 52; min_cruise = 198400; cod_juv_mm = 460}
+    
+      effort <- RODBC::sqlQuery(channel = channel, query = paste0("select a.hauljoin, (a.distance_fished * a.net_width/1000) effort_km2, a.start_latitude latitude, a.start_longitude longitude, a.start_time, a.stationid, a.vessel, a.cruise, a.haul, floor(a.cruise/100) year, a.stratum
+                                                                from racebase.haul a, race_data.v_cruises c
+                                                                where a.cruise > ", min_cruise, 
+                                                                "and a.abundance_haul = 'Y'
+                                                                and a.haul_type in (3,13)
+                                                                and a.cruisejoin = c.cruisejoin
+                                                                and c.survey_definition_id = ", survey_definition_id))
+      
+      # ESP species
+      pollock_catch <- RODBC::sqlQuery(channel = channel, query = paste0("select a.hauljoin, b.species_code, nvl(b.number_fish, 0) number_fish, floor(a.cruise/100) year
+            from racebase.haul a, racebase.catch b, race_data.v_cruises c
+            where a.cruise > ", min_cruise,
+              "and a.abundance_haul = 'Y'
+              and b.species_code = 21740
+              and a.haul_type in (3,13)
+              and a.hauljoin = b.hauljoin
+              and a.cruisejoin = c.cruisejoin
+              and c.survey_definition_id = ", survey_definition_id))
+      
+      pollock_cpue <- dplyr::full_join(pollock_catch, effort)
+      
+      pollock_juveniles <- RODBC::sqlQuery(channel = channel, query = paste0("select a.hauljoin, b.species_code, sum(b.frequency) number_juvenile, d.common_name 
+                    from racebase.haul a, racebase.length b, race_data.v_cruises c, racebase.species d
+                        where b.cruise > ", min_cruise,
+                        "and a.hauljoin = b.hauljoin
+                        and a.haul_type in (3,13)
+                        and a.cruisejoin = c.cruisejoin
+                        and c.survey_definition_id = ", survey_definition_id,
+                        "and b.length < 251
+                        and b.species_code = d.species_code
+                        and b.species_code = 21740
+                        group by (a.hauljoin, d.common_name, b.species_code, d.common_name)"))
+
+      pollock_adults <- RODBC::sqlQuery(channel = channel, query = paste0("select a.hauljoin, b.species_code, sum(b.frequency) number_adult, d.common_name 
+                    from racebase.haul a, racebase.length b, race_data.v_cruises c, racebase.species d
+                        where b.cruise > ", min_cruise,
+                        "and a.hauljoin = b.hauljoin
+                        and a.haul_type in (3,13)
+                        and a.cruisejoin = c.cruisejoin
+                        and c.survey_definition_id = ", survey_definition_id,
+                        "and b.length > 250
+                        and b.species_code = d.species_code
+                        and b.species_code = 21740
+                        group by (a.hauljoin, d.common_name, b.species_code, d.common_name, b.vessel, b.cruise, b.haul)"))
+      
+
+      pollock_lh <- dplyr::full_join(pollock_adults, pollock_juveniles)
+      pollock_cpue <- dplyr::full_join(pollock_cpue, pollock_lh, by = c("HAULJOIN", "SPECIES_CODE"))
+      
+      pollock_cpue$NUMBER_ADULT[is.na(pollock_cpue$NUMBER_ADULT)] <- 0
+      pollock_cpue$NUMBER_JUVENILE[is.na(pollock_cpue$NUMBER_JUVENILE)] <- 0
+      pollock_cpue$NUMBER_FISH[is.na(pollock_cpue$NUMBER_FISH)] <- 0
+      pollock_cpue$PROPORTION_JUVENILE <- pollock_cpue$NUMBER_JUVENILE / (pollock_cpue$NUMBER_JUVENILE + pollock_cpue$NUMBER_ADULT)
+      pollock_cpue$SPECIES_CODE[is.na(pollock_cpue$SPECIES_CODE)] <- 21740
+      pollock_cpue$COMMON_NAME[is.na(pollock_cpue$COMMON_NAME)] <- "walleye pollock"
+      pollock_cpue <- dplyr::filter(pollock_cpue, !is.infinite(PROPORTION_JUVENILE), !is.na(PROPORTION_JUVENILE))
+      
+      pollock_cpue <- pollock_cpue |>
+        dplyr::mutate(NUMBER_JUVENILE = round(PROPORTION_JUVENILE * NUMBER_FISH),
+                      NUMBER_ADULT = round((1-PROPORTION_JUVENILE) * NUMBER_FISH)) |>
+        dplyr::select(-NUMBER_FISH, -PROPORTION_JUVENILE) |>
+        tidyr::pivot_longer(cols = c(NUMBER_JUVENILE, NUMBER_ADULT)) |>
+        dplyr::mutate(SPECIES_CODE = ifelse(name == "NUMBER_JUVENILE", 21741, 21742),
+                      COMMON_NAME = ifelse(name == "NUMBER_JUVENILE", "walleye pollock (juvenile)", "walleye pollock (adult)")) |>
+        dplyr::select(-name) |>
+        dplyr::rename(NUMBER_FISH = value)
+      
+      names(pollock_cpue) <- casefold(names(pollock_cpue))
+      
+      pollock_lw <- dplyr::filter(dat_lw, SPECIES_CODE == 21740, !is.na(WEIGHT_G)) |>
+        dplyr::mutate(SPECIES_CODE = ifelse(LENGTH_MM < 251, 21741, 21742),
+                      COMMON_NAME = ifelse(LENGTH_MM < 251, "walleye pollock (< 25 cm)", "walleye pollock (>= 25 cm)"))
+      
+      names(pollock_lw) <- casefold(names(pollock_lw))
+      
+      # P. cod
+      cod_catch <- RODBC::sqlQuery(channel = channel, query = paste0("select a.hauljoin, b.species_code, nvl(b.number_fish, 0) number_fish, floor(a.cruise/100) year
+            from racebase.haul a, racebase.catch b, race_data.v_cruises c
+            where a.cruise > ", min_cruise,
+              "and a.abundance_haul = 'Y'
+              and b.species_code = 21720
+              and a.haul_type in (3,13)
+              and a.hauljoin = b.hauljoin
+              and a.cruisejoin = c.cruisejoin
+              and c.survey_definition_id = ", survey_definition_id))
+      
+      cod_cpue <- dplyr::full_join(cod_catch, effort)
+      
+      cod_juveniles <- RODBC::sqlQuery(channel = channel, query = paste0("select a.hauljoin, b.species_code, sum(b.frequency) number_juvenile, d.common_name
+                    from racebase.haul a, racebase.length b, race_data.v_cruises c, racebase.species d
+                        where b.cruise > ", min_cruise,
+                        "and a.hauljoin = b.hauljoin
+                        and a.haul_type in (3,13)
+                        and a.cruisejoin = c.cruisejoin
+                        and c.survey_definition_id = ", survey_definition_id,
+                        "and b.length < ", cod_juv_mm+1,
+                        "and b.species_code = d.species_code
+                        and b.species_code = 21720
+                        group by (a.hauljoin, d.common_name, b.species_code, d.common_name)"))
+      
+      cod_adults <- RODBC::sqlQuery(channel = channel, query = paste0("select a.hauljoin, b.species_code, sum(b.frequency) number_adult, d.common_name
+                    from racebase.haul a, racebase.length b, race_data.v_cruises c, racebase.species d
+                        where b.cruise > ", min_cruise,
+                                                                          "and a.hauljoin = b.hauljoin
+                        and a.haul_type in (3,13)
+                        and a.cruisejoin = c.cruisejoin
+                        and c.survey_definition_id = ", survey_definition_id,
+                        "and b.length > ", cod_juv_mm,
+                        "and b.species_code = d.species_code
+                        and b.species_code = 21720
+                        group by (a.hauljoin, d.common_name, b.species_code, d.common_name, b.vessel, b.cruise, b.haul)"))
+      
+      cod_lh <- dplyr::full_join(cod_adults, cod_juveniles)
+      cod_cpue <- dplyr::full_join(cod_cpue, cod_lh, by = c("HAULJOIN", "SPECIES_CODE"))
+      
+      cod_cpue$NUMBER_ADULT[is.na(cod_cpue$NUMBER_ADULT)] <- 0
+      cod_cpue$NUMBER_JUVENILE[is.na(cod_cpue$NUMBER_JUVENILE)] <- 0
+      cod_cpue$NUMBER_FISH[is.na(cod_cpue$NUMBER_FISH)] <- 0
+      cod_cpue$PROPORTION_JUVENILE <- cod_cpue$NUMBER_JUVENILE / (cod_cpue$NUMBER_JUVENILE + cod_cpue$NUMBER_ADULT)
+      cod_cpue$SPECIES_CODE[is.na(cod_cpue$SPECIES_CODE)] <- 21720
+      cod_cpue$COMMON_NAME[is.na(cod_cpue$COMMON_NAME)] <- "Pacific cod"
+      cod_cpue <- dplyr::filter(cod_cpue, !is.infinite(PROPORTION_JUVENILE), !is.na(PROPORTION_JUVENILE))
+      
+      cod_cpue <- cod_cpue |>
+        dplyr::mutate(NUMBER_JUVENILE = round(PROPORTION_JUVENILE * NUMBER_FISH),
+                      NUMBER_ADULT = round((1-PROPORTION_JUVENILE) * NUMBER_FISH)) |>
+        dplyr::select(-NUMBER_FISH, -PROPORTION_JUVENILE) |>
+        tidyr::pivot_longer(cols = c(NUMBER_JUVENILE, NUMBER_ADULT)) |>
+        dplyr::mutate(SPECIES_CODE = ifelse(name == "NUMBER_JUVENILE", 21721, 21722),
+                      COMMON_NAME = ifelse(name == "NUMBER_JUVENILE", "Pacific cod (juvenile)", "Pacific cod (adult)")) |>
+        dplyr::select(-name) |>
+        dplyr::rename(NUMBER_FISH = value)
+      
+      names(cod_cpue) <- casefold(names(cod_cpue))
+      
+      cod_lw <- dplyr::filter(dat_lw, SPECIES_CODE == 21720, !is.na(WEIGHT_G)) |>
+        dplyr::mutate(SPECIES_CODE = ifelse(LENGTH_MM < cod_juv_mm+1, 21721, 21722),
+                      COMMON_NAME = ifelse(LENGTH_MM < cod_juv_mm+1, "Pacific cod (juvenile)", "Pacific cod (adult)"))
+      
+      names(cod_lw) <- casefold(names(cod_lw)) 
+    
     if(class(dat_lw) != "data.frame") {
       message(print(dat_lw))
       stop("get_condition_data: RODBC error - no length/weight returned.")
@@ -87,7 +233,7 @@ get_condition_data <- function(channel = NULL) {
     names(dat_lw) <- casefold(names(dat_lw))
     names(dat_cpue) <- casefold(names(dat_cpue))
     names(dat_biomass) <- casefold(names(dat_biomass))
-    combined_cpue_lw <- dplyr::bind_rows(dat_lw, dat_cpue)
+    combined_cpue_lw <- dplyr::bind_rows(dat_lw, dat_cpue, pollock_cpue, pollock_lw, cod_cpue, cod_lw)
     
     write.csv(combined_cpue_lw, paste0(getwd(),"/data/",i, "_all_species.csv"), row.names = FALSE)
     write.csv(dat_biomass, paste0(getwd(),"/data/",i, "_stratum_biomass_all_species.csv"), row.names = FALSE)
