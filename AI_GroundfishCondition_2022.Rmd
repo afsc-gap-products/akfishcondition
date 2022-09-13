@@ -3,8 +3,8 @@ title: Aleutian Islands Groundfish Condition
 author: 
 - affiliation: RACE
   description: Research Fisheries Biologist
-  email: Ned.Laman@NOAA.gov
-  name: Ned Laman
+  email: cecilia.oleary@NOAA.gov
+  name: Cecilia O'Leary
 output: word_document
 fontsize: 12pt
 addr: 
@@ -14,21 +14,10 @@ addr:
 ---
 
 ```{r setup, include=FALSE}
-# Load packages
-list_rpackage <- c("knitr", "ggplot2", "devtools", "reader", "viridis", "akfishcondition")
-which_not_installed <- which(list_rpackage %in% rownames(installed.packages()) == FALSE)
+library(akfishcondition)
+library(knitr)
 
-if(length(which_not_installed) > 1){
-	install.packages(list_rpackage[which_not_installed], dep = TRUE)
-	# install akfishcondition from S.Rohan repo
-	if ("akfishcondition" %in% list_rpackage[which_not_installed]){
-		devtools::install_github("sean-rohan-NOAA/akfishcondition")
-		}
-	}
-
-# load the packages from the list
-lapply(list_rpackage, require, character.only = TRUE)
-
+region <- "AI"
 # Unzip map files
 unzip(system.file("extdata/2021_ESR.zip", package = "akfishcondition"))
 
@@ -37,11 +26,11 @@ if(!dir.exists("plots")) {
 }
 
 # Load data
-ai_ann_mean_resid_df <- akfishcondition:::AI_INDICATOR$FULL_REGION
-ai_stratum_resids_df <- akfishcondition:::AI_INDICATOR$STRATUM
+ai_ann_mean_resid_df <- AI_INDICATOR$FULL_REGION
+ai_stratum_resids_df <- AI_INDICATOR$STRATUM
 ```
 
-Contributed by Ned Laman^1^, Sean Rohan^1^  
+Contributed by Cecilia O'Leary^1^ and Sean Rohan^1^  
 ^1^ Resource Assessment and Conservation Engineering Division, Groundfish Assessment Program, Alaska Fisheries Science Center, National Marine Fisheries Service, NOAA, Seattle, WA  
 **Contact**: ned.laman@noaa.gov  
 **Last updated**:  September 2020
@@ -49,7 +38,7 @@ Contributed by Ned Laman^1^, Sean Rohan^1^
 **Description of Indicator**: Residual body condition computed from a long-term average of length-weight-based body condition is an indicator of variability in somatic growth (Brodeur et al., 2004) and represents how heavy a fish is per unit body length. As such, it can be considered an indicator of ecosystem productivity. Positive residual body condition is interpreted to indicate fish in better condition (heavier per unit length) than those with negative residual body condition indicating poorer condition (lighter per unit length). Overall body condition of fishes likely reflects fish growth which can have implications for their subsequent survival (Paul and Paul, 1999; Boldt and Haldorson, 2004).
 
 ```{r map, include = TRUE, out.width = "200%", fig.cap = "\\label{fig:figs}Figure 1. National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center (AFSC) Resource Assessment and Conservation Engineering Groundfish Assessment Program (RACE-GAP) Aleutian Islands summer bottom trawl survey area with International North Pacific Fisheries Commission (INPFC) statistical fishing strata delineated by the purple lines.",  echo = FALSE}
-include_graphics("MapAI.png") 
+knitr::include_graphics("MapAI.png") 
 ```
 
 Paired lengths and weights of individual fishes were examined from the Alaska Fisheries Science Center biennial Resource Assessment and Conservation Engineering (AFSC/RACE) - Groundfish Assessment Program’s (GAP) bottom trawl survey of the Aleutian Islands (AI). Analyses focused on walleye pollock (*Gadus chalcogrammus*), Pacific cod (*Gadus macrocephalus*), arrowtooth flounder (*Atheresthes stomias*), southern rock sole (*Lepidopsetta bilineata*), Atka mackerel (*Pleurogrammus monopterygius*), northern rockfish (*Sebastes polyspinis*), and Pacific ocean perch (*Sebastes alutus*) collected in trawls with satisfactory performance at standard survey stations. Data were combined in the International North Pacific Fisheries Commission (INPFC) strata; Southern Bering Sea, Eastern Aleutian Islands, Central Aleutian Islands, and Western Aleutian Islands (Figure 1). 
@@ -61,35 +50,30 @@ Length-weight relationships for each of the seven species were estimated within 
 **Status and Trends**: Residual body condition varied amongst survey years for all species considered (Figure 2). The updated computational methods used to calculate this year’s residual body condition indexes returned different values than those reported in the last Aleutian Islands Ecosystem Considerations document (Boldt et al. 2018). The patterns of above or below average residual condition observed in 2018 largely match those generated here from the updated computations, but with notable reductions in the magnitude of the residuals from the latter in most years. The lower magnitude results come from using stratum-specific regression coefficients and samples weighted in proportion to biomass which reduces the influence of spatio-temporal variation in sampling intensity on the residuals. Some exceptions to the pattern tracking observed for the majority of cases are instances when residual condition switched from above to below average (>250 mm pollock in 1993 and 2015 and 100–250 mm pollock in 2010) and an instance when 100–250 mm pollock (2016) condition switched from below average to above. Condition of most species since 2010 has primarily been below the long term average or neutral. Exceptions occur for 100–250 mm walleye pollock in 2016 and Atka mackerel in 2012 where the residual body condition is neutral or slightly positive. Southern rock sole residual body condition is trending positive in the Aleutians since 2012. The period prior to the 2010 AI bottom trawl survey is characterized by body condition indicators cycling between positive and negative values through the years.
 
 ```{r figure 2 grid, include = TRUE, echo = FALSE, fig.height = 14, fig.width = 12, fig.cap = "\\label{fig:figs}Figure 2. Biomass-weighted residual body condition index across survey years (1984--2018) for seven Aleutian Islands groundfish species collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center (AFSC) Resource Assessment and Conservation Engineering Groundfish Assessment Program (RACE-GAP) standard summer bottom trawl survey. Filled bars denote weighted length-weight residuals using this year's indicator calculation, error bars denote two standard errors, points denote the mean of the unweighted length-weight residual from the previous year's (2018) ESR.",  message = FALSE, warning = FALSE}
-ai_ann_mean_resid_df$display_name <- akfishcondition::set_plot_order(ai_ann_mean_resid_df$common_name, region = "AI")
+fig2  <- plot_anomaly_timeseries(x = AI_INDICATOR$FULL_REGION,
+                        region = region, 
+                        fill_color = "#0085CA", 
+                        var_y_name = "mean_wt_resid", 
+                        var_y_se_name = "se_wt_resid",
+                        var_x_name = "year",
+                        y_title = "Length-weight residual (ln(g))",
+                        format_for = "rmd")
 
-fig2 <- ggplot() + 
-  geom_bar(data = ai_ann_mean_resid_df, 
-               aes(x = year, 
-                   y = mean_wt_resid), 
-           stat = "identity", 
-           fill = "plum", 
-           color = "black",
-           width = 0.8) +
-  geom_errorbar(data = ai_ann_mean_resid_df, 
-               aes(x = year, 
-                   ymax = mean_wt_resid + 2*se_wt_resid,
-                   ymin = mean_wt_resid - 2*se_wt_resid),
-           width = 0.8) +
-  geom_hline(yintercept = 0) +
-    # geom_point(data = old_indicator_dat, 
-    #          aes(x = year, 
-    #              y = ymeans)) +
-  facet_wrap(~display_name, ncol = 2, scales = "free_y") +
-  scale_x_continuous(name = "Year") +
-  scale_y_continuous(name = "Length-weight residual (ln(g))") +
-  theme_condition_index()
-print(fig2)
+fig2_png  <- plot_anomaly_timeseries(x = AI_INDICATOR$FULL_REGION,
+                        region = region, 
+                        fill_color = "#0085CA", 
+                        var_y_name = "mean_wt_resid", 
+                        var_y_se_name = "se_wt_resid",
+                        var_x_name = "year",
+                        y_title = "Length-weight residual (ln(g))",
+                        format_for = "png")
+
+print(fig2 + theme_condition_index())
 ```
 
 ```{r figure 2 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png("AIbyyear.png",width=6,height=7,units="in",res=300)
-print(fig2 + theme_pngs())
+png(here::here("plots", "AI_condition.png"), width = 6, height = 7, units = "in", res = 300)
+print(fig2_png + theme_blue_strip())
 dev.off()
 ```
 
@@ -97,28 +81,24 @@ The general pattern of below average residual body condition index across recent
 
 
 ```{r figure 3 grid, include = TRUE, echo = FALSE, fig.height = 14, fig.width = 12, fig.cap = "\\label{fig:figs}Figure 3. Residual body condition index for seven Aleutian Islands groundfish species collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center (AFSC) Resource Assessment and Conservation Engineering Groundfish Assessment Program (RACE-GAP) standard summer bottom trawl survey (1984--2018) grouped by International North Pacific Fisheries Commission (INPFC) statistical sampling strata.", message = FALSE, warning = FALSE}
-ai_stratum_resids_df$display_name <- akfishcondition::set_plot_order(ai_stratum_resids_df$common_name, region = "AI")
-fig3 <- ggplot(data = ai_stratum_resids_df, 
-               aes(x = year, 
-                   y = stratum_resid_mean, 
-                   fill = set_stratum_order(trimws(inpfc_stratum), region = "AI"))) + 
-  geom_hline(yintercept = 0) +
-  geom_bar(stat = "identity", 
-           color = "black",
-           position = "stack",
-           width = 0.8) +
-  facet_wrap(~display_name, ncol = 2, scales = "free_y") +
-  scale_x_continuous(name = "Year") +
-  scale_y_continuous(name = "Length-weight residual (ln(g))") +
-  scale_fill_brewer(name = "Stratum", palette = "BrBG") +
-  theme_condition_index()
-print(fig3)
+fig3 <- plot_stratum_stacked_bar(x = AI_INDICATOR$STRATUM, 
+                                 region = region, 
+                                 fill_palette = "BrBG",
+                                 var_y_name = "stratum_resid_mean", 
+                                 var_x_name = "year",
+                                 var_group_name = "inpfc_stratum",
+                                 fill_title = "Stratum",
+                                 y_title = "Length-weight residual (ln(g))")
+
+print(fig3 + theme_condition_index())
 ```
 
 ```{r figure 3 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png(here::here("plots", "ai_condition_by_stratum.png"),width=6,height=7,units="in",res=300)
+png(here::here("plots", "AI_condition_by_stratum.png"),width=6,height=7,units="in",res=300)
 print(fig3 + theme_pngs())
 dev.off()
+
+ai_stratum_resids_df$display_name <- akfishcondition::set_plot_order(ai_stratum_resids_df$common_name, region = region)
 
 for(i in 1:length(unique(ai_stratum_resids_df$display_name))) {
   

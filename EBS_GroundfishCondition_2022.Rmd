@@ -27,9 +27,9 @@ pkg_version <- packageVersion("akfishcondition")
 unzip(system.file("extdata/2021_ESR.zip", package = "akfishcondition"))
 
 # Load data
-ebs_ann_mean_resid_df <- akfishcondition:::EBS_INDICATOR$FULL_REGION
-ebs_stratum_resids_df <- akfishcondition:::EBS_INDICATOR$STRATUM
-nbs_ann_mean_resid_df <- akfishcondition:::NBS_INDICATOR$FULL_REGION
+ebs_ann_mean_resid_df <- EBS_INDICATOR$FULL_REGION
+ebs_stratum_resids_df <- EBS_INDICATOR$STRATUM
+nbs_ann_mean_resid_df <- NBS_INDICATOR$FULL_REGION
 
 if(!dir.exists("plots")) {
   dir.create("plots")
@@ -67,14 +67,6 @@ if(make_map){
     ggplot2::geom_sf(data = ebs_layers$akland, 
                      fill = "grey85", 
                      color = "black") +
-    # ggplot2::geom_text(data = data.frame(x = -158.5, 
-    #                                      y = 62.4, 
-    #                                      lab = "Alaska") %>%
-    #                      akgfmaps::transform_data_frame_crs(out.crs = coldpool:::ebs_proj_crs),
-    #                    mapping = aes(x = x,
-    #                                  y = y,
-    #                                  label = lab),
-    #                    size = rel(8)) +
     geom_sf(data = ebs_layers$graticule,
             size = 0.2,
             alpha = 0.5) +
@@ -105,8 +97,8 @@ if(make_map){
 
 ```
 
-Contributed by Sean Rohan and Bianca Prohaska   
-Resource Assessment and Conservation Engineering Division, Alaska Fisheries Science Center, National Marine Fisheries Service, NOAA  
+Contributed by Sean Rohan^1^ and Bianca Prohaska^1^   
+^1^Resource Assessment and Conservation Engineering Division, Alaska Fisheries Science Center, National Marine Fisheries Service, NOAA  
 **Contact**: sean.rohan@noaa.gov
 **Last updated**:  October 2021
 
@@ -126,57 +118,63 @@ To calculate indicators, length-weight relationships were estimated from linear 
 
 ```{r figure 2 grid, include=TRUE, echo=FALSE, fig.height=14,fig.width=12,fig.cap="\\label{fig:figs}Figure 2. Weighted length-weight residuals for seven groundfish species and age 1–2 walleye pollock (100–250 mm) collected during AFSC/RACE GAP standard summer bottom trawl surveys of the eastern Bering Sea shelf, 1999-2021. Filled bars denote weighted length-weight residuals using this year's indicator calculation. Error bars denote two standard errors",  message=FALSE, warning=FALSE}
 # Set factor levels for plotting order
-ebs_ann_mean_resid_df$display_name <- akfishcondition::set_plot_order(ebs_ann_mean_resid_df$common_name, region = "BS")
 
-fig2 <- ggplot() + 
-  geom_bar(data = ebs_ann_mean_resid_df, 
-               aes(x = year, 
-                   y = mean_wt_resid),
-           stat = "identity", fill = "#0085CA", color = "black") +
-  geom_errorbar(data = ebs_ann_mean_resid_df, 
-               aes(x = year, 
-                   ymax = mean_wt_resid + 2*se_wt_resid,
-                   ymin = mean_wt_resid - 2*se_wt_resid)) +
-  geom_hline(yintercept = 0) +
-  facet_wrap(~display_name, ncol = 2, scales = "free_y") +
-  scale_x_continuous(name = "Year") +
-  scale_y_continuous(name = "Length-weight residual (ln(g))") +
-  theme_condition_index()
-print(fig2)
+fig2  <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION,
+                        region = "BS", 
+                        fill_color = "#0085CA", 
+                        var_y_name = "mean_wt_resid", 
+                        var_y_se_name = "se_wt_resid",
+                        var_x_name = "year",
+                        y_title = "Length-weight residual (ln(g))",
+                        format_for = "rmd")
+
+fig2_png  <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION,
+                        region = "BS", 
+                        fill_color = "#0085CA", 
+                        var_y_name = "mean_wt_resid", 
+                        var_y_se_name = "se_wt_resid",
+                        var_x_name = "year",
+                        y_title = "Length-weight residual (ln(g))",
+                        format_for = "png")
+
+print(fig2 + theme_condition_index())
 ```
 
 ```{r figure 2 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
 png(here::here("plots", "EBS_condition.png"),width=6,height=7,units="in",res=300)
-print(fig2 + theme_pngs())
+print(fig2_png + theme_blue_strip())
 dev.off()
 
 ```
 
 
 ```{r figure 3 grid, include=TRUE, echo=FALSE, fig.height=14,fig.width=12,fig.cap="\\label{fig:figs}Figure 3. Length-weight residuals for groundfish species and age 1–2 walleye pollock (100–250 mm) collected during AFSC/RACE GAP summer bottom trawl surveys of the Northern Bering Sea, 2010 and 2017–2021. Error bars denote two standard errors.",  message=FALSE, warning=FALSE}
-nbs_ann_mean_resid_df$display_name <- set_plot_order(nbs_ann_mean_resid_df$common_name, region = "BS")
 
-fig3 <- ggplot() + 
-  geom_bar(data = nbs_ann_mean_resid_df, 
-               aes(x = year, 
-                   y = mean_resid),
-           stat = "identity", fill = "#54ADDB", color = "black") +
-  geom_errorbar(data = nbs_ann_mean_resid_df, 
-               aes(x = year, 
-                   ymax = mean_resid + 2*se,
-                   ymin = mean_resid - 2*se)) +
-  geom_hline(yintercept = 0) +
-  facet_wrap(~display_name, ncol = 2, scales = "free_y") +
-  scale_x_continuous(name = "Year", breaks = c(2010, 2015, 2020), limits = c(2009, 2022)) +
-  scale_y_continuous(name = "Length-weight residual (ln(g))") +
-  theme_condition_index()
-print(fig3)
+fig3 <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
+                        region = "BS", 
+                        fill_color = "#0085CA", 
+                        var_y_name = "mean_resid", 
+                        var_y_se_name = "se",
+                        var_x_name = "year",
+                        y_title = "Length-weight residual (ln(g))",
+                        format_for = "rmd")
+
+fig3_png <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
+                        region = "BS", 
+                        fill_color = "#0085CA", 
+                        var_y_name = "mean_resid", 
+                        var_y_se_name = "se",
+                        var_x_name = "year",
+                        y_title = "Length-weight residual (ln(g))",
+                        format_for = "png")
+
+print(fig3 + theme_condition_index())
 
 ```
 
 ```{r figure 3 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
 png(here::here("plots", "NBS_condition.png"),width=6,height=7,units="in",res=300)
-print(fig3 + theme_pngs())
+print(fig3_png + theme_blue_strip())
 dev.off()
 ```
 
@@ -185,30 +183,28 @@ In 2021, negative length-weight residuals were observed for large walleye polloc
 In 2021, similar to 2010-2019, Pacific cod condition was generally negative on the middle and outer northern shelf and outer southern shelf (Strata 40, 50, and 60); however, condition was also negative on the inner southern shelf and inner northern shelf (strata 10, 20 and 30) indicating a decline in condition on these strata since 2019. Large walleye pollock (>250 mm) condition was primarily negative on all strata in 2021, which is consistent with the observed condition on the inner shelf since 2015. In 2021, small walleye pollock (100–250 mm) condition was generally positive, and consistent with observed condition on the inner shelf since 2014. In 2021, condition was observed in all EBS strata for northern rock sole, Alaska plaice, flathead sole and arrowtooth flounder. The remaining species, yellowfin sole, had positive residuals on the outer shelf (Stratum 40).
 
 ```{r figure 4 set up, include=FALSE, fig.height=4, fig.width=4, message=FALSE, warning=FALSE}
-ebs_stratum_resids_df$display_name <- set_plot_order(ebs_stratum_resids_df$common_name, region = "BS")
-
-fig4 <- ggplot(data = ebs_stratum_resids_df, 
-               aes(x = year, 
-                   y = stratum_resid_mean, 
-                   fill = factor(stratum))) + 
-  geom_hline(yintercept = 0) +
-  geom_bar(stat = "identity", color = "black", position = "stack") +
-  facet_wrap(~set_plot_order(display_name, region = "BS"), ncol = 2, scales = "free_y") +
-  scale_x_continuous(name = "Year") +
-  scale_y_continuous(name = "Length-weight residual  (ln(g))") +
-  scale_fill_brewer(name = "Stratum", palette = "BrBG") +
-  theme_condition_index()
-
+fig4 <- plot_stratum_stacked_bar(x = EBS_INDICATOR$STRATUM,
+                                 region = "BS",
+                                 fill_palette = "BrBG",
+                                 var_y_name = "stratum_resid_mean",
+                                 var_x_name = "year",
+                                 var_group_name = "stratum",
+                                 fill_title = "Stratum",
+                                 y_title = "Length-weight residual (ln(g))")
 ```
 
 ```{r figure 4 grid, include=TRUE, echo=FALSE, fig.height=14, fig.width=12, fig.cap="\\label{fig:figs}Figure 4. Length-weight residuals by survey stratum (10-60) for seven eastern Bering Sea shelf groundfish species and age 1–2 walleye pollock (100–250 mm) sampled in the AFSC/RACE GAP standard summer bottom trawl survey, 1999-2021. Length-weight residuals are not weighted by stratum biomass.",message=FALSE, warning=FALSE}
-print(fig4)
+print(fig4 +
+  theme_condition_index())
 ```
 
 ```{r figure 4 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
 png(here::here("plots", "EBS_condition_by_stratum.png"), width = 6, height = 7, units = "in", res = 300)
-print(fig4 + theme_pngs())
+print(fig4 + theme_blue_strip())
 dev.off()
+
+ebs_stratum_resids_df <- EBS_INDICATOR$STRATUM
+ebs_stratum_resids_df$display_name <- set_plot_order(ebs_stratum_resids_df$common_name, region = "BS")
 
 for(i in 1:length(unique(ebs_stratum_resids_df$display_name))) {
   png(paste0("./plots/EBS_NBS_condition_", gsub(">", "gt", 
