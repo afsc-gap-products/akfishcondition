@@ -1,7 +1,7 @@
 Package: akfishcondition
 Type: Package
 Title: Groundfish condition index
-Version: 2.2.0
+Version: 2.3.0
 Authors@R: c(person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre")),
     person("Ned", "Laman", email = "ned.laman@noaa.gov", role = c("ctb")),
     person("Cecilia", "O'Leary", email = "cecilia.oleary@noaa.gov", role = c("ctb")))
@@ -17,7 +17,7 @@ Description: This package calculates groundfish condition based on length-weight
 License: GPL (>=2)
 Encoding: UTF-8
 LazyData: false
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 Imports: colorspace,
     viridis
 Suggests: knitr, rmarkdown, RODBC, getPass, stringr, VAST (>= 3.9.0), FishStatsUtils (>= 2.11.0), tictoc
