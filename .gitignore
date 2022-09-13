@@ -36,8 +36,10 @@ doc
 Meta
 *.png
 /output/
-/data/
+/data/*.csv
+/data/*.rds
 /results/
+/archive/
 *.csv
 0_update_condition_data.html
 
