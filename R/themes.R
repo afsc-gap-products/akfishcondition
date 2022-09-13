@@ -13,8 +13,12 @@ theme_condition_index <- function() {
           legend.text = element_text(size = 18),
           legend.position = "right",
           panel.grid.minor = element_blank(),
-          strip.text = element_text(size = 20),
-          strip.background = element_blank())
+          strip.text = element_text(size = 20,
+                                    color = "white",
+                                    face = "bold",
+                                    margin = margin(0.5, 0, 0.5, 0, "mm")),
+          strip.background = element_rect(fill = "#0055a4",
+                                          color = NA))
 } 
 
 #' Default png theme
@@ -34,6 +38,30 @@ theme_pngs <- function() {
           strip.text = element_text(size = 11),
           strip.background = element_blank())
 } 
+
+#' Multi-panel map theme with blue strip
+#' 
+#' Theme for multipanel maps with blue strip
+#' 
+#' @export
+
+theme_blue_strip <- function() {
+  theme_bw() %+replace%
+    theme(axis.title = element_text(color = "black", face = "bold", size = 10),
+          axis.text = element_text(color = "black"),
+          axis.ticks = element_line(color = "black"),
+          axis.text.x = element_text(size = 9),
+          axis.text.y = element_text(size = 9),
+          panel.grid = element_blank(),
+          legend.title = element_blank(),
+          legend.position = "bottom",
+          strip.text = element_text(size = 9,
+                                    color = "white",
+                                    face = "bold",
+                                    margin = margin(0.5, 0, 0.5, 0, "mm")),
+          strip.background = element_rect(fill = "#0055a4",
+                                          color = NA))
+}
 
 #' Set species plotting order
 #' @param common_name Vector of common names
