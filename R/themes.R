@@ -135,8 +135,9 @@ set_plot_order <- function(common_name, region) {
 #' @export
 
 set_stratum_order <- function(stratum, region) {
-  if(!(region %in% c("AI", "GOA"))) {
-    stop("Region must be either: AI or GOA")
+  region <- toupper(region)
+  if(!(region %in% c("AI", "GOA", "BS"))) {
+    stop("Region must be either: AI, BS, or GOA")
   }
   if(region == "GOA") {
     return(factor(stratum,
@@ -151,5 +152,7 @@ set_stratum_order <- function(stratum, region) {
                              "Eastern Aleutians",
                              "Central Aleutians",
                              "Western Aleutians")))
+  } else {
+    return(factor(stratum))
   }
 }
