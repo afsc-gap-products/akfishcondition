@@ -203,40 +203,17 @@ png(here::here("plots", "EBS_condition_by_stratum.png"), width = 6, height = 7, 
 print(fig4 + theme_blue_strip())
 dev.off()
 
-ebs_stratum_resids_df <- EBS_INDICATOR$STRATUM
-ebs_stratum_resids_df$display_name <- set_plot_order(ebs_stratum_resids_df$common_name, region = "BS")
-
-for(i in 1:length(unique(ebs_stratum_resids_df$display_name))) {
-  png(paste0("./plots/EBS_NBS_condition_", gsub(">", "gt", 
-                                                 unique(ebs_stratum_resids_df$display_name)[i]), ".png"), 
-      width = 6, height = 7, units = "in", res = 300)
-  print(
-    ggplot(data = nbs_ann_mean_resid_df %>% 
-             dplyr::mutate(stratum = "NBS",
-                           stratum_resid_mean = mean_resid,
-                           stratum_resid_se = se) %>%
-             rbind.fill(ebs_stratum_resids_df) %>% 
-             dplyr::filter(display_name == unique(ebs_stratum_resids_df$display_name)[i]),
-           aes(x = year, 
-               y = stratum_resid_mean, 
-               fill = stratum,
-               ymin = stratum_resid_mean - 2*stratum_resid_se,
-               ymax = stratum_resid_mean + 2*stratum_resid_se)) +
-      geom_hline(yintercept = 0) +
-      ggtitle(unique(ebs_stratum_resids_df$display_name)[i]) +
-      geom_bar(stat = "identity", color = "black", position = "stack") +
-      geom_errorbar() +
-      facet_wrap(~stratum, 
-                 ncol = 2, 
-                 scales = "free_y") +
-      scale_x_continuous(name = "Year") +
-      scale_y_continuous(name = "Length-weight residual (ln(g))") +
-      scale_fill_brewer(name = "Stratum", palette = "BrBG", drop = FALSE) +
-      theme_pngs() + 
-      theme(legend.position = "none",
-            title = element_text(hjust = 0.5)))
-  dev.off()
-}
+plot_species_stratum_bar(
+  x = EBS_INDICATOR$STRATUM,
+  region = "BS",
+  var_x_name = "year",
+  var_y_name = "stratum_resid_mean",
+  var_y_se_name = "stratum_resid_se",
+  y_title = "Length-weight residual (ln(g))",
+  var_group_name = "stratum",
+  fill_title = "Stratum",
+  fill_palette = "BrBG",
+  write_plot = TRUE)
 ```
 
 **Factors influencing observed trends**: Several factors may influence the observed temporal and spatial patterns in fish condition in the EBS and NBS. Water temperature could explain some of the spatial and temporal variability in length-weight residuals. Historically, particularly cold years tend to correspond with negative condition, while particularly warm years tend to correspond to positive condition. For example, water temperatures during the 1999 survey were particularly cold in the Bering Sea and this corresponded with a year of negative condition for all groundfish with individual length-weight data. In addition, spatial temporal factor analyses suggest the morphometric condition of age-7 walleye pollock is strongly correlated with cold pool extent in the EBS [@Gruss2021].  In recent years, continuing warm temperatures across the Bering Sea shelf since the record low seasonal sea ice extent in 2017–2018 and historical cold pool area minimum in 2018 [@Stabeno2019a], may have influenced the positive trend in fish condition from 2016 to 2019.  Although, warmer conditions also occurred in 2021, with the fourth smallest cold pool area and fifth warmest mean bottom temperature in the 39-year survey time series, the majority of species had negative or neutral condition in 2021. Although, warmer temperatures may increase growth rates if there is adequate prey to offset temperature-dependent increases in metabolic demand, growth rates may also decline if prey resources are not adequate to offset temperature-dependent increases in metabolic demand. For example, elevated temperatures during the 2014–2016 marine heatwave in the 
