@@ -28,6 +28,11 @@ library(akfishcondition)
 channel <- akfishcondition:::get_connected(schema = "AFSC")
 
 akfishcondition::get_condition_data(channel = channel)
+
+akfishcondition:::make_data_summary(dat_csv = here::here("data", "nbs_all_species.csv"), region = "NBS")
+akfishcondition:::make_data_summary(dat_csv = here::here("data", "ebs_all_species.csv"), region = "EBS")
+akfishcondition:::make_data_summary(dat_csv = here::here("data", "ai_all_species.csv"), region = "AI")
+akfishcondition:::make_data_summary(dat_csv = here::here("data", "goa_all_species.csv"), region = "GOA")
 ```
 
 
@@ -36,20 +41,29 @@ akfishcondition::get_condition_data(channel = channel)
 ## 1.1 Aleutian Islands
 ```{r get_ai, message=FALSE, warning=FALSE}
 # Aleutian Islands
-ai_biomass <- read.csv(file = here::here("data", "stratum_biomass_ai_all_species.csv"))
+ai_biomass <- read.csv(file = here::here("data", "ai_stratum_biomass_all_species.csv"))
 
-ai_lw <- read.csv(file = here::here("data", "gcd_ai_all_species.csv")) %>%
+ai_lw <- read.csv(file = here::here("data", "ai_all_species.csv")) %>%
                 dplyr::filter(!is.na(length_mm)) %>%
                 dplyr::mutate(ID = paste(cruise, vessel, haul, specimenid, sep = "_"))
 
-ai_nsamp <- table(ai_lw$inpfc_stratum, ai_lw$common_name)
+ai_nsamp <- table(ai_lw$inpfc_stratum, ai_lw$common_name) %>%
+  as.data.frame() |>
+  dplyr::rename(n_raw = Freq)
 
 ai_dat <- ai_lw %>% 
   dplyr::inner_join(ai_biomass) %>%
   dplyr::select(-vessel, -cruise, -haul, -hauljoin)
 
 # Checks (stratum count match should be TRUE)
-ai_count_match <- sum(ai_nsamp == table(ai_dat$inpfc_stratum, ai_dat$common_name)) == length(ai_nsamp)
+
+ai_qc_df <- table(ai_dat$inpfc_stratum, ai_dat$common_name) %>% 
+  as.data.frame() %>%
+  dplyr::rename(n_filtered = Freq) %>%
+  dplyr::inner_join(ai_nsamp) %>%
+  dplyr::mutate(equal = n_filtered == n_raw)
+
+ai_count_match <- sum(ai_qc_df$equal) == nrow(ai_qc_df)
 print(paste0("AI stratum count match: ", ai_count_match))
 print(paste0("Year range: ", min(ai_dat$year), "-",  max(ai_dat$year)))
 
@@ -68,18 +82,27 @@ pcod_ai_dat <- ai_dat %>% dplyr::filter(species_code == 21720)
 goa_biomass <- read.csv(file = here::here("data", "stratum_biomass_goa_all_species.csv"))
 
 # Retrieve GOA length-weight, rename INPFFC_AREA to inpfc_stratum and create year field.
-goa_lw <- read.csv(file = here::here("data", "gcd_goa_all_species.csv")) %>%
+goa_lw <- read.csv(file = here::here("data", "goa_all_species.csv")) %>%
                 dplyr::filter(!is.na(length_mm)) %>%
                 dplyr::mutate(ID = paste(cruise, vessel, haul, specimenid, sep = "_"))
 
-goa_nsamp <- table(goa_lw$inpfc_stratum, goa_lw$common_name)
+goa_nsamp <- table(goa_lw$inpfc_stratum, goa_lw$common_name) %>%
+  as.data.frame() |>
+  dplyr::rename(n_raw = Freq)
 
 goa_dat <- goa_lw %>% 
   dplyr::inner_join(goa_biomass) %>%
   dplyr::select(-vessel, -cruise, -haul, -hauljoin)
 
 # Checks (stratum count match should be TRUE)
-goa_count_match <- sum(goa_nsamp == table(goa_dat$inpfc_stratum, goa_dat$common_name)) == length(goa_nsamp)
+
+goa_qc_df <- table(goa_dat$inpfc_stratum, goa_dat$common_name) %>% 
+  as.data.frame() %>%
+  dplyr::rename(n_filtered = Freq) %>%
+  dplyr::inner_join(goa_nsamp) %>%
+  dplyr::mutate(equal = n_filtered == n_raw)
+
+goa_count_match <- sum(goa_qc_df$equal) == nrow(goa_qc_df)
 print(paste0("GOA stratum count match: ", goa_count_match))
 print(paste0("Year range: ", min(goa_dat$year), "-",  max(goa_dat$year)))
 
@@ -99,20 +122,29 @@ pcod_goa_dat <- goa_dat %>% dplyr::filter(species_code == 21720)
 ebs_biomass <- read.csv(file = here::here("data", "stratum_biomass_ebs_all_species.csv"))
 
 # Retrieve EBS length-weight, update stratum field and create year field.
-ebs_lw <- read.csv(file = here::here("data", "gcd_ebs_all_species.csv")) %>%
+ebs_lw <- read.csv(file = here::here("data", "ebs_all_species.csv")) %>%
                 dplyr::filter(stratum < 70) %>%
                 dplyr::filter(!is.na(length_mm)) %>%
                 dplyr::mutate(ID = paste(cruise, vessel, haul, specimenid, sep = "_"),
                               stratum = floor(stratum/10)*10)
 
-ebs_nsamp <- table(ebs_lw$stratum, ebs_lw$common_name)
+ebs_nsamp <- table(ebs_lw$stratum, ebs_lw$common_name) %>%
+  as.data.frame() |>
+  dplyr::rename(n_raw = Freq)
 
 ebs_dat <- ebs_lw %>% 
   dplyr::inner_join(ebs_biomass) %>%
   dplyr::select(-vessel, -cruise, -haul, -hauljoin)
 
 # Checks (stratum count match should be TRUE)
-ebs_count_match <- sum(ebs_nsamp == table(ebs_dat$stratum, ebs_dat$common_name)) == length(ebs_nsamp)
+
+ebs_qc_df <- table(ebs_dat$stratum, ebs_dat$common_name) %>% 
+  as.data.frame() %>%
+  dplyr::rename(n_filtered = Freq) %>%
+  dplyr::inner_join(ebs_nsamp) %>%
+  dplyr::mutate(equal = n_filtered == n_raw)
+
+ebs_count_match <- sum(ebs_qc_df$equal) == nrow(ebs_qc_df)
 print(paste0("EBS stratum count match: ", ebs_count_match))
 print(paste0("Year range: ", min(ebs_dat$year), "-",  max(ebs_dat$year)))
 
@@ -132,11 +164,12 @@ The northern Bering Sea does not use biomass because the entire region is treate
 
 ```{r get_nbs, message=FALSE, warning=FALSE}
 # Retrieve NBS length-weight, update stratum field and create year field.
-nbs_dat <- read.csv(file = here::here("data", "gcd_nbs_all_species.csv")) %>%
+nbs_dat <- read.csv(file = here::here("data", "nbs_all_species.csv")) %>%
   dplyr::filter(!is.na(length_mm)) %>%
   dplyr::mutate(stratum = 999,
                 ID = paste(cruise, vessel, haul, specimenid, sep = "_")) %>%
-  dplyr::select(-vessel, -cruise, -haul, -hauljoin)
+  dplyr::select(-vessel, -cruise, -haul, -hauljoin) %>%
+  dplyr::filter(!(species_code %in% c(21741, 21742, 21721,21722)))
 
 print(paste0("Year range: ", min(nbs_dat$year), "-",  max(nbs_dat$year)))
 
@@ -616,8 +649,14 @@ PCOD_ESP <- list(FULL_REGION_EBS = as.data.frame(pcod_ebs_ann_mean_resid_df),
                  stratum_NBS = NA,
                  LAST_UPDATE = Sys.Date())
 
-save(EBS_INDICATOR, 
-     NBS_INDICATOR, 
+usethis::use_data(EBS_INDICATOR, overwrite = TRUE)
+usethis::use_data(AI_INDICATOR, overwrite = TRUE)
+usethis::use_data(GOA_INDICATOR, overwrite = TRUE)
+usethis::use_data(NBS_INDICATOR, overwrite = TRUE)
+usethis::use_data(PCOD_ESP, overwrite = TRUE)
+
+save(EBS_INDICATOR,
+     NBS_INDICATOR,
      GOA_INDICATOR,
      AI_INDICATOR,
      PCOD_ESP,

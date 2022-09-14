@@ -1,0 +1,486 @@
+---
+title: Pacific cod condition for 2020 ESP
+author: 
+- affiliation: RACE
+  description: Research Fisheries Biologist
+  email: Sean.Rohan@NOAA.gov
+  name: Sean Rohan
+output: word_document
+fontsize: 12pt
+addr: 
+  l1: 7600 Sand Point Way, NE
+  l2: NMFS RACE Division, Groundfish Assessment Program
+  l3: Seattle, WA 98115
+---
+
+```{r setup, include=FALSE}
+# Load packages
+library(knitr)
+library(ggplot2)
+library(devtools)
+library(readr)
+library(viridis)
+
+# Check the akfishcondition package is installed
+if(!("akfishcondition" %in% installed.packages())) {
+  devtools::install_github("sean-rohan-NOAA/akfishcondition")
+}
+
+library(akfishcondition)
+pkg_version <- packageVersion("akfishcondition")
+
+# Unzip packaged csv and map files
+# unzip(system.file("data/2020_ESR.zip", package = "akfishcondition"))
+
+# Load data
+ebs_dat <- readr::read_csv(file = "./2020-08-22_ebs_condition_data_2020_ESR.csv") %>% 
+  dplyr::filter(SPECIES_CODE == 21720)
+nbs_dat <- readr::read_csv(file = "./2020-08-22_nbs_condition_data_2020_ESR.csv") %>% 
+  dplyr::filter(SPECIES_CODE == 21720)
+ai_dat <- readr::read_csv(file = "2020_08_20_ai_condition_data_2018_ESR.csv") %>% 
+  dplyr::filter(SPECIES_CODE == 21720)
+goa_dat <- readr::read_csv(file = "2020_08_20_goa_condition_data_2019_ESR.csv") %>% 
+  dplyr::filter(SPECIES_CODE == 21720)
+
+# Split into adult and subadult based on Stark (2007)
+ebs_dat$SPECIES_CODE[ebs_dat$SPECIES_CODE == 21720  & ebs_dat$LENGTH < 460] <- 21721
+ebs_dat$COMMON_NAME[ebs_dat$SPECIES_CODE == 21720] <- "Pacific cod (>460 mm)"
+ebs_dat$COMMON_NAME[ebs_dat$SPECIES_CODE == 21721] <- "Pacific cod (\u2264460 mm)"
+
+nbs_dat$SPECIES_CODE[nbs_dat$SPECIES_CODE == 21720  & nbs_dat$LENGTH < 460] <- 21721
+nbs_dat$COMMON_NAME[nbs_dat$SPECIES_CODE == 21720] <- "Pacific cod (>460 mm)"
+nbs_dat$COMMON_NAME[nbs_dat$SPECIES_CODE == 21721] <- "Pacific cod (\u2264460 mm)"
+
+ai_dat$SPECIES_CODE[ai_dat$SPECIES_CODE == 21720  & ai_dat$LENGTH < 460] <- 21721
+ai_dat$COMMON_NAME[ai_dat$SPECIES_CODE == 21720] <- "Pacific cod (>460 mm)"
+ai_dat$COMMON_NAME[ai_dat$SPECIES_CODE == 21721] <- "Pacific cod (\u2264460 mm)"
+
+goa_dat$SPECIES_CODE[goa_dat$SPECIES_CODE == 21720 & goa_dat$LENGTH < 420] <- 21721
+goa_dat$COMMON_NAME[goa_dat$SPECIES_CODE == 21720] <- "Pacific cod (>420 mm)"
+goa_dat$COMMON_NAME[goa_dat$SPECIES_CODE == 21721] <- "Pacific cod (\u2264420 mm)"
+
+```
+
+Prepared by Sean Rohan^1^ and Ned Laman^1^   
+^1^ Resource Assessment and Conservation Engineering Division, Alaska Fisheries Science Center, National Marine Fisheries Service, NOAA  
+**Contact**: sean.rohan@noaa.gov  
+**Last updated**:  October 2020
+
+
+```{r,  message=FALSE, warning=FALSE, echo = FALSE}
+# Set factor levels for plotting order
+#--------------------------------------
+# Eastern Bering Sea
+#--------------------------------------
+ebs_spp_vec <- unique(ebs_dat$SPECIES_CODE)
+
+# Calculate length weight residuals
+for(i in 1:length(ebs_spp_vec)) {
+  # Separate slope for each stratum. Bias correction according to Brodziak, no outlier detection.
+  ebs_df <- akfishcondition::calc_lw_residuals(len = ebs_dat$LENGTH[ebs_dat$SPECIES_CODE == ebs_spp_vec[i]], 
+                                               wt = ebs_dat$WEIGHT[ebs_dat$SPECIES_CODE == ebs_spp_vec[i]], 
+                                               year = ebs_dat$YEAR[ebs_dat$SPECIES_CODE == ebs_spp_vec[i]],
+                                               stratum = ebs_dat$STRATUM[ebs_dat$SPECIES_CODE == ebs_spp_vec[i]],
+                                               make_diagnostics = TRUE, # Make diagnostics
+                                               bias.correction = TRUE, # Bias correction turned on
+                                               outlier.rm = FALSE, # Outlier removal turned on
+                                               region = "EBS_PCOD",
+                                               species_code = ebs_dat$SPECIES_CODE[ebs_dat$SPECIES_CODE == ebs_spp_vec[i]])
+  
+  ebs_dat$resid_mean[ebs_dat$SPECIES_CODE == ebs_spp_vec[i]] <- ebs_df$lw.res_mean
+  ebs_dat$resid_lwr[ebs_dat$SPECIES_CODE == ebs_spp_vec[i]] <- ebs_df$lw.res_lwr
+  ebs_dat$resid_upr[ebs_dat$SPECIES_CODE == ebs_spp_vec[i]] <- ebs_df$lw.res_upr
+  
+}
+
+# Estimate mean and std. err for each stratum, filter out strata with less than 10 samples
+ebs_stratum_resids <- ebs_dat %>% 
+  dplyr::group_by(COMMON_NAME, SPECIES_CODE, YEAR, STRATUM, BIOMASS) %>%
+  dplyr::summarise(stratum_resid_mean = mean(resid_mean),
+                   stratum_resid_sd = sd(resid_mean),
+                   n = n()) %>%
+  dplyr::filter(n >= 10) %>%
+  dplyr::mutate(stratum_resid_se = stratum_resid_sd/sqrt(n))
+
+# Weight strata by biomass
+for(i in 1:length(ebs_spp_vec)) {
+  ebs_stratum_resids$weighted_resid_mean[ebs_stratum_resids$SPECIES_CODE == ebs_spp_vec[i]] <- 
+    akfishcondition::weight_lw_residuals(residuals = ebs_stratum_resids$stratum_resid_mean[ebs_stratum_resids$SPECIES_CODE == ebs_spp_vec[i]], 
+                                         year = ebs_stratum_resids$YEAR[ebs_stratum_resids$SPECIES_CODE == ebs_spp_vec[i]], 
+                                         stratum = ebs_stratum_resids$STRATUM[ebs_stratum_resids$SPECIES_CODE == ebs_spp_vec[i]], 
+                                         stratum_biomass = ebs_stratum_resids$BIOMASS[ebs_stratum_resids$SPECIES_CODE == ebs_spp_vec[i]])
+  ebs_stratum_resids$weighted_resid_se[ebs_stratum_resids$SPECIES_CODE == ebs_spp_vec[i]] <- 
+    akfishcondition::weight_lw_residuals(residuals = ebs_stratum_resids$stratum_resid_se[ebs_stratum_resids$SPECIES_CODE == ebs_spp_vec[i]], 
+                                         year = ebs_stratum_resids$YEAR[ebs_stratum_resids$SPECIES_CODE == ebs_spp_vec[i]], 
+                                         stratum = ebs_stratum_resids$STRATUM[ebs_stratum_resids$SPECIES_CODE == ebs_spp_vec[i]], 
+                                         stratum_biomass = ebs_stratum_resids$BIOMASS[ebs_stratum_resids$SPECIES_CODE == ebs_spp_vec[i]])
+}
+
+# Biomass-weighted residual and SE by year
+ebs_ann_mean_resid_df <- ebs_stratum_resids %>% 
+  dplyr::group_by(YEAR, COMMON_NAME) %>%
+  dplyr::summarise(mean_wt_resid = mean(weighted_resid_mean),
+                   se_wt_resid = mean(weighted_resid_se))
+
+#--------------------------------------
+# Northern Bering Sea
+#--------------------------------------
+# Get unique species code combinations
+nbs_spp_vec <- unique(nbs_dat$SPECIES_CODE)
+
+# Calculate residuals and weighted residuals
+for(i in 1:length(nbs_spp_vec)) {
+  
+  # Separate slope for each stratum. Bias correction according to Brodziak, no outlier detection.
+  nbs_dat$resid[nbs_dat$SPECIES_CODE == nbs_spp_vec[i]] <- 
+    akfishcondition::calc_lw_residuals(len = nbs_dat$LENGTH[nbs_dat$SPECIES_CODE == nbs_spp_vec[i]], 
+                                       wt = nbs_dat$WEIGHT[nbs_dat$SPECIES_CODE == nbs_spp_vec[i]], 
+                                       year = nbs_dat$YEAR[nbs_dat$SPECIES_CODE == nbs_spp_vec[i]],
+                                       stratum = NA, # Strata are combined for the NBS
+                                       make_diagnostics = FALSE, # Make diagnostics
+                                       bias.correction = TRUE, # Bias correction turned on
+                                       outlier.rm = FALSE, # Outlier removal turned off
+                                       include_ci = FALSE,
+                                       region = "NBS_PCOD",
+                                       species_code = nbs_dat$SPECIES_CODE[nbs_dat$SPECIES_CODE == nbs_spp_vec[i]])
+}
+
+# Biomass-weighted residuals by year
+nbs_ann_mean_resid_df <- nbs_dat %>% 
+  dplyr::group_by(COMMON_NAME, YEAR, SPECIES_CODE) %>%
+  dplyr::summarise(mean_resid = mean(resid, na.rm = TRUE),
+                   se = sd(resid, na.rm = TRUE)/n(),
+                   n = n()) %>%
+  dplyr::filter(n >=10)
+
+#--------------------------------------
+# Gulf of Alaska
+#--------------------------------------
+
+goa_spp_vec <- unique(goa_dat$SPECIES_CODE)
+
+# Calculate length weight residuals
+for(i in 1:length(goa_spp_vec)) {
+  # Separate slope for each stratum. Bias correction according to Brodziak, no outlier detection.
+  goa_df <- akfishcondition::calc_lw_residuals(len = goa_dat$LENGTH[goa_dat$SPECIES_CODE == goa_spp_vec[i]], 
+                                               wt = goa_dat$WEIGHT[goa_dat$SPECIES_CODE == goa_spp_vec[i]], 
+                                               year = goa_dat$YEAR[goa_dat$SPECIES_CODE == goa_spp_vec[i]],
+                                               stratum = goa_dat$INPFC_STRATUM[goa_dat$SPECIES_CODE == goa_spp_vec[i]],
+                                               make_diagnostics = TRUE, # Make diagnostics
+                                               bias.correction = TRUE, # Bias correction turned on
+                                               outlier.rm = FALSE, # Outlier removal turned off
+                                               region = "GOA_PCOD",
+                                               species_code = goa_dat$SPECIES_CODE[goa_dat$SPECIES_CODE == goa_spp_vec[i]])
+  
+  goa_dat$resid_mean[goa_dat$SPECIES_CODE == goa_spp_vec[i]] <- goa_df$lw.res_mean
+  goa_dat$resid_lwr[goa_dat$SPECIES_CODE == goa_spp_vec[i]] <- goa_df$lw.res_lwr
+  goa_dat$resid_upr[goa_dat$SPECIES_CODE == goa_spp_vec[i]] <- goa_df$lw.res_upr
+  
+}
+
+# Estimate mean and std. err for each stratum, filter out strata with less than 10 samples
+goa_stratum_resids <- goa_dat %>% 
+  dplyr::group_by(COMMON_NAME, SPECIES_CODE, YEAR, INPFC_STRATUM, AREA_BIOMASS) %>%
+  dplyr::summarise(stratum_resid_mean = mean(resid_mean),
+                   stratum_resid_sd = sd(resid_mean),
+                   n = n()) %>%
+  dplyr::filter(n >= 10) %>%
+  dplyr::mutate(stratum_resid_se = stratum_resid_sd/sqrt(n))
+
+# Weight strata by biomass
+for(i in 1:length(goa_spp_vec)) {
+  goa_stratum_resids$weighted_resid_mean[goa_stratum_resids$SPECIES_CODE == goa_spp_vec[i]] <- 
+    akfishcondition::weight_lw_residuals(residuals = goa_stratum_resids$stratum_resid_mean[goa_stratum_resids$SPECIES_CODE == goa_spp_vec[i]], 
+                                         year = goa_stratum_resids$YEAR[goa_stratum_resids$SPECIES_CODE == goa_spp_vec[i]], 
+                                         stratum = goa_stratum_resids$INPFC_STRATUM[goa_stratum_resids$SPECIES_CODE == goa_spp_vec[i]], 
+                                         stratum_biomass = goa_stratum_resids$AREA_BIOMASS[goa_stratum_resids$SPECIES_CODE == goa_spp_vec[i]])
+  goa_stratum_resids$weighted_resid_se[goa_stratum_resids$SPECIES_CODE == goa_spp_vec[i]] <- 
+    akfishcondition::weight_lw_residuals(residuals = goa_stratum_resids$stratum_resid_se[goa_stratum_resids$SPECIES_CODE == goa_spp_vec[i]], 
+                                         year = goa_stratum_resids$YEAR[goa_stratum_resids$SPECIES_CODE == goa_spp_vec[i]], 
+                                         stratum = goa_stratum_resids$INPFC_STRATUM[goa_stratum_resids$SPECIES_CODE == goa_spp_vec[i]], 
+                                         stratum_biomass = goa_stratum_resids$AREA_BIOMASS[goa_stratum_resids$SPECIES_CODE == goa_spp_vec[i]])
+}
+
+# Biomass-weighted residual and SE by year
+goa_ann_mean_resid_df <- goa_stratum_resids %>% 
+  dplyr::group_by(YEAR, COMMON_NAME) %>%
+  dplyr::summarise(mean_wt_resid = mean(weighted_resid_mean),
+                   se_wt_resid = mean(weighted_resid_se))
+
+#--------------------------------------
+# Aleutian Islands
+#--------------------------------------
+
+ai_spp_vec <- unique(ai_dat$SPECIES_CODE)
+
+# Calculate length weight residuals
+for(i in 1:length(ai_spp_vec)) {
+  # Separate slope for each stratum. Bias correction according to Brodziak, no outlier detection.
+  ai_df <- akfishcondition::calc_lw_residuals(len = ai_dat$LENGTH[ai_dat$SPECIES_CODE == ai_spp_vec[i]], 
+                                               wt = ai_dat$WEIGHT[ai_dat$SPECIES_CODE == ai_spp_vec[i]], 
+                                               year = ai_dat$YEAR[ai_dat$SPECIES_CODE == ai_spp_vec[i]],
+                                               stratum = ai_dat$INPFC_STRATUM[ai_dat$SPECIES_CODE == ai_spp_vec[i]],
+                                               make_diagnostics = TRUE, # Make diagnostics
+                                               bias.correction = TRUE, # Bias correction turned on
+                                               outlier.rm = FALSE, # Outlier removal turned off
+                                               region = "AI_PCOD",
+                                               species_code = ai_dat$SPECIES_CODE[ai_dat$SPECIES_CODE == ai_spp_vec[i]])
+  
+  ai_dat$resid_mean[ai_dat$SPECIES_CODE == ai_spp_vec[i]] <- ai_df$lw.res_mean
+  ai_dat$resid_lwr[ai_dat$SPECIES_CODE == ai_spp_vec[i]] <- ai_df$lw.res_lwr
+  ai_dat$resid_upr[ai_dat$SPECIES_CODE == ai_spp_vec[i]] <- ai_df$lw.res_upr
+  
+}
+
+# Estimate mean and std. err for each stratum, filter out strata with less than 10 samples
+ai_stratum_resids <- ai_dat %>% 
+  dplyr::group_by(COMMON_NAME, SPECIES_CODE, YEAR, INPFC_STRATUM, AREA_BIOMASS) %>%
+  dplyr::summarise(stratum_resid_mean = mean(resid_mean),
+                   stratum_resid_sd = sd(resid_mean),
+                   n = n()) %>%
+  dplyr::filter(n >= 10) %>%
+  dplyr::mutate(stratum_resid_se = stratum_resid_sd/sqrt(n))
+
+# Weight strata by biomass
+for(i in 1:length(ai_spp_vec)) {
+  ai_stratum_resids$weighted_resid_mean[ai_stratum_resids$SPECIES_CODE == ai_spp_vec[i]] <- 
+    akfishcondition::weight_lw_residuals(residuals = ai_stratum_resids$stratum_resid_mean[ai_stratum_resids$SPECIES_CODE == ai_spp_vec[i]], 
+                                         year = ai_stratum_resids$YEAR[ai_stratum_resids$SPECIES_CODE == ai_spp_vec[i]], 
+                                         stratum = ai_stratum_resids$INPFC_STRATUM[ai_stratum_resids$SPECIES_CODE == ai_spp_vec[i]], 
+                                         stratum_biomass = ai_stratum_resids$AREA_BIOMASS[ai_stratum_resids$SPECIES_CODE == ai_spp_vec[i]])
+  ai_stratum_resids$weighted_resid_se[ai_stratum_resids$SPECIES_CODE == ai_spp_vec[i]] <- 
+    akfishcondition::weight_lw_residuals(residuals = ai_stratum_resids$stratum_resid_se[ai_stratum_resids$SPECIES_CODE == ai_spp_vec[i]], 
+                                         year = ai_stratum_resids$YEAR[ai_stratum_resids$SPECIES_CODE == ai_spp_vec[i]], 
+                                         stratum = ai_stratum_resids$INPFC_STRATUM[ai_stratum_resids$SPECIES_CODE == ai_spp_vec[i]], 
+                                         stratum_biomass = ai_stratum_resids$AREA_BIOMASS[ai_stratum_resids$SPECIES_CODE == ai_spp_vec[i]])
+}
+
+# Biomass-weighted residual and SE by year
+ai_ann_mean_resid_df <- ai_stratum_resids %>% 
+  dplyr::group_by(YEAR, COMMON_NAME) %>%
+  dplyr::summarise(mean_wt_resid = mean(weighted_resid_mean),
+                   se_wt_resid = mean(weighted_resid_se))
+
+# Write csvs
+write.csv(ai_ann_mean_resid_df, file = "./output/ESP_PCOD/ESP_ai_pcod_annual.csv", row.names = FALSE)
+write.csv(ai_stratum_resids, file = "./output/ESP_PCOD/ESP_ai_pcod_stratum.csv", row.names = FALSE)
+write.csv(goa_ann_mean_resid_df, file = "./output/ESP_PCOD/ESP_goa_pcod_annual.csv", row.names = FALSE)
+write.csv(goa_stratum_resids, file = "./output/ESP_PCOD/ESP_goa_pcod_stratum.csv", row.names = FALSE)
+write.csv(ebs_ann_mean_resid_df, file = "./output/ESP_PCOD/ESP_ebs_pcod_annual.csv", row.names = FALSE)
+write.csv(ebs_stratum_resids, file = "./output/ESP_PCOD/ESP_ebs_pcod_stratum.csv", row.names = FALSE)
+write.csv(nbs_ann_mean_resid_df, file = "./output/ESP_PCOD/ESP_nbs_pcod_annual.csv", row.names = FALSE)
+
+
+```
+
+```{r, include = TRUE, echo = FALSE, fig.height = 6, fig.width = 7, fig.cap = "\\label{fig:figs}Biomass-weighted residual body condition index across survey years (1984--2018) for Aleutian Islands subadult and adult Pacific cod collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center (AFSC) Resource Assessment and Conservation Engineering Groundfish Assessment Program (RACE-GAP) standard summer bottom trawl survey. Filled bars denote weighted length-weight residuals, error bars denote two standard errors."}
+AI_plot <- ggplot() + 
+  geom_bar(data = ai_ann_mean_resid_df, 
+               aes(x = YEAR, 
+                   y = mean_wt_resid), 
+           stat = "identity", 
+           fill = "plum", 
+           color = "black",
+           width = 0.7) +
+  geom_errorbar(data = ai_ann_mean_resid_df, 
+               aes(x = YEAR, 
+                   ymax = mean_wt_resid + 2*se_wt_resid,
+                   ymin = mean_wt_resid - 2*se_wt_resid),
+           width = 0.7) +
+  geom_hline(yintercept = 0) +
+  facet_wrap(~COMMON_NAME, ncol = 2, scales = "free_y") +
+  scale_x_continuous(name = "Year") +
+  scale_y_continuous(name = "Length-weight residual (ln(g))") +
+  theme_pngs()
+
+print(AI_plot)
+```
+
+```{r, include = FALSE, echo = FALSE} 
+png("./output/ESP_PCOD/ESP_AI_condition_PCOD.png", 
+      width = 6, height = 7, units = "in", res = 300) 
+print(AI_plot)
+dev.off()
+```
+
+```{r, include = TRUE, echo = FALSE, fig.height = 6, fig.width = 7, fig.cap = "\\label{fig:figs}Biomass-weighted residual body condition index across survey years (1997--2019) for Eastern Bering Sea subadult and adult Pacific cod collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center (AFSC) Resource Assessment and Conservation Engineering Groundfish Assessment Program (RACE-GAP) standard summer bottom trawl survey. Filled bars denote weighted length-weight residuals, error bars denote two standard errors."}
+
+EBS_plot <- ggplot() + 
+  geom_bar(data = ebs_ann_mean_resid_df, 
+               aes(x = YEAR, 
+                   y = mean_wt_resid), 
+           stat = "identity", 
+           fill = "plum", 
+           color = "black") +
+  geom_errorbar(data = ebs_ann_mean_resid_df, 
+               aes(x = YEAR, 
+                   ymax = mean_wt_resid + 2*se_wt_resid,
+                   ymin = mean_wt_resid - 2*se_wt_resid)) +
+  geom_hline(yintercept = 0) +
+  facet_wrap(~COMMON_NAME, ncol = 2, scales = "free_y") +
+  scale_x_continuous(name = "Year") +
+  scale_y_continuous(name = "Length-weight residual (ln(g))") +
+  theme_pngs()
+
+print(EBS_plot)
+```
+
+```{r, include = FALSE, echo = FALSE} 
+png("./output/ESP_PCOD/ESP_EBS_condition_PCOD.png", 
+      width = 6, height = 7, units = "in", res = 300) 
+print(EBS_plot)
+dev.off()
+```
+
+```{r, include = TRUE, echo = FALSE, fig.height = 6, fig.width = 7, fig.cap = "\\label{fig:figs}Biomass-weighted residual body condition index across survey years (2010--2019) for Northern Bering Sea subadult and adult Pacific cod collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center (AFSC) Resource Assessment and Conservation Engineering Groundfish Assessment Program (RACE-GAP) standard summer bottom trawl survey. Filled bars denote weighted length-weight residuals, error bars denote two standard errors."}
+
+NBS_plot <- ggplot() + 
+  geom_bar(data = nbs_ann_mean_resid_df, 
+               aes(x = YEAR, 
+                   y = mean_resid), 
+           stat = "identity", 
+           fill = "plum", 
+           color = "black") +
+  geom_errorbar(data = nbs_ann_mean_resid_df, 
+               aes(x = YEAR, 
+                   ymax = mean_resid + 2*se,
+                   ymin = mean_resid - 2*se)) +
+  geom_hline(yintercept = 0) +
+  facet_wrap(~COMMON_NAME, ncol = 2, scales = "free_y") +
+  scale_x_continuous(name = "Year", breaks = c(2010, 2015, 2020), limits = c(2009, 2020)) +
+  scale_y_continuous(name = "Length-weight residual (ln(g))") +
+  theme_pngs()
+
+print(NBS_plot)
+```
+
+```{r, include = FALSE, echo = FALSE} 
+png("./output/ESP_PCOD/ESP_NBS_condition_PCOD.png", 
+      width = 6, height = 7, units = "in", res = 300) 
+print(NBS_plot)
+dev.off()
+```
+
+```{r, include = TRUE, echo = FALSE, fig.height = 6, fig.width = 7, fig.cap = "\\label{fig:figs}Biomass-weighted residual body condition index across survey years (1984-2019) for Gulf of Alaska subadult and adult Pacific cod collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center (AFSC) Resource Assessment and Conservation Engineering Groundfish Assessment Program (RACE-GAP) standard summer bottom trawl survey. Filled bars denote weighted length-weight residuals, error bars denote two standard errors."}
+GOA_plot <- ggplot() + 
+  geom_bar(data = goa_ann_mean_resid_df, 
+               aes(x = YEAR, 
+                   y = mean_wt_resid), 
+           stat = "identity", 
+           fill = "plum", 
+           color = "black",
+           width = 0.7) +
+  geom_errorbar(data = goa_ann_mean_resid_df, 
+               aes(x = YEAR, 
+                   ymax = mean_wt_resid + 2*se_wt_resid,
+                   ymin = mean_wt_resid - 2*se_wt_resid),
+           width = 0.7) +
+  geom_hline(yintercept = 0) +
+  facet_wrap(~COMMON_NAME, ncol = 2, scales = "free_y") +
+  scale_x_continuous(name = "Year") +
+  scale_y_continuous(name = "Length-weight residual (ln(g))") +
+  theme_pngs()
+
+print(GOA_plot)
+```
+
+```{r, include = FALSE, echo = FALSE} 
+png("./output/ESP_PCOD/ESP_GOA_condition_PCOD.png", 
+      width = 6, height = 7, units = "in", res = 300) 
+print(GOA_plot)
+dev.off()
+```
+
+```{r, include = TRUE, echo = FALSE, fig.height = 6, fig.width = 7, fig.cap = "\\label{fig:figs} Residual body condition index for seven Gulf of Alaska groundfish species collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center (AFSC) Resource Assessment and Conservation Engineering Groundfish Assessment Program (RACE-GAP) standard summer bottom trawl survey (1984--2019) grouped by International North Pacific Fisheries Commission (INPFC) statistical sampling strata.", message = FALSE, warning = FALSE}
+# Generate stratum plots
+
+for(i in 1:length(unique(goa_stratum_resids$COMMON_NAME))) {
+  goa_sel_df <- goa_stratum_resids %>% 
+    dplyr::filter(COMMON_NAME == unique(goa_stratum_resids$COMMON_NAME)[i])
+  
+  png(paste0("./output/ESP_PCOD/ESP_GOA_condition_stratum_", goa_sel_df$SPECIES_CODE[1], ".png"), width = 6, height = 7, units = "in", res = 300)
+  print(
+    ggplot(data = goa_sel_df,
+           aes(x = YEAR, 
+               y = stratum_resid_mean, 
+               fill = set_stratum_order(INPFC_STRATUM, REGION = "GOA"),
+               ymin = stratum_resid_mean - 2*stratum_resid_se,
+               ymax = stratum_resid_mean + 2*stratum_resid_se)) +
+      geom_hline(yintercept = 0) +
+      geom_bar(stat = "identity", color = "black", position = "stack", width = 0.7) +
+      geom_errorbar(width = 0.7) +
+      facet_wrap(~set_stratum_order(INPFC_STRATUM, REGION = "GOA"), 
+                 ncol = 2, 
+                 scales = "free_y") +
+      ggtitle(unique(goa_stratum_resids$COMMON_NAME)[i]) +
+      scale_x_continuous(name = "Year") +
+      scale_y_continuous(name = "Length-weight residual (ln(g))") +
+      scale_fill_brewer(name = "Stratum", palette = "BrBG", drop = FALSE) +
+      theme_pngs() + 
+      theme(legend.position = "none",
+            title = element_text(hjust = 0.5)))
+  dev.off()
+}
+
+for(i in 1:length(unique(ai_stratum_resids$COMMON_NAME))) {
+  ai_sel_df <- ai_stratum_resids %>% 
+    dplyr::filter(COMMON_NAME == unique(ai_stratum_resids$COMMON_NAME)[i])
+  
+  png(paste0("./output/ESP_PCOD/ESP_AI_condition_stratum_", ai_sel_df$SPECIES_CODE[1], ".png"), width = 6, height = 7, units = "in", res = 300)
+  print(
+    ggplot(data = ai_sel_df,
+           aes(x = YEAR, 
+               y = stratum_resid_mean, 
+               fill = set_stratum_order(INPFC_STRATUM, REGION = "AI"),
+               ymin = stratum_resid_mean - 2*stratum_resid_se,
+               ymax = stratum_resid_mean + 2*stratum_resid_se)) +
+      geom_hline(yintercept = 0) +
+      geom_bar(stat = "identity", color = "black", position = "stack", width = 0.7) +
+      geom_errorbar(width = 0.7) +
+      facet_wrap(~set_stratum_order(INPFC_STRATUM, REGION = "AI"), 
+                 ncol = 2, 
+                 scales = "free_y") +
+      ggtitle(unique(ai_stratum_resids$COMMON_NAME)[i]) +
+      scale_x_continuous(name = "Year") +
+      scale_y_continuous(name = "Length-weight residual (ln(g))") +
+      scale_fill_brewer(name = "Stratum", palette = "BrBG", drop = FALSE) +
+      theme_pngs() + 
+      theme(legend.position = "none",
+            title = element_text(hjust = 0.5)))
+  dev.off()
+}
+
+for(i in 1:length(unique(ebs_stratum_resids$COMMON_NAME))) {
+  ebs_sel_df <- nbs_ann_mean_resid_df %>% 
+             dplyr::mutate(STRATUM = "NBS",
+                           stratum_resid_mean = mean_resid,
+                           stratum_resid_se = se) %>%
+             rbind.fill(ebs_stratum_resids) %>% 
+             dplyr::filter(COMMON_NAME == unique(ebs_stratum_resids$COMMON_NAME)[i])
+  
+  png(paste0("./output/ESP_PCOD/ESP_EBS_NBS_condition_stratum_", ebs_sel_df$SPECIES_CODE[1], ".png"), 
+      width = 6, height = 7, units = "in", res = 300)
+  print(
+    ggplot(data = ebs_sel_df,
+           aes(x = YEAR, 
+               y = stratum_resid_mean, 
+               fill = STRATUM,
+               ymin = stratum_resid_mean - 2*stratum_resid_se,
+               ymax = stratum_resid_mean + 2*stratum_resid_se)) +
+      geom_hline(yintercept = 0) +
+      ggtitle(unique(ebs_stratum_resids$COMMON_NAME)[i]) +
+      geom_bar(stat = "identity", color = "black", position = "stack") +
+      geom_errorbar() +
+      facet_wrap(~STRATUM, 
+                 ncol = 2, 
+                 scales = "free_y") +
+      scale_x_continuous(name = "Year") +
+      scale_y_continuous(name = "Length-weight residual (ln(g))") +
+      scale_fill_brewer(name = "Stratum", palette = "BrBG", drop = FALSE) +
+      theme_pngs() + 
+      theme(legend.position = "none",
+            title = element_text(hjust = 0.5)))
+  dev.off()
+}
+
+```

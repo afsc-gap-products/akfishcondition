@@ -13,8 +13,12 @@ theme_condition_index <- function() {
           legend.text = element_text(size = 18),
           legend.position = "right",
           panel.grid.minor = element_blank(),
-          strip.text = element_text(size = 20),
-          strip.background = element_blank())
+          strip.text = element_text(size = 20,
+                                    color = "white",
+                                    face = "bold",
+                                    margin = margin(0.5, 0, 0.5, 0, "mm")),
+          strip.background = element_rect(fill = "#0055a4",
+                                          color = NA))
 } 
 
 #' Default png theme
@@ -35,13 +39,37 @@ theme_pngs <- function() {
           strip.background = element_blank())
 } 
 
+#' Multi-panel map theme with blue strip
+#' 
+#' Theme for multipanel maps with blue strip
+#' 
+#' @export
+
+theme_blue_strip <- function() {
+  theme_bw() %+replace%
+    theme(axis.title = element_text(color = "black", face = "bold", size = 10),
+          axis.text = element_text(color = "black"),
+          axis.ticks = element_line(color = "black"),
+          axis.text.x = element_text(size = 9),
+          axis.text.y = element_text(size = 9),
+          panel.grid = element_blank(),
+          legend.title = element_blank(),
+          legend.position = "bottom",
+          strip.text = element_text(size = 9,
+                                    color = "white",
+                                    face = "bold",
+                                    margin = margin(0.5, 0, 0.5, 0, "mm")),
+          strip.background = element_rect(fill = "#0055a4",
+                                          color = NA))
+}
+
 #' Set species plotting order
 #' @param common_name Vector of common names
 #' @param region Character vector of length one indicating whether the region is AI, GOA, or BS
 #' @export
 
 set_plot_order <- function(common_name, region) {
-  if(!(region %in% c("AI", "GOA", "BS"))) {
+  if(!(region %in% c("AI", "GOA", "BS", "EBS"))) {
     stop("Region must be either: AI, BS, or GOA")
   }
   if(region == "AI") {
@@ -80,7 +108,7 @@ set_plot_order <- function(common_name, region) {
                            "dusky rockfish",
                            "northern rockfish",
                            "Pacific ocean perch")))
-  } else if(region == "BS") {
+  } else if(region %in% c("BS", "EBS")) {
     return(factor(common_name, 
                   levels = c("walleye pollock (>250 mm)",
                              "walleye pollock (100–250 mm)",
@@ -107,8 +135,9 @@ set_plot_order <- function(common_name, region) {
 #' @export
 
 set_stratum_order <- function(stratum, region) {
-  if(!(region %in% c("AI", "GOA"))) {
-    stop("Region must be either: AI or GOA")
+  region <- toupper(region)
+  if(!(region %in% c("AI", "GOA", "BS"))) {
+    stop("Region must be either: AI, BS, or GOA")
   }
   if(region == "GOA") {
     return(factor(stratum,
@@ -123,5 +152,7 @@ set_stratum_order <- function(stratum, region) {
                              "Eastern Aleutians",
                              "Central Aleutians",
                              "Western Aleutians")))
+  } else {
+    return(factor(stratum))
   }
 }
