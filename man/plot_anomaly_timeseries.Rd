@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_plots.R
 \name{plot_anomaly_timeseries}
 \alias{plot_anomaly_timeseries}
-\title{Generate condition time series plot}
+\title{Make condition time series plot}
 \usage{
 plot_anomaly_timeseries(
   x,
@@ -36,5 +36,5 @@ plot_anomaly_timeseries(
 A ggplot object of the time series
 }
 \description{
-Generate condition time series plot
+Make condition time series plot
 }

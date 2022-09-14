@@ -1,4 +1,4 @@
-#' Generate condition time series plot
+#' Make condition time series plot
 #' 
 #' @param x Input data.frame
 #' @param region Region. AI, BS, or GOA. Character (1L).
@@ -84,7 +84,7 @@ plot_anomaly_timeseries <- function(x,
 }
 
 
-#' Generate condition time series plot
+#' Make condition time series stacked bar plot
 #' 
 #' @param x Input data.frame
 #' @param region Region. AI, BS, or GOA. Character (1L).
@@ -93,6 +93,7 @@ plot_anomaly_timeseries <- function(x,
 #' @param var_x_name Name of the x (time variable). Character (1L).
 #' @param var_group_name Name of the variable to use for grouping (i.e., stratum). Character (1L).
 #' @param y_title Y-axis title. Character (1L).
+#' @param fill_title Name of the fill variable to use for plotting. Character (1L).
 #' @return A ggplot object of the time series
 #' @export
 
@@ -132,5 +133,100 @@ plot_stratum_stacked_bar <- function(x,
     scale_fill_brewer(name = fill_title, palette = fill_palette)
   
   return(p1)
+  
+}
+
+
+
+#' Make single species stratum bar plots
+#' 
+#' Make condition time series bar plots with separate panels for each stratum.
+#' 
+#' @param x Input data.frame
+#' @param region Region. AI, BS, or GOA. Character (1L).
+#' @param var_x_name Name of the x (time variable). Character (1L).
+#' @param var_y_name Name of the y variable in the data.frame. Character (1L).
+#' @param var_y_se_name Name of the standard error for the y variable. Character (1L).
+#' @param y_title Y-axis title. Character (1L).
+#' @param fill_title Name of the fill variable to use for plotting. Character (1L).
+#' @param fill_pallete Character vector denoting which color pallette to use. Must be a valid name for RColorBrewer::brewer.pal(name = {fill_palette})
+#' @param var_group_name Name of the variable to use for grouping (i.e., stratum). Character (1L).
+#' @param write_plot Should plots be written to the /plot/ directory?
+#' @return A list of bar plots as ggplot objects
+#' @export
+
+plot_species_stratum_bar <- function(x, 
+                                     region, 
+                                     var_x_name, 
+                                     var_y_name, 
+                                     var_y_se_name, 
+                                     y_title = "Length-weight residual (ln(g))", 
+                                     var_group_name = "stratum", 
+                                     fill_title = "Stratum",  
+                                     fill_palette = "BrBG", 
+                                     write_plot = TRUE) {
+  
+  region <- toupper(region)
+  
+  stopifnot("Invalid region in plot_anomaly_timeseries. Must be 'BS', 'AI', or 'GOA'"  = (region %in% c("BS", "AI", "GOA")))
+  
+  x$display_name <- akfishcondition::set_plot_order(x$common_name, 
+                                                    region = region)
+  
+  names(x)[which(names(x) == var_x_name)] <- "var_x"
+  names(x)[which(names(x) == var_y_name)] <- "var_y"
+  names(x)[which(names(x) == var_group_name)] <- "var_group"
+  names(x)[which(names(x) == var_y_se_name)] <- "var_y_se"
+  
+  x$display_name <- akfishcondition::set_plot_order(x$common_name, region = region)
+  
+  unique_groups <- unique(x$display_name)
+  
+  out_list <- list()
+  for(ii in 1:length(unique_groups)) {
+    p1 <- 
+      ggplot(data = x %>% 
+               dplyr::filter(display_name == unique_groups[ii]),
+             aes(x = var_x, 
+                 y = var_y, 
+                 fill = set_stratum_order(trimws(var_group), region = region),
+                 ymin = var_y - 2*var_y_se,
+                 ymax = var_y + 2*var_y_se)) +
+      geom_hline(yintercept = 0) +
+      geom_bar(stat = "identity", 
+               color = "black", 
+               position = "stack", 
+               width = 0.8) +
+      geom_errorbar(width = 0.8) +
+      facet_wrap(~set_stratum_order(trimws(var_group), 
+                                    region = region), 
+                 ncol = 2, 
+                 scales = "free_y") +
+      ggtitle(unique_groups[ii]) +
+      scale_x_continuous(name = "Year") +
+      scale_y_continuous(name = y_title) +
+      scale_fill_brewer(name = fill_title, 
+                        palette = fill_palette, 
+                        drop = FALSE) +
+      theme(legend.position = "none",
+            title = element_text(hjust = 0.5))
+    
+    
+    if(write_plot) {
+      png(paste0("./plots/", region, "_sppcond_", 
+                 gsub(pattern = ">", replacement  = "gt", unique_groups[ii]), ".png"), 
+          width = 6, height = 7, units = "in", res = 600)
+      print(p1 + theme_blue_strip() + 
+              theme(legend.position = "none",
+                    title = element_text(hjust = 0.5)))
+      dev.off()
+    }
+    
+    out_list[ii] <- p1
+    
+  }
+  
+  
+  return(out_list)
   
 }

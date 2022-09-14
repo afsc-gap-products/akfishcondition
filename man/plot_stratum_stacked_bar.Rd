@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_plots.R
 \name{plot_stratum_stacked_bar}
 \alias{plot_stratum_stacked_bar}
-\title{Generate condition time series plot}
+\title{Make condition time series stacked bar plot}
 \usage{
 plot_stratum_stacked_bar(
   x,
@@ -26,6 +26,8 @@ plot_stratum_stacked_bar(
 
 \item{var_group_name}{Name of the variable to use for grouping (i.e., stratum). Character (1L).}
 
+\item{fill_title}{Name of the fill variable to use for plotting. Character (1L).}
+
 \item{y_title}{Y-axis title. Character (1L).}
 
 \item{var_y_se_name}{Name of the standard error for the y variable. Character (1L).}
@@ -34,5 +36,5 @@ plot_stratum_stacked_bar(
 A ggplot object of the time series
 }
 \description{
-Generate condition time series plot
+Make condition time series stacked bar plot
 }
