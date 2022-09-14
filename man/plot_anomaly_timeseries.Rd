@@ -38,3 +38,16 @@ A ggplot object of the time series
 \description{
 Make condition time series plot
 }
+\examples{
+# EBS anomaly timeseries plot
+
+names(EBS_INDICATOR$FULL_REGION)
+
+plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION,
+fill_color = "#0085CA", 
+var_y_name = "mean_wt_resid", 
+var_y_se_name = "se_wt_resid",
+var_x_name = "year",
+y_title = "Length-weight residual (ln(g))",
+format_for = "png")
+}

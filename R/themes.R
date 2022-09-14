@@ -5,12 +5,12 @@ theme_condition_index <- function() {
   theme_bw() %+replace%
     theme(plot.title = element_text(size = 18, face = "bold"),
           panel.grid.major = element_blank(),
-          axis.text.x = element_text(size = 18),
-          axis.text.y = element_text(size = 18),
-          axis.title.x = element_text(size = 18),
-          axis.title.y = element_text(size = 18, angle = 90),
-          legend.title = element_text(size = 18, face = "bold"),
-          legend.text = element_text(size = 18),
+          axis.text.x = element_text(size = 22),
+          axis.text.y = element_text(size = 22),
+          axis.title.x = element_text(size = 22),
+          axis.title.y = element_text(size = 22, angle = 90),
+          legend.title = element_text(size = 22, face = "bold"),
+          legend.text = element_text(size = 20),
           legend.position = "right",
           panel.grid.minor = element_blank(),
           strip.text = element_text(size = 20,
@@ -130,6 +130,7 @@ set_plot_order <- function(common_name, region) {
 }
 
 #' Set stratum plotting order
+#' 
 #' @param common_name Vector of stratum names
 #' @param region Character vector of length one indicating whether the region is AI, GOA, or BS
 #' @export
