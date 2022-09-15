@@ -33,6 +33,44 @@ akfishcondition:::make_data_summary(dat_csv = here::here("data", "nbs_all_specie
 akfishcondition:::make_data_summary(dat_csv = here::here("data", "ebs_all_species.csv"), region = "EBS")
 akfishcondition:::make_data_summary(dat_csv = here::here("data", "ai_all_species.csv"), region = "AI")
 akfishcondition:::make_data_summary(dat_csv = here::here("data", "goa_all_species.csv"), region = "GOA")
+
+ESR_SETTINGS <- list(ESR_SPECIES = data.frame(common_name = c(
+    "walleye pollock", "walleye pollock (100–250 mm)", "walleye pollock (>250 mm)", "Pacific cod", 
+    "Pacific cod (juvenile)", "Pacific cod (adult)", "Atka mackerel", "arrowtooth flounder", 
+    "flathead sole", "yellowfin sole", "northern rock sole", "southern rock sole", "Alaska plaice",
+    "Pacific ocean perch", "dusky rockfish", "northern rockfish"),
+    species_code = c(21740, 21741, 21742, 21720, 21721, 21722, 21921, 10110, 10130,
+                     10210, 10261, 10262, 10285, 30060, 30152, 30420),
+    AI = c(TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, TRUE, FALSE, TRUE),
+    GOA = c(TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE),
+    EBS = c(TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE),
+    NBS = c(TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE)),
+    VAST_SETTINGS = data.frame(species_code = c(30420, 30060, 10262, 21720, 21740, 10110, 30152,
+                                30420, 30060, 10262, 21720, 21740, 21921, 10110,
+                                10130, 10210, 10285, 21740, 21720, 10110, 10261,
+                                21740, 21720, 10210, 10285
+                                ),
+               region = c("GOA", "GOA", "GOA", "GOA", "GOA", "GOA", "GOA",
+                          "AI", "AI", "AI", "AI", "AI", "AI", "AI",
+                          "EBS", "EBS", "EBS", "EBS", "EBS", "EBS", "EBS",
+                          "NBS", "NBS", "NBS", "NBS"),
+               ObsModel_1 = c(2, 2, 2, 2, 2, 2, 2,
+                              2, 2, 2, 2, 2, 2, 2,
+                              2, 2, 2, 2, 2, 2, 2,
+                              2, 2, 2, 2), 
+               ObsModel_2 = c(1, 1, 1, 1, 1, 1, 1,
+                              1, 1, 1, 1, 1, 1, 1,
+                              1, 1, 1, 1, 1, 1, 1,
+                              1, 1, 1, 1), 
+               ObsModel_3 = c(3, 3, 3, 3, 4, 4, 4,
+                              3, 3, 3, 3, 4, 3, 4,
+                              3, 3, 3, 4, 4, 4, 4,
+                              4, 4, 3, 4),
+               ObsModel_4 = c(3, 3, 3, 3, 4, 4, 4,
+                              3, 3, 3, 3, 4, 3, 4,
+                              3, 3, 3, 4, 4, 4, 4,
+                              4, 4, 3, 4))
+    )
 ```
 
 
@@ -196,6 +234,7 @@ save(AI_raw,
 ```{r update_ai, message=FALSE, warning=FALSE}
 ai_dat$species_code[ai_dat$species_code == 21740  & ai_dat$length_mm >= 100 & ai_dat$length_mm <= 250] <- 21741
 ai_dat$common_name[ai_dat$species_code == 21740] <- "walleye pollock (>250 mm)"
+ai_dat$species_code[ai_dat$species_code == 21740] <- 21742
 ai_dat$common_name[ai_dat$species_code == 21741] <- "walleye pollock (100–250 mm)"
 
 ##AI Calculations and figures
@@ -258,6 +297,7 @@ ai_stratum_resids <- ai_stratum_resids %>%
 # Convert 10-25 cm lengths to age-1
 goa_dat$species_code[goa_dat$species_code == 21740  & goa_dat$length_mm >= 100 & goa_dat$length_mm <= 250] <- 21741
 goa_dat$common_name[goa_dat$species_code == 21740] <- "walleye pollock (>250 mm)"
+goa_dat$species_code[goa_dat$species_code == 21740] <- 21742
 goa_dat$common_name[goa_dat$species_code == 21741] <- "walleye pollock (100–250 mm)"
 
 ## Calculations and figures
@@ -320,6 +360,7 @@ goa_stratum_resids <- goa_stratum_resids %>%
 # Convert 10-25 cm lengths to age-1
 ebs_dat$species_code[ebs_dat$species_code == 21740  & ebs_dat$length_mm >= 100 & ebs_dat$length_mm <= 250] <- 21741
 ebs_dat$common_name[ebs_dat$species_code == 21741] <- "walleye pollock (100–250 mm)"
+ebs_dat$species_code[ebs_dat$species_code == 21740] <- 21742
 ebs_dat$common_name[ebs_dat$species_code == 21740] <- "walleye pollock (>250 mm)"
 
 ebs_spp_vec <- unique(ebs_dat$species_code)
@@ -381,6 +422,7 @@ ebs_stratum_resids <- ebs_stratum_resids %>%
 ```{r update_nbs, message=FALSE, warning=FALSE}
 nbs_dat$species_code[nbs_dat$species_code == 21740 & nbs_dat$length_mm >= 100 & nbs_dat$length_mm <= 250] <- 21741
 nbs_dat$common_name[nbs_dat$species_code == 21741] <- "walleye pollock (100–250 mm)"
+nbs_dat$species_code[nbs_dat$species_code == 21740] <- 21742
 nbs_dat$common_name[nbs_dat$species_code == 21740] <- "walleye pollock (>250 mm)"
 
 # Get unique species code combinations
@@ -622,7 +664,16 @@ pcod_ai_ann_mean_resid_df <- pcod_ai_stratum_resids %>%
                    se_wt_resid = mean(weighted_resid_se))
 ```
 
-# 3. Update version in DESCRIPTION file
+# 3. Load VAST indicator
+
+```{r}
+bundle_vast_condition(region = "GOA", years = c(seq(1984, 1999, 3), seq(2001, 2022, 2)))
+bundle_vast_condition(region = "EBS", years = c(1999:2019, 2021:2022))
+bundle_vast_condition(region = "NBS", years = c(2010, 2017, 2019, 2021, 2022))
+bundle_vast_condition(region = "AI", years = c(seq(1984, 1999, 3), seq(2001, 2022, 2)))
+```
+
+# 4. Update version in DESCRIPTION file
 
 Update sysdata.rda with raw data for the condition indicator and write raw data to inst/extdata.
 
@@ -660,10 +711,11 @@ save(EBS_INDICATOR,
      GOA_INDICATOR,
      AI_INDICATOR,
      PCOD_ESP,
+     ESR_SETTINGS,
      file = here::here("R", "sysdata.rda"))
 ```
 
-# 4. Update documentation, install, and restart
+# 5. Update documentation, install, and restart
 Update version number in DESCRIPTION and update documentation using:
 ```{r updater, eval=TRUE, include=FALSE}
 devtools::document(roclets = c('rd', 'collate', 'namespace'))
@@ -675,7 +727,7 @@ knitr::knit_exit()
 Rcmd.exe INSTALL --no-multiarch --with-keep.source cold_pool
 ```
 
-# 5. Check that data appears correctly
+# 6. Check that data appears correctly
 Check that the updated cold pool index data is included in the package.
 ```{r qaqc, eval = TRUE, include =FALSE}
 print(akfishcondition::AI_INDICATOR$LAST_UPDATE)
