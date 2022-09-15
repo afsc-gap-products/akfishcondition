@@ -4,4 +4,4 @@ akfishcondition::get_condition_data(channel = akfishcondition:::get_connected(sc
 
 region <- "GOA"
 x <- dplyr::filter(akfishcondition::ESR_SETTINGS$VAST_SETTINGS, region == region)
-akfishcondition::run_vast_condition(x = x, region = region, n_knots = 250)
+akfishcondition::run_vast_condition(x = x, region = region, n_knots = 250, response = "count")
