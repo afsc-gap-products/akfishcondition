@@ -69,13 +69,6 @@ run_vast_condition <- function(x, region, n_knots = 250, response = "count") {
   
   library(VAST)
   
-  region <- "GOA"
-  n_knots = 250
-  response = "count"
-  x = akfishcondition::ESR_SETTINGS$VAST_SETTINGS
-  ii <- 5
-  
-  
   stopifnot("run_vast_condition: x does not contain all of the required columns (species_code, region, ObsModel_1, ObsModel_2, ObsModel_3, ObsModel_4)" = all(c("species_code", "region", "ObsModel_1", "ObsModel_2", "ObsModel_3", "ObsModel_4") %in% names(x)))
   for(ii in 1:nrow(x)) 
   {
