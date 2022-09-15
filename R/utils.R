@@ -426,3 +426,28 @@ knitr::kable(out$n_specimen_by_vessel, caption = 'Table 3. Number of length-weig
                     output_file = here::here("output", region, paste0(region, "_data_summary.docx")))
   
 }
+
+#' Append common name to data frame using species_code
+#' 
+#' @param x data.frame
+#' @noRd
+
+add_common_name <- function(x) {
+  
+  spp_df <- data.frame(common_name = c(
+    "walleye pollock", "walleye pollock (100–250 mm)", "walleye pollock (>250 mm)", "Pacific cod", 
+    "Pacific cod (juvenile)", "Pacific cod (adult)", "Atka mackerel", "arrowtooth flounder", 
+    "flathead sole", "yellowfin sole", "northern rock sole", "southern rock sole", "Alaska plaice",
+    "Pacific ocean perch", "dusky rockfish", "northern rockfish"),
+    species_code = c(21740, 21741, 21742, 21720, 21721, 21722, 21921, 10110, 10130,
+                     10210, 10261, 10262, 10285, 30060, 30152, 30420),
+    AI = c(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, TRUE, FALSE, TRUE),
+    GOA = c(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE),
+    EBS = c(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE),
+    NBS = c(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE))
+  
+  x <- dplyr::left_join(x, spp_df)
+  
+  return(x)
+  
+}
