@@ -63,6 +63,8 @@ theme_blue_strip <- function() {
                                           color = NA))
 }
 
+
+
 #' Set species plotting order
 #' @param common_name Vector of common names
 #' @param region Character vector of length one indicating whether the region is AI, GOA, or BS

@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_plots.R
 \name{plot_two_timeseries}
 \alias{plot_two_timeseries}
-\title{Make condition time series plot}
+\title{Two condition time series and correlation}
 \usage{
 plot_two_timeseries(
   x_1,
@@ -51,5 +51,5 @@ plot_two_timeseries(
 A ggplot object of the time series
 }
 \description{
-Make condition time series plot
+Two condition time series and correlation
 }

@@ -275,7 +275,7 @@ plot_species_stratum_bar <- function(x,
 
 
 
-#' Make condition time series plot
+#' Two condition time series and correlation
 #' 
 #' @param x_1 A data.frame for the first time series.
 #' @param x_2 A data.frame for the second time series.
