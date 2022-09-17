@@ -18,7 +18,9 @@ plot_two_timeseries(
   fill_title = "Method",
   scale_y = TRUE,
   year_break = NULL,
+  x_offset = 0.25,
   fill_colors = c("#001743", "#0085CA"),
+  shapes = c(24, 21),
   format_for = "rmd"
 )
 }
@@ -43,9 +45,17 @@ plot_two_timeseries(
 
 \item{scale_y}{Logical. Should y variables be Z-score transformed?}
 
+\item{year_break}{Optional. Year to split a times series for geom_line(); denotes a break in the time series (i.e., EBS and NBS in 2020)}
+
+\item{x_offset}{Offset value to add to an x variable (e.g. year) from one of the time series to improve interpretability. Numeric (1L).}
+
 \item{fill_colors}{Fill colors to use for points. Character (2L).}
 
+\item{shapes}{Shapes to use for points.}
+
 \item{format_for}{"rmd" or "png"}
+
+\item{fill_color}{Fill colors to use for points.}
 }
 \value{
 A ggplot object of the time series
