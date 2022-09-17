@@ -149,6 +149,49 @@ dev.off()
 
 
 ```{r figure 3 grid, include=TRUE, echo=FALSE, fig.height=14,fig.width=12,fig.cap="\\label{fig:figs}Figure 3. Length-weight residuals for groundfish species and age 1–2 walleye pollock (100–250 mm) collected during AFSC/RACE GAP summer bottom trawl surveys of the Northern Bering Sea, 2010 and 2017–2021. Error bars denote two standard errors.",  message=FALSE, warning=FALSE}
+# Replace with VAST 
+fig3 <- plot_two_timeseries(x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION,
+                                x_2 = akfishcondition::NBS_INDICATOR$FULL_REGION,
+                                region = "BS",
+                                series_name_1 = "Historical",
+                                series_name_2 = "VAST",
+                                var_y_name_1 = "mean_wt_resid",
+                                var_x_name_1 = "year",
+                                var_y_name_2 = "mean_resid",
+                                var_x_name_2 = "year",
+                                y_title = "Condition anomaly (Z-score)",
+                                scale_y = TRUE,
+                                year_break = 2020,
+                                fill_colors = c("#0085CA", "#001743"),
+                                format_for = "rmd")
+
+fig3_png <- plot_two_timeseries(x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION,
+                                x_2 = akfishcondition::NBS_INDICATOR$FULL_REGION,
+                                region = "BS",
+                                series_name_1 = "Historical",
+                                series_name_2 = "VAST",
+                                var_y_name_1 = "mean_wt_resid",
+                                var_x_name_1 = "year",
+                                var_y_name_2 = "mean_resid",
+                                var_x_name_2 = "year",
+                                y_title = "Condition anomaly (Z-score)",
+                                scale_y = TRUE,
+                                year_break = 2020,
+                                fill_colors = c("#0085CA", "#001743"),
+                                format_for = "png")
+
+print(fig3 + theme_condition_index())
+```
+
+```{r newfigure 3 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+png(here::here("plots", "EBS_VAST_HISTORICAL_timeseries.png"),width=6,height=7,units="in",res=300)
+print(fig3_png + theme_blue_strip())
+dev.off()
+```
+
+
+```{r oldfigure 3 grid, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+print(fig3 + theme_condition_index())
 
 fig3 <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
                         region = "BS", 
@@ -168,7 +211,7 @@ fig3_png <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
                         y_title = "Length-weight residual (ln(g))",
                         format_for = "png")
 
-print(fig3 + theme_condition_index())
+
 
 ```
 
@@ -183,6 +226,34 @@ In 2021, negative length-weight residuals were observed for large walleye polloc
 In 2021, similar to 2010-2019, Pacific cod condition was generally negative on the middle and outer northern shelf and outer southern shelf (Strata 40, 50, and 60); however, condition was also negative on the inner southern shelf and inner northern shelf (strata 10, 20 and 30) indicating a decline in condition on these strata since 2019. Large walleye pollock (>250 mm) condition was primarily negative on all strata in 2021, which is consistent with the observed condition on the inner shelf since 2015. In 2021, small walleye pollock (100–250 mm) condition was generally positive, and consistent with observed condition on the inner shelf since 2014. In 2021, condition was observed in all EBS strata for northern rock sole, Alaska plaice, flathead sole and arrowtooth flounder. The remaining species, yellowfin sole, had positive residuals on the outer shelf (Stratum 40).
 
 ```{r figure 4 set up, include=FALSE, fig.height=4, fig.width=4, message=FALSE, warning=FALSE}
+fig4_new <- plot_xy_corr(
+  x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION,
+  x_2 = akfishcondition::AI_INDICATOR$FULL_REGION,
+  region = "BS",
+  series_name_1 = expression("Stratum-biomass weighted residual "~(ln(grams))),
+  series_name_2 = expression("VAST Condition "~((grams/cm)^beta)),
+  var_y_name_1 = "mean_wt_resid",
+  var_y_se_name_1 = "se_wt_resid",
+  var_x_name_1 = "year",
+  var_y_name_2 = "mean_wt_resid",
+  var_y_se_name_2 = "se_wt_resid",
+  var_x_name_2 = "year",
+  format_for = "rmd")
+
+fig4_new_png <- plot_xy_corr(
+  x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION,
+  x_2 = akfishcondition::AI_INDICATOR$FULL_REGION,
+  region = "BS",
+  series_name_1 = expression("Stratum-biomass weighted residual "~(ln(grams))),
+  series_name_2 = expression("VAST Condition "~((grams/cm)^beta)),
+  var_y_name_1 = "mean_wt_resid",
+  var_y_se_name_1 = "se_wt_resid",
+  var_x_name_1 = "year",
+  var_y_name_2 = "mean_wt_resid",
+  var_y_se_name_2 = "se_wt_resid",
+  var_x_name_2 = "year",
+  format_for = "png")
+
 fig4 <- plot_stratum_stacked_bar(x = EBS_INDICATOR$STRATUM,
                                  region = "BS",
                                  fill_palette = "BrBG",
@@ -191,14 +262,24 @@ fig4 <- plot_stratum_stacked_bar(x = EBS_INDICATOR$STRATUM,
                                  var_group_name = "stratum",
                                  fill_title = "Stratum",
                                  y_title = "Length-weight residual (ln(g))")
+
+print(fig4 +
+  theme_condition_index())
 ```
 
 ```{r figure 4 grid, include=TRUE, echo=FALSE, fig.height=14, fig.width=12, fig.cap="\\label{fig:figs}Figure 4. Length-weight residuals by survey stratum (10-60) for seven eastern Bering Sea shelf groundfish species and age 1–2 walleye pollock (100–250 mm) sampled in the AFSC/RACE GAP standard summer bottom trawl survey, 1999-2021. Length-weight residuals are not weighted by stratum biomass.",message=FALSE, warning=FALSE}
+print(fig4_new +
+  theme_condition_index())
+
 print(fig4 +
   theme_condition_index())
 ```
 
 ```{r figure 4 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+png(here::here("plots", "EBS_VAST_VS_HISTORICAL_Scatterplot.png"), width = 6, height = 7, units = "in", res = 300)
+print(fig4_new_png + theme_blue_strip())
+dev.off()
+
 png(here::here("plots", "EBS_condition_by_stratum.png"), width = 6, height = 7, units = "in", res = 300)
 print(fig4 + theme_blue_strip())
 dev.off()

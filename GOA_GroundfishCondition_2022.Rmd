@@ -111,35 +111,6 @@ plot_species_stratum_bar(
   fill_title = "Stratum",
   fill_palette = "BrBG",
   write_plot = TRUE)
-
-# goa_stratum_resids_df$display_name <- akfishcondition::set_plot_order(goa_stratum_resids_df$common_name, region = "GOA")
-# 
-# for(i in 1:length(unique(goa_stratum_resids_df$display_name))) {
-#   
-#   png(paste0("./plots/GOA_condition_", gsub(">", "gt", unique(goa_stratum_resids_df$display_name)[i]), ".png"), width = 6, height = 7, units = "in", res = 300)
-#   print(
-#     ggplot(data = goa_stratum_resids_df %>% 
-#              dplyr::filter(display_name == unique(goa_stratum_resids_df$display_name)[i]),
-#            aes(x = year, 
-#                y = stratum_resid_mean, 
-#                fill = set_stratum_order(trimws(inpfc_stratum), region = "GOA"),
-#                ymin = stratum_resid_mean - 2*stratum_resid_se,
-#                ymax = stratum_resid_mean + 2*stratum_resid_se)) +
-#       geom_hline(yintercept = 0) +
-#       geom_bar(stat = "identity", color = "black", position = "stack", width = 0.8) +
-#       geom_errorbar(width = 0.8) +
-#       facet_wrap(~set_stratum_order(trimws(inpfc_stratum), region = "GOA"), 
-#                  ncol = 2, 
-#                  scales = "free_y") +
-#       ggtitle(unique(goa_stratum_resids_df$display_name)[i]) +
-#       scale_x_continuous(name = "Year") +
-#       scale_y_continuous(name = "Length-weight residual (ln(g))") +
-#       scale_fill_brewer(name = "Stratum", palette = "BrBG", drop = FALSE) +
-#       theme_pngs() + 
-#       theme(legend.position = "none",
-#             title = element_text(hjust = 0.5)))
-#   dev.off()
-# }
 ```
 
 **Factors causing observed trends**: Factors that could affect residual fish body condition presented here include temperature, trawl survey timing, stomach fullness, movement in or out of the survey area, or variable somatic growth. Following an unprecedented warming event from 2014--2016 (Bond et al., 2015; Stabeno et al., 2019; Barbeaux et al., 2020), there has been a general trend of warming ocean temperatures in the survey area and sea surface temperature anomaly data continue to reflect temperatures above average historical conditions through 2021 (NOAA 2021); these warmer temperatures could be affecting fish growth conditions in this region. Changing ocean conditions along with normal patterns of movement can cause the proportion of the population resident in the sampling area during the annual bottom trawl survey to vary. Recorded changes attributed to the marine heatwave included species abundances, sizes, growth rates, weight/body condition, reproductive success, and species composition (Suryan et al., 2021). Warmer ocean temperatures can lead to lower energy (leaner) prey, increased metabolic needs of younger fish, and therefore slower growth for juveniles, as observed in Pacific cod (Barbeaux et al., 2020). Additionally, spatial and temporal trends in fish growth over the season become confounded with survey progress since the first length-weight data are generally collected in late May and the bottom trawl survey is conducted throughout the summer months moving from west to east. In addition, spatial variability in residual condition may also reflect local environmental features which can influence growth and prey availability in the areas surveyed (e.g., warm core eddies in the central GOA; Atwood et al., 2010). The fish condition computations presented here begin to, but do not wholly, account for spatio-temporal trends in the data contributed by survey sampling logistics nor do they resolve sources of variability in the underlying populations. 
