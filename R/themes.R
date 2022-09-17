@@ -76,7 +76,8 @@ set_plot_order <- function(common_name, region) {
   }
   if(region == "AI") {
     return(factor(common_name, 
-                  levels = c("walleye pollock (>250 mm)",
+                  levels = c("walleye pollock", 
+                             "walleye pollock (>250 mm)",
                              "walleye pollock (100–250 mm)",
                              "Pacific cod",
                              "southern rock sole",
@@ -84,7 +85,8 @@ set_plot_order <- function(common_name, region) {
                              "Atka mackerel",
                              "northern rockfish",
                              "Pacific ocean perch"),
-                  labels = c("walleye pollock (>250 mm)",
+                  labels = c("walleye pollock", 
+                             "walleye pollock (>250 mm)",
                              "walleye pollock (100–250 mm)",
                              "Pacific cod",
                              "southern rock sole",
@@ -94,7 +96,8 @@ set_plot_order <- function(common_name, region) {
                              "Pacific ocean perch")))
   } else if(region == "GOA") {
   return(factor(common_name,
-                levels = c("walleye pollock (>250 mm)",
+                levels = c("walleye pollock", 
+                           "walleye pollock (>250 mm)",
                            "walleye pollock (100–250 mm)",
                            "Pacific cod",
                            "arrowtooth flounder",
@@ -102,7 +105,8 @@ set_plot_order <- function(common_name, region) {
                            "dusky rockfish",
                            "northern rockfish",
                            "Pacific ocean perch"),
-                labels = c("walleye pollock (>250 mm)",
+                labels = c("walleye pollock", 
+                           "walleye pollock (>250 mm)",
                            "walleye pollock (100–250 mm)",
                            "Pacific cod",
                            "arrowtooth flounder",
@@ -112,7 +116,8 @@ set_plot_order <- function(common_name, region) {
                            "Pacific ocean perch")))
   } else if(region %in% c("BS", "EBS")) {
     return(factor(common_name, 
-                  levels = c("walleye pollock (>250 mm)",
+                  levels = c("walleye pollock", 
+                             "walleye pollock (>250 mm)",
                              "walleye pollock (100–250 mm)",
                              "Pacific cod",
                              "northern rock sole",
@@ -120,7 +125,8 @@ set_plot_order <- function(common_name, region) {
                              "arrowtooth flounder",
                              "Alaska plaice",
                              "flathead sole"),
-                  labels = c("walleye pollock (>250 mm)",
+                  labels = c("walleye pollock", 
+                             "walleye pollock (>250 mm)",
                              "walleye pollock (100–250 mm)",
                              "Pacific cod",
                              "northern rock sole",
