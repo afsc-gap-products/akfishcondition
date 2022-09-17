@@ -4,14 +4,12 @@
 \alias{run_vast_condition}
 \title{Run VAST to estimate fish condition}
 \usage{
-run_vast_condition(x, region, n_knots = 250, response = "count")
+run_vast_condition(x, n_knots = NULL, response = "count")
 }
 \arguments{
-\item{x}{data.frame containing species_code, region, ObsModel_1, ObsModel_2, ObsModel_3, and ObsModel_4 columns.}
+\item{x}{data.frame containing species_code, region, ObsModel_1, ObsModel_2, ObsModel_3, and ObsModel_4.}
 
-\item{region}{Region as a character vector.}
-
-\item{n_knots}{Number of knots to use to generate the mesh.}
+\item{n_knots}{Number of knots to use to generate the mesh. Default NULL = use n_knots from the input data.frame.}
 
 \item{response}{"count" or "biomass"}
 }
@@ -21,5 +19,5 @@ Run VAST to estimate fish condition
 \examples{
 x <- dplyr::filter(akfishcondition::ESR_SETTINGS$VAST_SETTINGS, region == "EBS")
 x <- dplyr::filter(x, species_code == 21740)
-run_vast_condition(x = x, region = "EBS" n_knots = 250)
+run_vast_condition(x = x, n_knots = 250)
 }

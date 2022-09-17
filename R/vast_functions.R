@@ -44,7 +44,8 @@ bundle_vast_condition <- function(region, years) {
   }
   
   # Append common name
-  vast_condition_df <- akfishcondition:::add_common_name(x = vast_condition_df)
+  vast_condition_df <- akfishcondition:::add_common_name(x = vast_condition_df) |>
+    dplyr::select(-AI, -GOA, -EBS, -NBS)
   
   return(vast_condition_df)
   
@@ -55,17 +56,16 @@ bundle_vast_condition <- function(region, years) {
 #' Run VAST to estimate fish condition
 #' 
 #' 
-#' @param x data.frame containing species_code, region, ObsModel_1, ObsModel_2, ObsModel_3, and ObsModel_4 columns.
-#' @param region Region as a character vector.
-#' @param n_knots Number of knots to use to generate the mesh.
+#' @param x data.frame containing species_code, region, ObsModel_1, ObsModel_2, ObsModel_3, and ObsModel_4.
+#' @param n_knots Number of knots to use to generate the mesh. Default NULL = use n_knots from the input data.frame.
 #' @param response "count" or "biomass"
 #' @examples
 #' x <- dplyr::filter(akfishcondition::ESR_SETTINGS$VAST_SETTINGS, region == "EBS")
 #' x <- dplyr::filter(x, species_code == 21740)
-#' run_vast_condition(x = x, region = "EBS" n_knots = 250)
+#' run_vast_condition(x = x, n_knots = 250)
 #' @export
 
-run_vast_condition <- function(x, region, n_knots = 250, response = "count") {
+run_vast_condition <- function(x, n_knots = NULL, response = "count") {
   
   library(VAST)
   
@@ -77,13 +77,9 @@ run_vast_condition <- function(x, region, n_knots = 250, response = "count") {
                           ifelse(x$region[ii] == "AI", "aleutian_islands", 
                                  ifelse(x$region[ii] == "EBS","Eastern_Bering_Sea","Northern_Bering_Sea")))
     
-    # species_code <- x$species_code
-    
     tictoc::tic("start species")
     
     message(paste0("Optimizing ", x$species_code[ii], " in ", x$region[ii]))
-    ## EBS/NBS years: 1999 - present
-    ## AI/GOA years: 1984 - present
     
     dir.create(paste0(getwd(),"/results/", x$region[ii], "/", x$species_code[ii],"/"))
     
@@ -109,7 +105,7 @@ run_vast_condition <- function(x, region, n_knots = 250, response = "count") {
       x$ObsModel_4[ii]), nrow = 2, ncol = 2)
     
     # Make settings
-    settings = make_settings( n_x = n_knots,
+    settings = make_settings( n_x = ifelse(is.null(n_knots), x$n_knots[ii], n_knots),
                               Region = region_VAST,
                               purpose = "condition_and_density",
                               bias.correct = FALSE,
@@ -132,7 +128,6 @@ run_vast_condition <- function(x, region, n_knots = 250, response = "count") {
     Expansion_cz = matrix( c( 0, 2, 0, 0 ), nrow=2, ncol=2 ) ##two for two categories (lengthed or not lenghted)
     
     n_i = ifelse( !is.na(specimen_sub[,'number_fish']), specimen_sub[,'number_fish'], specimen_sub[,'weight_g'] )
-
     c_i = ifelse( !is.na(specimen_sub[,'number_fish']), 0, 1 )
     specimen_sub$effort_km2[is.na(specimen_sub$effort_km2)] <- 1
     
@@ -143,17 +138,21 @@ run_vast_condition <- function(x, region, n_knots = 250, response = "count") {
     #fit_model( b_i = as_units(X, "count"), ... )
     #where `as_units` is the function that defines the units-class explicitly
     if(response == "count") {
+      # n_i = ifelse( !is.na(specimen_sub[,'number_fish']), specimen_sub[,'number_fish'], specimen_sub[,'weight_g'] )
+      # c_i = ifelse( !is.na(specimen_sub[,'number_fish']), 0, 1 )
+      # specimen_sub$effort_km2[is.na(specimen_sub$effort_km2)] <- 1
+      
       fit = fit_model( settings = settings,
                        Lat_i = specimen_sub$latitude,
                        Lon_i = specimen_sub$longitude,
                        t_i = specimen_sub$year,
-                       c_i = c_i, #categories (aka use for condition = 1, not = 0)
+                       c_i = c_i, #categories (aka condition = 1, not condition = 0)
                        b_i = n_i, #number
                        #a_i = rep(1, nrow(specimen_sub)), #area_swept
                        a_i = specimen_sub$effort_km2, #area_swept
                        catchability_data = catchability_data, ##length data
                        Q2_formula= ~ log(length_cm),
-                       Q2config_k = c(3), # Potential switch to make allometric weight-length a spatially varying term
+                       Q2config_k = c(3), # Spatially varying allometric length-weight
                        Expansion_cz = Expansion_cz, ##tells code to expand as weighted-average of biomass for length category (aka c = 1)
                        #getReportCovariance = TRUE,
                        run_model = TRUE,
