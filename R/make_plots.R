@@ -46,6 +46,8 @@ plot_anomaly_timeseries <- function(x,
   names(x)[which(names(x) == var_y_name)] <- "var_y"
   names(x)[which(names(x) == var_y_se_name)] <- "se_var_y"
   
+  x <- dplyr::filter(x, !is.na(var_y))
+  
   # Anomalies
   x_anomaly <- x %>%
     dplyr::group_by(common_name,
@@ -143,6 +145,8 @@ plot_stratum_stacked_bar <- function(x,
   names(x)[which(names(x) == var_y_name)] <- "var_y"
   names(x)[which(names(x) == var_group_name)] <- "var_group"
   
+  x <- dplyr::filter(x, !is.na(var_y))
+  
   p1 <- ggplot(data = x, 
                aes(x = var_x, 
                    y = var_y, 
@@ -219,6 +223,7 @@ plot_species_stratum_bar <- function(x,
   names(x)[which(names(x) == var_y_name)] <- "var_y"
   names(x)[which(names(x) == var_group_name)] <- "var_group"
   names(x)[which(names(x) == var_y_se_name)] <- "var_y_se"
+  x <- dplyr::filter(x, !is.na(var_y))
   
   x$display_name <- akfishcondition::set_plot_order(x$common_name, region = region)
   
@@ -245,7 +250,7 @@ plot_species_stratum_bar <- function(x,
                  ncol = 2, 
                  scales = "free_y") +
       ggtitle(unique_groups[ii]) +
-      scale_x_continuous(name = "Year") +
+      scale_x_continuous(name = "Year", breaks = scales::pretty_breaks()) +
       scale_y_continuous(name = y_title) +
       scale_fill_brewer(name = fill_title, 
                         palette = fill_palette, 
@@ -286,8 +291,12 @@ plot_species_stratum_bar <- function(x,
 #' @param var_y_name_2 Name of the y variable in the data.frame. Character (1L).
 #' @param var_x_name_2 Name of the x (time variable). Character (1L).
 #' @param scale_y Logical. Should y variables be Z-score transformed?
+#' @param year_break Optional. Year to split a times series for geom_line(); denotes a break in the time series (i.e., EBS and NBS in 2020)
 #' @param y_title Y-axis title. Character (1L).
+#' @param x_offset Offset value to add to an x variable (e.g. year) from one of the time series to improve interpretability. Numeric (1L).
 #' @param fill_title Name of the fill variable to use for plotting. Character (1L).
+#' @param fill_color Fill colors to use for points.
+#' @param shapes Shapes to use for points.
 #' @param format_for "rmd" or "png"
 #' @return A ggplot object of the time series
 #' @export
@@ -305,7 +314,9 @@ plot_two_timeseries <- function(x_1,
                                 fill_title = "Method",
                                 scale_y = TRUE,
                                 year_break = NULL,
+                                x_offset = 0.25,
                                 fill_colors = c("#001743", "#0085CA"), 
+                                shapes = c(24, 21),
                                 format_for = "rmd") {
   
   region <- toupper(region)
@@ -314,12 +325,16 @@ plot_two_timeseries <- function(x_1,
   
   stopifnot("Invalid region in plot_anomaly_timeseries. Must be 'BS', 'AI', or 'GOA'"  = (region %in% c("BS", "AI", "GOA")))
   
+  shared_cols <- c("var_x", "var_y", "var_y_se", "display_name", "common_name", "series")
+  
   # Setup time series 1
   x_1$display_name <- akfishcondition::set_plot_order(x_1$common_name, 
                                                       region = region)
   names(x_1)[which(names(x_1) == var_x_name_1)] <- "var_x"
   names(x_1)[which(names(x_1) == var_y_name_1)] <- "var_y"
   x_1$series <- series_name_1
+  x_1 <- x_1[, which(names(x_1) %in% shared_cols)]
+  x_1 <- dplyr::filter(x_1, !is.na(var_y))
   
   # Setup time series 2
   x_2$display_name <- akfishcondition::set_plot_order(x_2$common_name, 
@@ -327,6 +342,8 @@ plot_two_timeseries <- function(x_1,
   names(x_2)[which(names(x_2) == var_x_name_2)] <- "var_x"
   names(x_2)[which(names(x_2) == var_y_name_2)] <- "var_y"
   x_2$series <- series_name_2
+  x_2 <- x_2[, which(names(x_2) %in% shared_cols)]
+  x_2 <- dplyr::filter(x_2, !is.na(var_y))
   
   # Scale y variables
   if(scale_y) {
@@ -361,6 +378,7 @@ plot_two_timeseries <- function(x_1,
                     use = "complete.obs",
                     method = "pearson"), 2))
   
+  x_2$var_x <- x_2$var_x + x_offset
   x_combined <- dplyr::bind_rows(x_1, x_2)
   
   if(!is.null(year_break)) {
@@ -388,11 +406,11 @@ plot_two_timeseries <- function(x_1,
     geom_hline(yintercept = c(-2,2),
                linetype = 3,
                color = "grey50") +
-    geom_line(data = x_combined, 
-              aes(x = var_x, 
-                  y = var_y, 
-                  group = interaction(grp, series)),
-              color = "black") +
+    # geom_line(data = x_combined, 
+    #           aes(x = var_x, 
+    #               y = var_y, 
+    #               group = interaction(grp, series)),
+    #           color = "black") +
     geom_point(data = x_combined, 
                aes(x = var_x, 
                    y = var_y, 
@@ -408,9 +426,9 @@ plot_two_timeseries <- function(x_1,
     scale_fill_manual(name = fill_title, 
                       values = fill_colors) +
     scale_shape_manual(name = fill_title, 
-                       values = c(21, 24)) +
+                       values = shapes) +
     facet_wrap(~display_name, ncol = 2) +
-    scale_x_continuous(name = "Year") +
+    scale_x_continuous(name = "Year", breaks = scales::pretty_breaks()) +
     scale_y_continuous(name = y_title, limits = c(range(x_combined$var_y)))
   
   return(p1)
@@ -456,6 +474,8 @@ plot_xy_corr <- function(x_1,
   
   stopifnot("Invalid region in plot_anomaly_timeseries. Must be 'BS', 'AI', or 'GOA'"  = (region %in% c("BS", "AI", "GOA")))
   
+  shared_cols <- c("var_x", "var_y", "var_y_se", "display_name", "common_name", "series")
+  
   # Setup time series 1
   x_1$display_name <- akfishcondition::set_plot_order(x_1$common_name, 
                                                       region = region)
@@ -463,6 +483,8 @@ plot_xy_corr <- function(x_1,
   names(x_1)[which(names(x_1) == var_y_name_1)] <- "var_y"
   names(x_1)[which(names(x_1) == var_y_se_name_1)] <- "var_y_se"
   x_1$series <- series_name_1
+  x_1 <- x_1[, which(names(x_1) %in% shared_cols)]
+  x_1 <- dplyr::filter(x_1, !is.na(var_y))
   
   # Setup time series 2
   x_2$display_name <- akfishcondition::set_plot_order(x_2$common_name, 
@@ -471,6 +493,8 @@ plot_xy_corr <- function(x_1,
   names(x_2)[which(names(x_2) == var_y_name_2)] <- "var_y"
   names(x_2)[which(names(x_2) == var_y_se_name_2)] <- "var_y_se"
   x_2$series <- series_name_2
+  x_2 <- x_2[, which(names(x_2) %in% shared_cols)]
+  x_2 <- dplyr::filter(x_2, !is.na(var_y))
 
   # Correlation between timeseries
   x_combined <- dplyr::inner_join(
@@ -490,7 +514,8 @@ plot_xy_corr <- function(x_1,
                     var_x, 
                     var_y_2,
                     var_y_se_2),
-    by = c("display_name", "var_x"))
+    by = c("display_name", "var_x")) |>
+    dplyr::ungroup()
   
   
   corr_df <- x_combined |>
@@ -536,7 +561,7 @@ plot_xy_corr <- function(x_1,
                   label = paste0("r = ", format(r, nsmall = 2))),
               size = rel(point_rel_size*1.9)) +
     facet_wrap(~display_name, ncol = 2, scale = "free") +
-    scale_x_continuous(name = series_name_1) +
+    scale_x_continuous(name = series_name_1, breaks = scales::pretty_breaks()) +
     scale_y_continuous(name = series_name_2)
   
   return(p1)
