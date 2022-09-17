@@ -69,7 +69,11 @@ ESR_SETTINGS <- list(ESR_SPECIES = data.frame(common_name = c(
                ObsModel_4 = c(3, 3, 3, 3, 4, 4, 4,
                               3, 3, 3, 3, 4, 3, 4,
                               3, 3, 3, 4, 4, 4, 4,
-                              4, 4, 3, 4))
+                              4, 4, 3, 4),
+               n_knots = c(400, 400, 400, 400, 400, 400, 400,
+                           400, 600, 400, 400, 400, 400, 400,
+                           400, 400, 400, 400, 400, 400, 400,
+                           400, 400, 400, 400))
     )
 ```
 
@@ -233,9 +237,11 @@ save(AI_raw,
 ## 2.1 Aleutian Islands
 ```{r update_ai, message=FALSE, warning=FALSE}
 ai_dat$species_code[ai_dat$species_code == 21740  & ai_dat$length_mm >= 100 & ai_dat$length_mm <= 250] <- 21741
-ai_dat$common_name[ai_dat$species_code == 21740] <- "walleye pollock (>250 mm)"
-ai_dat$species_code[ai_dat$species_code == 21740] <- 21742
 ai_dat$common_name[ai_dat$species_code == 21741] <- "walleye pollock (100–250 mm)"
+ai_dat$species_code[ai_dat$species_code == 21740] <- 21742
+ai_dat$common_name[ai_dat$species_code == 21742] <- "walleye pollock (>250 mm)"
+
+
 
 ##AI Calculations and figures
 ai_spp_vec <- unique(ai_dat$species_code)
@@ -296,9 +302,9 @@ ai_stratum_resids <- ai_stratum_resids %>%
 ```{r update_goa, message=FALSE, warning=FALSE}
 # Convert 10-25 cm lengths to age-1
 goa_dat$species_code[goa_dat$species_code == 21740  & goa_dat$length_mm >= 100 & goa_dat$length_mm <= 250] <- 21741
-goa_dat$common_name[goa_dat$species_code == 21740] <- "walleye pollock (>250 mm)"
-goa_dat$species_code[goa_dat$species_code == 21740] <- 21742
 goa_dat$common_name[goa_dat$species_code == 21741] <- "walleye pollock (100–250 mm)"
+goa_dat$species_code[goa_dat$species_code == 21740] <- 21742
+goa_dat$common_name[goa_dat$species_code == 21742] <- "walleye pollock (>250 mm)"
 
 ## Calculations and figures
 goa_spp_vec <- unique(goa_dat$species_code)
@@ -361,7 +367,7 @@ goa_stratum_resids <- goa_stratum_resids %>%
 ebs_dat$species_code[ebs_dat$species_code == 21740  & ebs_dat$length_mm >= 100 & ebs_dat$length_mm <= 250] <- 21741
 ebs_dat$common_name[ebs_dat$species_code == 21741] <- "walleye pollock (100–250 mm)"
 ebs_dat$species_code[ebs_dat$species_code == 21740] <- 21742
-ebs_dat$common_name[ebs_dat$species_code == 21740] <- "walleye pollock (>250 mm)"
+ebs_dat$common_name[ebs_dat$species_code == 21742] <- "walleye pollock (>250 mm)"
 
 ebs_spp_vec <- unique(ebs_dat$species_code)
 
@@ -423,7 +429,7 @@ ebs_stratum_resids <- ebs_stratum_resids %>%
 nbs_dat$species_code[nbs_dat$species_code == 21740 & nbs_dat$length_mm >= 100 & nbs_dat$length_mm <= 250] <- 21741
 nbs_dat$common_name[nbs_dat$species_code == 21741] <- "walleye pollock (100–250 mm)"
 nbs_dat$species_code[nbs_dat$species_code == 21740] <- 21742
-nbs_dat$common_name[nbs_dat$species_code == 21740] <- "walleye pollock (>250 mm)"
+nbs_dat$common_name[nbs_dat$species_code == 21742] <- "walleye pollock (>250 mm)"
 
 # Get unique species code combinations
 nbs_spp_vec <- unique(nbs_dat$species_code)
@@ -667,10 +673,13 @@ pcod_ai_ann_mean_resid_df <- pcod_ai_stratum_resids %>%
 # 3. Load VAST indicator
 
 ```{r}
-bundle_vast_condition(region = "GOA", years = c(seq(1984, 1999, 3), seq(2001, 2022, 2)))
-bundle_vast_condition(region = "EBS", years = c(1999:2019, 2021:2022))
-bundle_vast_condition(region = "NBS", years = c(2010, 2017, 2019, 2021, 2022))
-bundle_vast_condition(region = "AI", years = c(seq(1984, 1999, 3), seq(2001, 2022, 2)))
+# bundle_vast_condition(region = "GOA", years = c(seq(1984, 1999, 3), seq(2001, 2022, 2)))
+# bundle_vast_condition(region = "EBS", years = c(1999:2019, 2021:2022))
+# bundle_vast_condition(region = "NBS", years = c(2010, 2017, 2019, 2021, 2022))
+ai_vast_df <- bundle_vast_condition(region = "AI", 
+                                    years = c(1986, seq(1991, 2000, 3), 
+                                              seq(2002, 2006, 2), 
+                                              seq(2010, 2018, 2), 2022))
 ```
 
 # 4. Update version in DESCRIPTION file
@@ -687,7 +696,8 @@ NBS_INDICATOR <- list(FULL_REGION = as.data.frame(nbs_ann_mean_resid_df),
 GOA_INDICATOR <- list(FULL_REGION = as.data.frame(goa_ann_mean_resid_df),
                       STRATUM = as.data.frame(goa_stratum_resids),
                       LAST_UPDATE = Sys.Date())
-AI_INDICATOR <- list(FULL_REGION = as.data.frame(ai_ann_mean_resid_df),
+AI_INDICATOR <- list(FULL_REGION = as.data.frame(dplyr::full_join(ai_ann_mean_resid_df,
+                                                                   ai_vast_df)),
                      STRATUM = as.data.frame(ai_stratum_resids),
                      LAST_UPDATE = Sys.Date())
 PCOD_ESP <- list(FULL_REGION_EBS = as.data.frame(pcod_ebs_ann_mean_resid_df),
