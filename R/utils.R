@@ -67,78 +67,7 @@ get_condition_data <- function(channel = NULL) {
     
     dat_lw <- RODBC::sqlQuery(channel = channel, query = readr::read_file(qry_lw))
     dat_biomass <- RODBC::sqlQuery(channel = channel, query = readr::read_file(qry_stratum_biomass))
-    if(i %in% c("ebs", "nbs")) {
-      
-      if(i == "ebs") {
-        
-      catch_df <- RODBC::sqlQuery(channel = channel,
-                                  query = "select a.hauljoin, a.start_latitude latitude, a.start_longitude longitude, a.start_time, a.stationid, b.species_code, floor(b.cruise/100) year, b.weight, b.number_fish, a.distance_fished, a.net_width, d.common_name
-                        from racebase.haul a, racebase.catch b, race_data.v_cruises c, racebase.species d
-                        where a.cruise > 199899
-                        and a.hauljoin = b.hauljoin
-                        and a.haul_type in (3,13)
-                        and a.cruisejoin = c.cruisejoin
-                        and c.survey_definition_id = 98
-                        and b.species_code = d.species_code
-                        and b.species_code in (21740, 21720, 10110, 10210, 10130, 10261, 10285)
-                        order by hauljoin")
-      
-      haul_df <- RODBC::sqlQuery(channel = channel,
-                                 query = "select a.hauljoin, a.start_latitude latitude, a.start_longitude longitude, a.start_time, floor(a.cruise/100) year, a.stationid, a.distance_fished, a.net_width
-    from racebase.haul a, race_data.v_cruises c
-                        where a.cruise > 199899
-                        and a.cruisejoin = c.cruisejoin
-                        and a.haul_type in (3,13)
-                        and c.survey_definition_id = 143
-                        and a.performance >= 0
-                        order by hauljoin")
-      }
-      
-      if(i == "nbs") {
-        
-        catch_df <- RODBC::sqlQuery(channel = channel,
-                                    query = "select a.hauljoin, a.start_latitude latitude, a.start_longitude longitude, a.start_time, a.stationid, b.species_code, floor(b.cruise/100) year, b.weight, b.number_fish, a.distance_fished, a.net_width, d.common_name
-                        from racebase.haul a, racebase.catch b, race_data.v_cruises c, racebase.species d
-                        where a.cruise > 200999
-                        and a.hauljoin = b.hauljoin
-                        and a.haul_type in (3,13)
-                        and a.cruisejoin = c.cruisejoin
-                        and c.survey_definition_id = 143
-                        and b.species_code = d.species_code
-                        and b.species_code in (21740, 21720,  10210, 10285)
-                        order by hauljoin")
-        
-        haul_df <- RODBC::sqlQuery(channel = channel,
-                                   query = "select a.hauljoin, a.start_latitude latitude, a.start_longitude longitude, a.start_time, floor(a.cruise/100) year, a.stationid, a.distance_fished, a.net_width
-    from racebase.haul a, race_data.v_cruises c
-                        where a.cruise > 200999
-                        and a.cruisejoin = c.cruisejoin
-                        and a.haul_type in (3,13)
-                        and c.survey_definition_id = 143
-                        and a.performance >= 0
-                        order by hauljoin")
-        
-      }
-      
-      spp_codes <- unique(catch_df$SPECIES_CODE)
-      all_hauls_df <- data.frame()
-      for(ii in 1:length(spp_codes)) {
-        
-        all_hauls_df <- dplyr::mutate(haul_df, SPECIES_CODE = spp_codes[ii]) |>
-          dplyr::bind_rows(all_hauls_df)
-        
-      }
-      
-      all_catch_df <- dplyr::right_join(catch_df, all_hauls_df)
-      all_catch_df$WEIGHT[is.na(all_catch_df$WEIGHT)] <- 0
-      all_catch_df$NUMBER_FISH[is.na(all_catch_df$NUMBER_FISH)] <- 0
-      dat_cpue <- all_catch_df |>
-        dplyr::mutate(EFFORT_KM2 = DISTANCE_FISHED*NET_WIDTH/1000) |>
-        dplyr::mutate(CPUE_KG_KM2 = WEIGHT/EFFORT_KM2)
-      
-    } else {
-      dat_cpue <- RODBC::sqlQuery(channel = channel, query = readr::read_file(qry_cpue))
-    }
+    dat_cpue <- RODBC::sqlQuery(channel = channel, query = readr::read_file(qry_cpue))
     
     if(i == "goa") {  survey_definition_id = 47; min_cruise = 198400; cod_juv_mm = 420}
     if(i == "ebs") { survey_definition_id = 98; min_cruise = 199900; cod_juv_mm = 460}
