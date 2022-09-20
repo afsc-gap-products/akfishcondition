@@ -311,6 +311,7 @@ make_data_summary <- function(dat_csv, region) {
                 dplyr::arrange(cruise) |>
                 data.frame())
   
+  dir.create(here::here("output", region), recursive = TRUE)
   saveRDS(object = out, file = here::here("output", region, paste0(region, "_sample_tables.rds")))
   
   yday_df <- dat |>
