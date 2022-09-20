@@ -13,7 +13,9 @@ Depends: R (>= 3.5),
     magrittr,
     plyr,
     reshape,
-    readr
+    readr,
+    here,
+    stringr
 Description: This package calculates groundfish condition based on length-weight regressions.
 License: GPL (>=2)
 Encoding: UTF-8
@@ -21,5 +23,5 @@ LazyData: false
 RoxygenNote: 7.2.1
 Imports: colorspace,
     viridis
-Suggests: knitr, rmarkdown, RODBC, getPass, stringr, VAST (>= 3.8.2), FishStatsUtils (>= 2.11.0), tictoc
+Suggests: knitr, rmarkdown, RODBC, getPass, VAST (>= 3.8.2), FishStatsUtils (>= 2.11.0), tictoc
 VignetteBuilder: knitr
