@@ -236,7 +236,7 @@ save(AI_raw,
 
 ## 2.1 Aleutian Islands
 ```{r update_ai, message=FALSE, warning=FALSE}
-ai_dat$species_code[ai_dat$species_code == 21740  & ai_dat$length_mm >= 100 & ai_dat$length_mm <= 250] <- 21741
+ai_dat$species_code[ai_dat$species_code == 21740 & ai_dat$length_mm >= 100 & ai_dat$length_mm <= 250] <- 21741
 ai_dat$common_name[ai_dat$species_code == 21741] <- "walleye pollock (100–250 mm)"
 ai_dat$species_code[ai_dat$species_code == 21740] <- 21742
 ai_dat$common_name[ai_dat$species_code == 21742] <- "walleye pollock (>250 mm)"
@@ -669,8 +669,86 @@ pcod_ai_ann_mean_resid_df <- pcod_ai_stratum_resids %>%
   dplyr::summarise(mean_wt_resid = mean(weighted_resid_mean),
                    se_wt_resid = mean(weighted_resid_se))
 ```
+# 3. Run VAST indicator
 
-# 3. Load VAST indicator
+## 3.1 Run VAST: Aleutian Islands
+
+```{r vast_ai}
+ai_spp <-  dplyr::filter(ESR_SETTINGS$VAST_SETTINGS, 
+                          region == "AI")
+
+ai_run_check <- character()
+
+for(ii in 1:nrow(ai_spp)) {
+  fit_check <- NA
+  fit_check <- try(
+    akfishcondition::run_vast_condition(x = ai_spp[ii,], 
+                                        response = "count"),
+    silent = TRUE)
+  
+  ai_run_check <- c(ai_run_check, class(fit_check)[1])
+}
+```
+
+## 3.2 Run VAST: Gulf of Alaska
+
+```{r vast_goa}
+goa_spp <-  dplyr::filter(ESR_SETTINGS$VAST_SETTINGS, 
+                         region == "GOA")
+
+goa_run_check <- character()
+
+for(ii in 1:nrow(goa_spp)) {
+  fit_check <- NA
+  fit_check <- try(
+    akfishcondition::run_vast_condition(x = goa_spp[ii,], 
+                                        response = "count"),
+    silent = TRUE)
+  
+  goa_run_check <- c(goa_run_check, class(fit_check)[1])
+}
+```
+
+## 3.3 Run VAST: EBS Shelf
+
+```{r vast_ebs}
+ebs_spp <-  dplyr::filter(ESR_SETTINGS$VAST_SETTINGS, 
+                    region == "EBS")
+
+ebs_run_check <- character()
+
+for(ii in 1:nrow(ebs_spp)) {
+  fit_check <- NA
+  fit_check <- try(
+    akfishcondition::run_vast_condition(x = ebs_spp[ii,], 
+                                        response = "count"),
+    silent = TRUE)
+  
+  ebs_run_check <- c(ebs_run_check, class(fit_check)[1])
+}
+```
+
+## 3.4 Run VAST: NBS
+
+```{r vast_nbs}
+nbs_spp <-  dplyr::filter(akfishcondition::ESR_SETTINGS$VAST_SETTINGS, 
+                          region == "NBS")
+
+nbs_run_check <- character()
+
+for(ii in 1:nrow(nbs_spp)) {
+  fit_check <- NA
+  fit_check <- try(
+    akfishcondition::run_vast_condition(x = nbs_spp[ii,], 
+                                        response = "count"),
+    silent = TRUE)
+  
+  nbs_run_check <- c(nbs_run_check, class(fit_check)[1])
+}
+```
+
+
+# 4. Load VAST indicator
 
 ```{r}
 # bundle_vast_condition(region = "GOA", years = c(seq(1984, 1999, 3), seq(2001, 2022, 2)))
@@ -682,7 +760,7 @@ ai_vast_df <- bundle_vast_condition(region = "AI",
                                               seq(2010, 2018, 2), 2022))
 ```
 
-# 4. Update version in DESCRIPTION file
+# 5. Update version in DESCRIPTION file
 
 Update sysdata.rda with raw data for the condition indicator and write raw data to inst/extdata.
 
@@ -725,7 +803,7 @@ save(EBS_INDICATOR,
      file = here::here("R", "sysdata.rda"))
 ```
 
-# 5. Update documentation, install, and restart
+# 6. Update documentation, install, and restart
 Update version number in DESCRIPTION and update documentation using:
 ```{r updater, eval=TRUE, include=FALSE}
 devtools::document(roclets = c('rd', 'collate', 'namespace'))
@@ -737,7 +815,7 @@ knitr::knit_exit()
 Rcmd.exe INSTALL --no-multiarch --with-keep.source cold_pool
 ```
 
-# 6. Check that data appears correctly
+# 7. Check that data appears correctly
 Check that the updated cold pool index data is included in the package.
 ```{r qaqc, eval = TRUE, include =FALSE}
 print(akfishcondition::AI_INDICATOR$LAST_UPDATE)
