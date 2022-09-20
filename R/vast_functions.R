@@ -77,11 +77,9 @@ run_vast_condition <- function(x, n_knots = NULL, response = "count") {
                           ifelse(x$region[ii] == "AI", "aleutian_islands", 
                                  ifelse(x$region[ii] == "EBS","Eastern_Bering_Sea","Northern_Bering_Sea")))
     
-    tictoc::tic("start species")
-    
     message(paste0("Optimizing ", x$species_code[ii], " in ", x$region[ii]))
-    
-    dir.create(paste0(getwd(),"/results/", x$region[ii], "/", x$species_code[ii],"/"))
+    start_time <- Sys.time()
+    dir.create(paste0(getwd(),"/results/", x$region[ii], "/", x$species_code[ii],"/"), recursive = TRUE)
     
     specimen_sub <- akfishcondition:::select_species(species_code = x$species_code[ii], region = x$region[ii])
     
@@ -130,10 +128,6 @@ run_vast_condition <- function(x, n_knots = NULL, response = "count") {
     n_i = ifelse( !is.na(specimen_sub[,'number_fish']), specimen_sub[,'number_fish'], specimen_sub[,'weight_g'] )
     c_i = ifelse( !is.na(specimen_sub[,'number_fish']), 0, 1 )
     specimen_sub$effort_km2[is.na(specimen_sub$effort_km2)] <- 1
-    
-    gc()
-    
-    tictoc::tic("model fitting")
     
     #fit_model( b_i = as_units(X, "count"), ... )
     #where `as_units` is the function that defines the units-class explicitly
@@ -191,9 +185,6 @@ run_vast_condition <- function(x, n_knots = NULL, response = "count") {
     # save the VAST model
     saveRDS(fit,file = paste0(getwd(),"/results/",x$region[ii],"/", x$species_code[ii], "/", x$species_code[ii], "_VASTfit.RDS"))
     
-    save <- tictoc::toc()
-    message(paste0("Completion time: ",round((as.numeric(save$toc) - as.numeric(save$tic))/60, digits = 1) , " minutes"))
-    
     # standard plots
     plot(fit,
          plot_set = c(3,20,21),
@@ -205,8 +196,8 @@ run_vast_condition <- function(x, n_knots = NULL, response = "count") {
     #       Yrange=c(NA,NA),
     #       category_names=c("Numbers","Condition (grams per cm^power)"),
     #       "working_dir" = paste0(getwd(),"/results/",x$region[ii],"/",x$species_code[ii],"/") )
-    save_species <- tictoc::toc()
-    message(paste0("Completion time: ",round((as.numeric(save_species$toc) - as.numeric(save_species$tic))/60, digits = 1) , " minutes"))
+    end_time <- Sys.time()
+    message(paste0("Completion time: ", round(difftime(start_time, end_time)), " minutes"))
     
   }
 }
