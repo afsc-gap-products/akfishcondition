@@ -24,6 +24,7 @@ The data in the package are used to calculate the summer groundfish morphometric
 
 ```{r get_connected, message=FALSE, warning=FALSE}
 library(akfishcondition)
+library(VAST)
 
 channel <- akfishcondition:::get_connected(schema = "AFSC")
 
