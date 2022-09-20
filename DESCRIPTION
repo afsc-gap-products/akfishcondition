@@ -10,6 +10,7 @@ Maintainer: Sean Rohan <sean.rohan@noaa.gov>
 Depends: R (>= 3.5),
     dplyr,
     ggplot2,
+    lubridate,
     magrittr,
     plyr,
     reshape,
