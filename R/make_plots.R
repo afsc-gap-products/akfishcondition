@@ -31,7 +31,9 @@ plot_anomaly_timeseries <- function(x,
                                     var_y_se_name = "se_wt_resid",
                                     var_x_name = "year",
                                     y_title = "Length-weight residual (ln(g))",
-                                    format_for = "rmd") {
+                                    format_for = "rmd",
+                                    plot_type = "point",
+                                    set_intercept = NULL) {
   
   region <- toupper(region)
   
@@ -55,43 +57,84 @@ plot_anomaly_timeseries <- function(x,
     dplyr::summarise(mean_var_y = mean(var_y),
                      sd_var_y = sd(var_y))
   
+  if(!is.null(set_intercept)) {
+    x_anomaly$mean_var_y <- set_intercept
+  }
+  
   # Make plot
-  p1 <- ggplot() + 
-    geom_hline(data = x_anomaly,
-               mapping = aes(yintercept = mean_var_y),
-               linetype = 1,
-               color = "grey50") +
-    geom_hline(data = x_anomaly,
-               mapping = aes(yintercept = mean_var_y + sd_var_y),
-               linetype = 2,
-               color = "grey50") +
-    geom_hline(data = x_anomaly,
-               mapping = aes(yintercept = mean_var_y - sd_var_y),
-               linetype = 2,
-               color = "grey50") +
-    geom_hline(data = x_anomaly,
-               mapping = aes(yintercept = mean_var_y + 2*sd_var_y),
-               linetype = 3,
-               color = "grey50") +
-    geom_hline(data = x_anomaly,
-               mapping = aes(yintercept = mean_var_y - 2*sd_var_y),
-               linetype = 3,
-               color = "grey50") +
-    geom_linerange(data = x, 
-                  aes(x = var_x, 
-                      ymax = var_y + 2*se_var_y,
-                      ymin = var_y - 2*se_var_y)) +
-    geom_point(data = x, 
+  if(plot_type == "point") {
+    p1 <- ggplot() + 
+      geom_hline(data = x_anomaly,
+                 mapping = aes(yintercept = mean_var_y),
+                 linetype = 1,
+                 color = "grey50") +
+      geom_hline(data = x_anomaly,
+                 mapping = aes(yintercept = mean_var_y + sd_var_y),
+                 linetype = 2,
+                 color = "grey50") +
+      geom_hline(data = x_anomaly,
+                 mapping = aes(yintercept = mean_var_y - sd_var_y),
+                 linetype = 2,
+                 color = "grey50") +
+      geom_hline(data = x_anomaly,
+                 mapping = aes(yintercept = mean_var_y + 2*sd_var_y),
+                 linetype = 3,
+                 color = "grey50") +
+      geom_hline(data = x_anomaly,
+                 mapping = aes(yintercept = mean_var_y - 2*sd_var_y),
+                 linetype = 3,
+                 color = "grey50") +
+      geom_linerange(data = x, 
+                     aes(x = var_x, 
+                         ymax = var_y + 2*se_var_y,
+                         ymin = var_y - 2*se_var_y)) + 
+      geom_point(data = x,
+                 aes(x = var_x,
+                     y = var_y),
+                 fill = fill_color,
+                 color = "black",
+                 shape = 21,
+                 size = rel(point_rel_size)) +
+      facet_wrap(~display_name, ncol = 2, scales = "free_y") +
+      scale_x_continuous(name = "Year", breaks = scales::pretty_breaks(n = 4)) +
+      scale_y_continuous(name = y_title)
+  } else if(plot_type == "bar") {
+    p1 <- ggplot() + 
+      geom_hline(data = x_anomaly,
+                 mapping = aes(yintercept = mean_var_y),
+                 linetype = 1,
+                 color = "grey50") +
+      geom_hline(data = x_anomaly,
+                 mapping = aes(yintercept = mean_var_y + sd_var_y),
+                 linetype = 2,
+                 color = "grey50") +
+      geom_hline(data = x_anomaly,
+                 mapping = aes(yintercept = mean_var_y - sd_var_y),
+                 linetype = 2,
+                 color = "grey50") +
+      geom_hline(data = x_anomaly,
+                 mapping = aes(yintercept = mean_var_y + 2*sd_var_y),
+                 linetype = 3,
+                 color = "grey50") +
+      geom_hline(data = x_anomaly,
+                 mapping = aes(yintercept = mean_var_y - 2*sd_var_y),
+                 linetype = 3,
+                 color = "grey50") +
+      geom_linerange(data = x, 
+                     aes(x = var_x, 
+                         ymax = var_y + 2*se_var_y,
+                         ymin = var_y - 2*se_var_y)) + 
+      geom_bar(data = x, 
                aes(x = var_x, 
                    y = var_y),
                stat = "identity", 
                fill = fill_color, 
                color = "black",
-               shape = 21,
-               size = rel(point_rel_size)) +
-    facet_wrap(~display_name, ncol = 2, scales = "free_y") +
-    scale_x_continuous(name = "Year") +
-    scale_y_continuous(name = y_title)
+               width = 0.8) +
+      facet_wrap(~display_name, ncol = 2, scales = "free_y") +
+      scale_x_continuous(name = "Year", breaks = scales::pretty_breaks(n = 4)) +
+      scale_y_continuous(name = y_title)
+  }
   
   return(p1)
   
@@ -260,7 +303,7 @@ plot_species_stratum_bar <- function(x,
     
     
     if(write_plot) {
-      png(paste0("./plots/", region, "_sppcond_", 
+      png(paste0("./plots/", region, "/", region, "_sppcond_", 
                  gsub(pattern = ">", replacement  = "gt", unique_groups[ii]), ".png"), 
           width = 6, height = 7, units = "in", res = 600)
       print(p1 + theme_blue_strip() + 
@@ -428,7 +471,7 @@ plot_two_timeseries <- function(x_1,
     scale_shape_manual(name = fill_title, 
                        values = shapes) +
     facet_wrap(~display_name, ncol = 2) +
-    scale_x_continuous(name = "Year", breaks = scales::pretty_breaks()) +
+    scale_x_continuous(name = "Year", breaks = scales::pretty_breaks(n = 4)) +
     scale_y_continuous(name = y_title, limits = c(range(x_combined$var_y)))
   
   return(p1)
