@@ -12,7 +12,9 @@ plot_anomaly_timeseries(
   var_y_se_name = "se_wt_resid",
   var_x_name = "year",
   y_title = "Length-weight residual (ln(g))",
-  format_for = "rmd"
+  format_for = "rmd",
+  plot_type = "point",
+  set_intercept = NULL
 )
 }
 \arguments{
