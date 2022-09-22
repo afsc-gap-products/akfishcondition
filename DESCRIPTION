@@ -8,6 +8,7 @@ Authors@R: c(person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("au
     person("Ned", "Laman", email = "ned.laman@noaa.gov", role = c("ctb")))
 Maintainer: Sean Rohan <sean.rohan@noaa.gov>
 Depends: R (>= 3.5),
+    car,
     dplyr,
     ggplot2,
     lubridate,
