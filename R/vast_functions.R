@@ -129,6 +129,7 @@ run_vast_condition <- function(x, n_knots = NULL, response = "count") {
     c_i = ifelse( !is.na(specimen_sub[,'number_fish']), 0, 1 )
     specimen_sub$effort_km2[is.na(specimen_sub$effort_km2)] <- 1
     
+    gc()
     #fit_model( b_i = as_units(X, "count"), ... )
     #where `as_units` is the function that defines the units-class explicitly
     if(response == "count") {
