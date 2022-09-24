@@ -43,6 +43,14 @@ bundle_vast_condition <- function(region, years) {
     }
   }
   
+  # Handle corner cases
+  if(region == "EBS") {
+    vast_condition_df <- vast_condition_df |>
+      dplyr::filter(!(year == 2015 & species_code == 10285)) |>
+      dplyr::filter(!(year == 2007 & species_code == 10110)) |>
+      dplyr::filter(!(year == 2013 & species_code == 10110))
+  }
+  
   # Append common name
   vast_condition_df <- akfishcondition:::add_common_name(x = vast_condition_df) |>
     dplyr::select(-AI, -GOA, -EBS, -NBS)

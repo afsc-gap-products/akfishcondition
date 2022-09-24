@@ -104,7 +104,7 @@ get_condition_data <- function(channel = NULL) {
 #' @param remove_outliers If TRUE, remove outliers based on Bonferroni test.
 #' @noRd
 
-select_species <- function(species_code, region, remove_outliers = TRUE, bonferroni_threshold = 0.7){
+select_species <- function(species_code, region, remove_outliers = TRUE, bonferroni_threshold = 0.05){
   
   if(file.exists(paste0(getwd(),"/data/", region, "_all_species.csv"))) {
     all_species <- read.csv(paste0(getwd(),"/data/", region, "_all_species.csv"))
