@@ -102,9 +102,10 @@ get_condition_data <- function(channel = NULL) {
 #' @param species_code RACE species code as a 1L numeric vector
 #' @param region Region as a character vector. One of "GOA", "AI", "NBS", "EBS")
 #' @param remove_outliers If TRUE, remove outliers based on Bonferroni test.
+#' @param fork_lengths_mm Numeric vector of fork lengths to include.
 #' @noRd
 
-select_species <- function(species_code, region, remove_outliers = TRUE, bonferroni_threshold = 0.05){
+select_species <- function(species_code, region, remove_outliers = TRUE, bonferroni_threshold = 0.05, fork_lengths_mm = NULL){
   
   if(file.exists(paste0(getwd(),"/data/", region, "_all_species.csv"))) {
     all_species <- read.csv(paste0(getwd(),"/data/", region, "_all_species.csv"))
@@ -118,6 +119,11 @@ select_species <- function(species_code, region, remove_outliers = TRUE, bonferr
   all_species$cpue_kg_km2 <- as.numeric(all_species$cpue_kg_km2)
   
   specimen_sub <- all_species[which(all_species$species_code == species_code),]
+  
+  if(!is.null(fork_lengths)) {
+    fl_range <- range(fork_lengths_mm)
+    specimen_sub <- specimen_sub[specimen_sub$length_mm >= fl_range[1] & specimen_sub$length <= fl_range[2], ]
+  }
   
   if(!(nrow(specimen_sub) > 1)) {
     stop(paste0("select_species: Species code", species_code, "not found for region ", region))

@@ -67,13 +67,14 @@ bundle_vast_condition <- function(region, years) {
 #' @param x data.frame containing species_code, region, ObsModel_1, ObsModel_2, ObsModel_3, and ObsModel_4.
 #' @param n_knots Number of knots to use to generate the mesh. Default NULL = use n_knots from the input data.frame.
 #' @param response "count" or "biomass"
+#' @param fork_lengths_mm Optional. Lengths in millimeters to use. Passed to akfishcondition::select_species()
 #' @examples
 #' x <- dplyr::filter(akfishcondition::ESR_SETTINGS$VAST_SETTINGS, region == "EBS")
 #' x <- dplyr::filter(x, species_code == 21740)
 #' run_vast_condition(x = x, n_knots = 250)
 #' @export
 
-run_vast_condition <- function(x, n_knots = NULL, response = "count") {
+run_vast_condition <- function(x, n_knots = NULL, response = "count", fork_lengths = NULL) {
   
   library(VAST)
   
@@ -89,7 +90,9 @@ run_vast_condition <- function(x, n_knots = NULL, response = "count") {
     start_time <- Sys.time()
     dir.create(paste0(getwd(),"/results/", x$region[ii], "/", x$species_code[ii],"/"), recursive = TRUE)
     
-    specimen_sub <- akfishcondition:::select_species(species_code = x$species_code[ii], region = x$region[ii])
+    specimen_sub <- akfishcondition:::select_species(species_code = x$species_code[ii], 
+                                                     region = x$region[ii],
+                                                     fork_lengths_mm = fork_lengths_mm)
     
     # Exclude years without both weights and counts
     weight_and_n <- table(c(
@@ -206,7 +209,7 @@ run_vast_condition <- function(x, n_knots = NULL, response = "count") {
     #       category_names=c("Numbers","Condition (grams per cm^power)"),
     #       "working_dir" = paste0(getwd(),"/results/",x$region[ii],"/",x$species_code[ii],"/") )
     end_time <- Sys.time()
-    message(paste0("Completion time: ", round(difftime(start_time, end_time)), " minutes"))
+    message(paste0("Completion time: ", round(difftime(end_time, start_time)), " minutes"))
     
   }
 }
