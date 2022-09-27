@@ -31,7 +31,7 @@ weight_lw_residuals <- function(residuals, year, stratum = NA, stratum_biomass =
       var3 <- var1/var2*length(sel_catch)
       wtlw.res[year_ind] <- var3
     }
-  } else if(!is.na(stratum)[1] & is.na(stratum_biomass)) {
+  } else if(!is.na(stratum)[1] & is.na(stratum_biomass[1])) {
     # Calculate residuals by stratum without biomass expansion
     unique_years_stratum <- expand.grid(year = unique(year), stratum = unique(stratum))
       for(i in 1:nrow(unique_years_stratum)) {
