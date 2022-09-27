@@ -74,7 +74,7 @@ bundle_vast_condition <- function(region, years) {
 #' run_vast_condition(x = x, n_knots = 250)
 #' @export
 
-run_vast_condition <- function(x, n_knots = NULL, response = "count", fork_lengths = NULL) {
+run_vast_condition <- function(x, n_knots = NULL, response = "count", fork_lengths_mm = NULL) {
   
   library(VAST)
   

@@ -4,7 +4,12 @@
 \alias{run_vast_condition}
 \title{Run VAST to estimate fish condition}
 \usage{
-run_vast_condition(x, n_knots = NULL, response = "count", fork_lengths = NULL)
+run_vast_condition(
+  x,
+  n_knots = NULL,
+  response = "count",
+  fork_lengths_mm = NULL
+)
 }
 \arguments{
 \item{x}{data.frame containing species_code, region, ObsModel_1, ObsModel_2, ObsModel_3, and ObsModel_4.}
