@@ -148,8 +148,13 @@ select_species <- function(species_code, region, remove_outliers = TRUE, bonferr
     # Produce a Bonferroni value for each length-weight records
     bonf_p <- car::outlierTest(lw_mod, n.max=Inf, cutoff=Inf, order=FALSE)$bonf.p 
     outlier_index <- unique(which(bonf_p < bonferroni_threshold))
-    message("select_species: Removing ", length(outlier_index), " outliers from ", species_code, " in ", region, " based on Bonferroni test.")
-    lw_sub <- lw_sub[-outlier_index, ]
+    
+    if(legnth(outlier_index) > 0) {
+      message("select_species: Removing ", length(outlier_index), " outliers from ", species_code, " in ", region, " based on Bonferroni test.")
+      lw_sub <- lw_sub[-outlier_index, ]
+    } else {
+      message("select_species: No outliers detected using Bonferroni test.")
+    }
     
     # Rejoin CPUE and length-weight w/ outliers removed
     specimen_sub <- dplyr::bind_rows(lw_sub, cpue_sub)
