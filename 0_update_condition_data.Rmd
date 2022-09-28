@@ -74,7 +74,7 @@ ESR_SETTINGS <- list(ESR_SPECIES = data.frame(common_name = c(
                n_knots = c(400, 400, 400, 400, 400, 400, 400,
                            400, 600, 400, 400, 400, 400, 400,
                            150, 150, 150, 100, 150, 150, 50,
-                           400, 400, 400, 400))
+                           70, 100, 200, 50))
     )
 ```
 
@@ -305,14 +305,14 @@ Update version number in DESCRIPTION and update documentation using:
 devtools::document(roclets = c('rd', 'collate', 'namespace'))
 ```
 
-After updating, reinstall the coldpool package.
+After updating, reinstall the akfishcondition package.
 ```{r install, eval=FALSE, include=FALSE}
 knitr::knit_exit()
-Rcmd.exe INSTALL --no-multiarch --with-keep.source cold_pool
+Rcmd.exe INSTALL --no-multiarch --with-keep.source akfishcondition
 ```
 
 # 7. Check that data appears correctly
-Check that the updated cold pool index data is included in the package.
+Check that the updated condition data is included in the package.
 ```{r qaqc, eval = TRUE, include =FALSE}
 print(akfishcondition::AI_INDICATOR$LAST_UPDATE)
 print(akfishcondition::GOA_INDICATOR$LAST_UPDATE)

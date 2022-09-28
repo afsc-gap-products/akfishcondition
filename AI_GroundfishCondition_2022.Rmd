@@ -21,15 +21,15 @@ region <- "AI"
 # Unzip map files
 unzip(system.file("extdata/2021_ESR.zip", package = "akfishcondition"))
 
-if(!dir.exists("plots")) {
-  dir.create("plots")
+if(!dir.exists(here::here("plots", region))) {
+  dir.create(here::here("plots", region), recursive = TRUE)
 }
 ```
 
 Contributed by Cecilia O'Leary^1^ and Sean Rohan^1^  
 ^1^ Resource Assessment and Conservation Engineering Division, Groundfish Assessment Program, Alaska Fisheries Science Center, National Marine Fisheries Service, NOAA, Seattle, WA  
-**Contact**: ned.laman@noaa.gov  
-**Last updated**:  September 2020
+**Contact**: cecilia.oleary@noaa.gov  
+**Last updated**:  October 2022
 
 **Description of Indicator**: Residual body condition computed from a long-term average of length-weight-based body condition is an indicator of variability in somatic growth (Brodeur et al., 2004) and represents how heavy a fish is per unit body length. As such, it can be considered an indicator of ecosystem productivity. Positive residual body condition is interpreted to indicate fish in better condition (heavier per unit length) than those with negative residual body condition indicating poorer condition (lighter per unit length). Overall body condition of fishes likely reflects fish growth which can have implications for their subsequent survival (Paul and Paul, 1999; Boldt and Haldorson, 2004).
 
@@ -47,36 +47,18 @@ Length-weight relationships for each of the seven species were estimated within 
 
 ```{r figure 2 grid, include = TRUE, echo = FALSE, fig.height = 14, fig.width = 12, fig.cap = "\\label{fig:figs}Figure 2. Biomass-weighted residual body condition index across survey years (1984--2018) for seven Aleutian Islands groundfish species collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center (AFSC) Resource Assessment and Conservation Engineering Groundfish Assessment Program (RACE-GAP) standard summer bottom trawl survey. Filled bars denote weighted length-weight residuals using this year's indicator calculation, error bars denote two standard errors, points denote the mean of the unweighted length-weight residual from the previous year's (2018) ESR.",  message = FALSE, warning = FALSE}
 fig2  <- plot_anomaly_timeseries(x = AI_INDICATOR$FULL_REGION,
-                        region = region, 
-                        fill_color = "#0085CA", 
-                        var_y_name = "mean_wt_resid", 
-                        var_y_se_name = "se_wt_resid",
-                        var_x_name = "year",
-                        y_title = "Length-weight residual (ln(g))",
-                        format_for = "rmd")
-
-fig2_png  <- plot_anomaly_timeseries(x = AI_INDICATOR$FULL_REGION,
-                        region = region, 
-                        fill_color = "#0085CA", 
-                        var_y_name = "mean_wt_resid", 
-                        var_y_se_name = "se_wt_resid",
-                        var_x_name = "year",
-                        y_title = "Length-weight residual (ln(g))",
-                        format_for = "png")
-
-fig2  <- plot_anomaly_timeseries(x = AI_INDICATOR$FULL_REGION,
-                        region = region, 
-                        fill_color = "#0085CA", 
-                        var_y_name = "vast_condition", 
+                        region = "AI",
+                        fill_color = "#0085CA",
+                        var_y_name = "vast_condition",
                         var_y_se_name = "vast_condition_se",
                         var_x_name = "year",
                         y_title = expression("VAST Condition "~((grams/cm)^beta)),
                         format_for = "rmd")
 
 fig2_png  <- plot_anomaly_timeseries(x = AI_INDICATOR$FULL_REGION,
-                        region = region, 
-                        fill_color = "#0085CA", 
-                        var_y_name = "vast_condition", 
+                        region = "AI",
+                        fill_color = "#0085CA",
+                        var_y_name = "vast_condition",
                         var_y_se_name = "vast_condition_se",
                         var_x_name = "year",
                         y_title = expression("VAST Condition "~((grams/cm)^beta)),
@@ -86,50 +68,56 @@ print(fig2 + theme_condition_index())
 ```
 
 ```{r figure 2 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png(here::here("plots", "AI_condition.png"), width = 6, height = 7, units = "in", res = 300)
+png(here::here("plots", region, "AI_condition.png"),width=6,height=7,units="in",res=300)
 print(fig2_png + theme_blue_strip())
 dev.off()
 ```
 
 ```{r figure 3 grid, include = TRUE, echo = FALSE, fig.height = 14, fig.width = 12, fig.cap = "\\label{fig:figs}Figure 2. Biomass-weighted residual body condition index across survey years (1984--2018) for seven Aleutian Islands groundfish species collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center (AFSC) Resource Assessment and Conservation Engineering Groundfish Assessment Program (RACE-GAP) standard summer bottom trawl survey. Filled bars denote weighted length-weight residuals using this year's indicator calculation, error bars denote two standard errors, points denote the mean of the unweighted length-weight residual from the previous year's (2018) ESR.",  message = FALSE, warning = FALSE}
-fig3 <- akfishcondition::plot_two_timeseries(x_1 = akfishcondition::AI_INDICATOR$FULL_REGION,
-  x_2 = akfishcondition::AI_INDICATOR$FULL_REGION,
-  region = region,
-  series_name_1 = "SBW (Historical)",
-  series_name_2 = "VAST",
-  var_y_name_1 = "mean_wt_resid",
-  var_x_name_1 = "year",
-  var_y_name_2 = "vast_condition",
-  var_x_name_2 = "year",
-  format_for = "rmd")
+fig3 <- plot_two_timeseries(x_1 = akfishcondition::AI_INDICATOR$FULL_REGION,
+                                x_2 = akfishcondition::AI_INDICATOR$FULL_REGION,
+                                region = "AI",
+                                series_name_1 = "Historical",
+                                series_name_2 = "VAST",
+                                var_y_name_1 = "mean_wt_resid",
+                                var_x_name_1 = "year",
+                                var_y_name_2 = "vast_condition",
+                                var_x_name_2 = "year",
+                                y_title = "Condition anomaly (Z-score)",
+                                scale_y = TRUE,
+                                fill_colors = c("#0085CA", "#001743"),
+                                format_for = "rmd")
 
-fig3_png <- akfishcondition::plot_two_timeseries(x_1 = akfishcondition::AI_INDICATOR$FULL_REGION,
-  x_2 = akfishcondition::AI_INDICATOR$FULL_REGION,
-  region = region,
-  series_name_1 = "SBW (Historical)",
-  series_name_2 = "VAST",
-  var_y_name_1 = "mean_wt_resid",
-  var_x_name_1 = "year",
-  var_y_name_2 = "vast_condition",
-  var_x_name_2 = "year",
-  format_for = "png")
+fig3_png <- plot_two_timeseries(x_1 = akfishcondition::AI_INDICATOR$FULL_REGION,
+                                x_2 = akfishcondition::AI_INDICATOR$FULL_REGION,
+                                region = "AI",
+                                series_name_1 = "Historical",
+                                series_name_2 = "VAST",
+                                var_y_name_1 = "mean_wt_resid",
+                                var_x_name_1 = "year",
+                                var_y_name_2 = "vast_condition",
+                                var_x_name_2 = "year",
+                                y_title = "Condition anomaly (Z-score)",
+                                scale_y = TRUE,
+                                fill_colors = c("#0085CA", "#001743"),
+                                format_for = "png")
 
-print(fig3 + theme_condition_index() + theme(legend.position = "bottom"))
+print(fig3 + theme_condition_index())
 ```
 
 ```{r figure 3 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png(here::here("plots", "AI_SBW_vs_VAST_timeseries.png"), width = 6, height = 7, units = "in", res = 300)
+png(here::here("plots", region, "AI_VAST_HISTORICAL_timeseries.png"),width=6,height=7,units="in",res=300)
 print(fig3_png + theme_blue_strip())
 dev.off()
 ```
 The general pattern of below average residual body condition index across recent survey years for the Aleutian Islands as described above was mostly reflected in the spatial condition indicators across INPFC strata (Figure 3). In some instances, stratum-specific condition was above average when the overall annual condition was below average (e.g., in the Central and Western Aleutians for Atka mackerel in 2014 and for >250 mm walleye pollock in 2016). The relative contribution of stratum-specific residual body condition to the overall trends (indicated by the height of each colored bar segment) does not demonstrate a clear pattern, although for many species, changes in body condition were synchronous amongst strata within years. The strata represented by southern rock sole and 100–250 mm walleye pollock condition indicators varied through time but it is unclear whether this was due to variation in fish distribution or sampling effort.
 
-```{r figure 4 grid, include = TRUE, echo = FALSE, fig.height = 14, fig.width = 12, fig.cap = "\\label{fig:figs}Figure 3. Residual body condition index for seven Aleutian Islands groundfish species collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center (AFSC) Resource Assessment and Conservation Engineering Groundfish Assessment Program (RACE-GAP) standard summer bottom trawl survey (1984--2018) grouped by International North Pacific Fisheries Commission (INPFC) statistical sampling strata.", message = FALSE, warning = FALSE}
-fig4_new <- plot_xy_corr(
+```{r figure 4 set up, include=FALSE, fig.height=4, fig.width=4, message=FALSE, warning=FALSE}
+fig4 <- akfishcondition::plot_xy_corr(
   x_1 = akfishcondition::AI_INDICATOR$FULL_REGION,
   x_2 = akfishcondition::AI_INDICATOR$FULL_REGION,
   region = region,
-  series_name_1 = "Stratum-biomass weighted residual",
+  series_name_1 = "SBW (Historical)",
   series_name_2 = "VAST",
   var_y_name_1 = "mean_wt_resid",
   var_y_se_name_1 = "se_wt_resid",
@@ -139,11 +127,11 @@ fig4_new <- plot_xy_corr(
   var_x_name_2 = "year",
   format_for = "rmd")
 
-fig4_new_png <- plot_xy_corr(
+fig4_png <- akfishcondition::plot_xy_corr(
   x_1 = akfishcondition::AI_INDICATOR$FULL_REGION,
   x_2 = akfishcondition::AI_INDICATOR$FULL_REGION,
   region = region,
-  series_name_1 = "Stratum-biomass weighted residual",
+  series_name_1 = "SBW (Historical)",
   series_name_2 = "VAST",
   var_y_name_1 = "mean_wt_resid",
   var_y_se_name_1 = "se_wt_resid",
@@ -151,40 +139,63 @@ fig4_new_png <- plot_xy_corr(
   var_y_name_2 = "vast_condition",
   var_y_se_name_2 = "vast_condition_se",
   var_x_name_2 = "year",
-  format_for = "png")
+  format_for = "png"
+  )
+```
 
-fig4 <- plot_stratum_stacked_bar(x = AI_INDICATOR$STRATUM,
-                                 region = region,
-                                 fill_palette = "BrBG",
-                                 var_y_name = "stratum_resid_mean",
-                                 var_x_name = "year",
-                                 var_group_name = "inpfc_stratum",
-                                 fill_title = "Stratum",
-                                 y_title = "Length-weight residual (ln(g))")
-
-print(fig4_new + theme_condition_index())
+```{r figure 4 grid, include = TRUE, echo = FALSE, fig.height = 14, fig.width = 12, fig.cap = "\\label{fig:figs}Figure 3. Residual body condition index for seven Aleutian Islands groundfish species collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center (AFSC) Resource Assessment and Conservation Engineering Groundfish Assessment Program (RACE-GAP) standard summer bottom trawl survey (1984--2018) grouped by International North Pacific Fisheries Commission (INPFC) statistical sampling strata.", message = FALSE, warning = FALSE}
+print(fig4 +
+  theme_condition_index())
 ```
 
 ```{r figure 4 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png(here::here("plots", "AI_condition_by_stratum.png"),width=6,height=7,units="in",res=300)
-print(fig4 + theme_blue_strip())
+png(here::here("plots", region, "AI_VAST_VS_HISTORICAL_scatterplot.png"), width = 6, height = 7, units = "in", res = 600)
+print(fig4_png + theme_blue_strip())
+dev.off()
+```
+
+```{r sbw_legacy_plots, include=FALSE, message=FALSE, warning=FALSE}
+# Stratum-biomass weighted residual time series anomaly
+sbw_timeseries <- plot_anomaly_timeseries(x = AI_INDICATOR$FULL_REGION,
+                        region = region, 
+                        fill_color = "#0085CA", 
+                        var_y_name = "mean_wt_resid", 
+                        var_y_se_name = "se_wt_resid",
+                        var_x_name = "year",
+                        y_title = "Length-weight residual (ln(g))",
+                        plot_type = "bar",
+                        format_for = "png",
+                        set_intercept = 0)
+
+png(here::here("plots", region, "AI_SBW_timeseries.png"), width = 6, height = 7, units = "in", res = 600)
+print(sbw_timeseries + akfishcondition::theme_blue_strip())
 dev.off()
 
-png(here::here("plots", "AI_VAST_VS_SBW.png"),width=6,height=7,units="in",res=300)
-print(fig4_new_png + theme_blue_strip())
+# Stratum-biomass weighted residual stratum stacked bar plots
+stacked_bar <- akfishcondition::plot_stratum_stacked_bar(x = AI_INDICATOR$STRATUM, 
+                                                         region = region, 
+                                                         var_x_name = "year", 
+                                                         var_y_name = "stratum_resid_mean", 
+                                                         y_title = "Length-weight residual (ln(g))",
+                                                         var_group_name = "inpfc_stratum",
+                                                         fill_title = "Stratum",
+                                                         fill_palette = "BrBG")
+
+png(here::here("plots", region, "AI_SBW_stratum_stacked_bar.png"), width = 6, height = 7, units = "in", res = 600)
+print(stacked_bar + akfishcondition::theme_blue_strip())
 dev.off()
 
-plot_species_stratum_bar(
-  x = AI_INDICATOR$STRATUM,
-  region = "AI",
-  var_x_name = "year",
-  var_y_name = "stratum_resid_mean",
-  var_y_se_name = "stratum_resid_se",
-  y_title = "Length-weight residual (ln(g))",
-  var_group_name = "inpfc_stratum",
-  fill_title = "Stratum",
-  fill_palette = "BrBG",
-  write_plot = TRUE)
+# AI single species stratum plots
+akfishcondition::plot_species_stratum_bar(x = AI_INDICATOR$STRATUM, 
+                                          region = region, 
+                                          var_x_name = "year", 
+                                          var_y_name = "stratum_resid_mean", 
+                                          var_y_se_name = "stratum_resid_se",
+                                          y_title = "Length-weight residual (ln(g))",
+                                          var_group_name = "inpfc_stratum",
+                                          fill_title = "Stratum",
+                                          fill_palette = "BrBG",
+                                          write_plot = TRUE)
 ```
 
 **Factors causing observed trends**: Factors that could affect residual fish body condition presented here include temperature, trawl survey timing, stomach fullness, movement in or out of the survey area, or variable somatic growth. Since the Warm Blob in 2014 (Bond et al., 2015; Stabeno et al., 2019), there has been a general trend of warming ocean temperatures in the survey area through 2018 that could be affecting fish growth conditions there. Changing ocean conditions along with normal patterns of movement can cause the proportion of the population resident in the sampling area during the annual bottom trawl survey to vary. The date that the first length-weight data are collected is generally in the beginning of June and the bottom trawl survey is conducted throughout the summer months moving from east to west so that spatial and temporal trends in fish growth over the season become confounded with survey progress. The updated condition analyses presented here begin to, but do not wholly account for spatio-temporal variability in the underlying populations sampled. 
