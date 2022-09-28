@@ -578,7 +578,7 @@ plot_xy_corr <- function(x_1,
                          min_y = min(var_y_2-2*var_y_se_2),
                          max_y = max(var_y_2+2*var_y_se_2)) %>%
         dplyr::mutate(lab_x = max_x - (max_x - min_x)*0.12,
-                      lab_y = min_y + (max_y - min_y)*0.02),
+                      lab_y = min_y + (max_y - min_y)*0.07),
       by = "display_name")
   
   # Make plot
