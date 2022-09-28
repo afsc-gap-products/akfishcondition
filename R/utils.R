@@ -149,7 +149,7 @@ select_species <- function(species_code, region, remove_outliers = TRUE, bonferr
     bonf_p <- car::outlierTest(lw_mod, n.max=Inf, cutoff=Inf, order=FALSE)$bonf.p 
     outlier_index <- unique(which(bonf_p < bonferroni_threshold))
     
-    if(legnth(outlier_index) > 0) {
+    if(length(outlier_index) > 0) {
       message("select_species: Removing ", length(outlier_index), " outliers from ", species_code, " in ", region, " based on Bonferroni test.")
       lw_sub <- lw_sub[-outlier_index, ]
     } else {
