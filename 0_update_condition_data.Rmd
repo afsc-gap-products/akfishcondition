@@ -30,10 +30,10 @@ channel <- akfishcondition:::get_connected(schema = "AFSC")
 
 akfishcondition::get_condition_data(channel = channel)
 
-akfishcondition:::make_data_summary(dat_csv = here::here("data", "nbs_all_species.csv"), region = "NBS")
-akfishcondition:::make_data_summary(dat_csv = here::here("data", "ebs_all_species.csv"), region = "EBS")
-akfishcondition:::make_data_summary(dat_csv = here::here("data", "ai_all_species.csv"), region = "AI")
-akfishcondition:::make_data_summary(dat_csv = here::here("data", "goa_all_species.csv"), region = "GOA")
+# akfishcondition:::make_data_summary(dat_csv = here::here("data", "nbs_all_species.csv"), region = "NBS")
+# akfishcondition:::make_data_summary(dat_csv = here::here("data", "ebs_all_species.csv"), region = "EBS")
+# akfishcondition:::make_data_summary(dat_csv = here::here("data", "ai_all_species.csv"), region = "AI")
+# akfishcondition:::make_data_summary(dat_csv = here::here("data", "goa_all_species.csv"), region = "GOA")
 
 ESR_SETTINGS <- list(ESR_SPECIES = data.frame(common_name = c(
     "walleye pollock", "walleye pollock (100–250 mm)", "walleye pollock (>250 mm)", "Pacific cod", 
@@ -65,15 +65,15 @@ ESR_SETTINGS <- list(ESR_SPECIES = data.frame(common_name = c(
                               1, 1, 1, 1), 
                ObsModel_3 = c(3, 3, 3, 3, 4, 4, 4,
                               3, 3, 3, 3, 4, 3, 4,
-                              3, 3, 3, 4, 4, 4, 4,
+                              3, 3, 3, 4, 4, 4, 3,
                               4, 4, 3, 4),
                ObsModel_4 = c(3, 3, 3, 3, 4, 4, 4,
                               3, 3, 3, 3, 4, 3, 4,
-                              3, 3, 3, 4, 4, 4, 4,
+                              3, 3, 3, 4, 4, 4, 3,
                               4, 4, 3, 4),
                n_knots = c(400, 400, 400, 400, 400, 400, 400,
                            400, 600, 400, 400, 400, 400, 400,
-                           150, 150, 150, 100, 150, 150, 50,
+                           150, 150, 150, 100, 150, 150, 150,
                            70, 100, 150, 50))
     )
 ```
@@ -183,7 +183,7 @@ for(ii in 1:nrow(ebs_spp)) {
 ## 3.4 Run VAST: NBS
 
 ```{r vast_nbs}
-nbs_spp <-  dplyr::filter(akfishcondition::ESR_SETTINGS$VAST_SETTINGS, 
+nbs_spp <-  dplyr::filter(ESR_SETTINGS$VAST_SETTINGS, 
                           region == "NBS")
 
 nbs_run_check <- character()
@@ -204,6 +204,11 @@ for(ii in 1:nrow(nbs_spp)) {
 # 4. Load VAST indicators
 
 ```{r load_vast_indicators}
+# akfishcondition:::make_vast_table(region = "GOA", write_table = TRUE)
+akfishcondition:::make_vast_table(region = "EBS", write_table = TRUE)
+akfishcondition:::make_vast_table(region = "NBS", write_table = TRUE)
+akfishcondition:::make_vast_table(region = "AI", write_table = TRUE)
+
 # goa_vast_df <-bundle_vast_condition(region = "GOA", years = c(seq(1984, 1999, 3), seq(2001, 2022, 2)))
 ebs_vast_df <- akfishcondition::bundle_vast_condition(region = "EBS", years = c(1999:2019, 2021:2022))
 nbs_vast_df <- akfishcondition::bundle_vast_condition(region = "NBS", years = c(2010, 2017, 2019, 2021, 2022))
