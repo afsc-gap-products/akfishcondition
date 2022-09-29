@@ -158,7 +158,7 @@ run_vast_condition <- function(x, n_knots = NULL, response = "count", fork_lengt
                        a_i = specimen_sub$effort_km2, #area_swept
                        catchability_data = catchability_data, ##length data
                        Q2_formula= ~ log(length_cm),
-                       Q2config_k = c(3), # Spatially varying allometric length-weight
+                       # Q2config_k = c(3), # Spatially varying allometric slope (b) for the length-weight equation (W=a*L^b)
                        Expansion_cz = Expansion_cz, ##tells code to expand as weighted-average of biomass for length category (aka c = 1)
                        #getReportCovariance = TRUE,
                        run_model = TRUE,

@@ -670,6 +670,8 @@ make_vast_table <- function(region, write_table = TRUE) {
     
   }
   
+  row.names(out_df) <- 1:nrow(out_df)
+  
   return(out_df)
   
 }
