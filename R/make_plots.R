@@ -644,16 +644,26 @@ make_vast_table <- function(region, write_table = TRUE) {
       message("make_vast_tables: Reading VASTfit.rds for species ", sel_spp$species_code[ii], " in ", sel_spp$region[ii], ".")
       vast_fit <- readRDS(file = vast_file)
       
+      if(!is.na(vast_fit$parameter_estimates$SD$par.fixed['log_sigmaPhi2_k'])) {
+        bb <- vast_fit$parameter_estimates$SD$par.fixed['lambda2_k']
+        se <- exp(vast_fit$parameter_estimates$SD$par.fixed['log_sigmaPhi2_k'])
+      } else {
+        fixed_summary <- summary(vast_fit$parameter_estimates$SD, "fixed")
+        bb <- fixed_summary[which(row.names(fixed_summary) == "lambda2_k"), 1]
+        se <- fixed_summary[which(row.names(fixed_summary) == "lambda2_k"), 2]
+      }
+
+      
       out_df <- dplyr::bind_rows(out_df,
                                  dplyr::bind_cols(sel_spp[ii,],
-                                                  data.frame(b_est = vast_fit$parameter_estimates$SD$par.fixed['lambda2_k'],
-                                                             b_se =  exp(vast_fit$parameter_estimates$SD$par.fixed['log_sigmaPhi2_k']),
+                                                  data.frame(b_est = bb,
+                                                             b_se = se,
                                                              max_gradient = vast_fit$parameter_estimates['max_gradient']$max_gradient,
                                                              convergence_check = vast_fit$parameter_estimates['Convergence_check']$Convergence_check,
                                                              knots_match = vast_fit$spatial_list$n_x == sel_spp$n_knots[ii])))
       
     } else {
-      warning("make_vast_tables: VASTfit file for species ", sel_spp$species_code[ii], " in ", sel_spp$region[ii], " cannot be found in ", vast_file)
+      warning("\nmake_vast_tables: VASTfit file for species ", sel_spp$species_code[ii], " in ", sel_spp$region[ii], " cannot be found in ", vast_file, "\n")
     }
   }
   
