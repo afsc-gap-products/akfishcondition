@@ -32,9 +32,11 @@
 *.utf8.md
 *.knit.md
 inst/doc
+/*.png
+/*.docx
+/plots/*.csv
 doc
 Meta
-*.png
 /output/
 /data/*.csv
 /data/*.rds
