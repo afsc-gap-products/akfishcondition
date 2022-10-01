@@ -308,7 +308,7 @@ plot_species_stratum_bar <- function(x,
                color = "black", 
                position = "stack", 
                width = 1) +
-      geom_errorbar(width = 0.8) +
+      geom_linerange() +
       facet_wrap(~set_stratum_order(trimws(var_group), 
                                     region = region_order), 
                  ncol = 2, 
@@ -464,7 +464,7 @@ plot_species_bar <- function(x,
                color = "black",
                fill = fill_color,
                width = 1) +
-      geom_errorbar(width = 0.8) +
+      geom_linerange() + 
       facet_grid(~display_name) +
       scale_x_continuous(name = "Year", breaks = scales::pretty_breaks(n = 4)) +
       scale_y_continuous(name = y_title,
