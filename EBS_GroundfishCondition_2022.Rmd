@@ -26,7 +26,7 @@ make_map <- TRUE
 pkg_version <- packageVersion("akfishcondition")
 
 # Unzip map files
-unzip(system.file("extdata/2021_ESR.zip", package = "akfishcondition"))
+unzip(system.file("extdata/2022_ESR.zip", package = "akfishcondition"))
 
 if(!dir.exists(here::here("plots", region))) {
   dir.create(here::here("plots", region), recursive = TRUE)

@@ -32,7 +32,6 @@
 *.knit.md
 inst/doc
 /*.png
-/*.docx
 /plots/*.csv
 doc
 Meta
@@ -43,3 +42,6 @@ Meta
 /archive/
 *.csv
 0_update_condition_data.html
+/*.bib
+/*.csl
+/*.docx
