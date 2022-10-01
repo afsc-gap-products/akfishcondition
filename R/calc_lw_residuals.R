@@ -49,11 +49,10 @@ calc_lw_residuals <- function(len,
   lw.reg <- run_lw_reg(logwt = logwt, loglen = loglen, stratum = stratum)
   
   #Assessing Outliers using Bonferroni Outlier Test
-  #Identify if there are any outliers in your data that exceed cutoff = 0.05 (default)
   if(outlier.rm) {
     #Produce a Bonferroni value for each point in your data
     bonf_p <- car::outlierTest(lw.reg$mod,n.max=Inf,cutoff=Inf,order=FALSE)$bonf.p 
-    remove <- which(bonf_p < .7)
+    remove <- which(bonf_p < .05)
     print("Outlier rows removed")
     logwt[remove] <- NA
     loglen[remove] <- NA

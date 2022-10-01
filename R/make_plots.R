@@ -8,6 +8,7 @@
 #' @param var_x_name Name of the x (time variable). Character (1L).
 #' @param y_title Y-axis title. Character (1L).
 #' @param format_for "rmd" or "png"
+#' @param set_intercept Intercept to use for plots. Numeric (1L). 0 for residual, 1 for vAST relative condition, NULL for VAST a
 #' @return A ggplot object of the time series
 #' @examples 
 #' # EBS anomaly timeseries plot
@@ -99,7 +100,19 @@ plot_anomaly_timeseries <- function(x,
       scale_x_continuous(name = "Year", breaks = scales::pretty_breaks(n = 4)) +
       scale_y_continuous(name = y_title)
   } else if(plot_type == "bar") {
+    
+    if(is.null(set_intercept)) {
+      set_intercept <- 0
+    }
+    
     p1 <- ggplot() + 
+      geom_bar(data = x, 
+               aes(x = var_x, 
+                   y = var_y),
+               stat = "identity", 
+               fill = fill_color, 
+               color = "black",
+               width = 1) +
       geom_hline(data = x_anomaly,
                  mapping = aes(yintercept = mean_var_y),
                  linetype = 1,
@@ -124,16 +137,13 @@ plot_anomaly_timeseries <- function(x,
                      aes(x = var_x, 
                          ymax = var_y + 2*se_var_y,
                          ymin = var_y - 2*se_var_y)) + 
-      geom_bar(data = x, 
-               aes(x = var_x, 
-                   y = var_y),
-               stat = "identity", 
-               fill = fill_color, 
-               color = "black",
-               width = 0.8) +
       facet_wrap(~display_name, ncol = 2, scales = "free_y") +
-      scale_x_continuous(name = "Year", breaks = scales::pretty_breaks(n = 4)) +
-      scale_y_continuous(name = y_title)
+      scale_x_continuous(name = "Year", 
+                         breaks = scales::pretty_breaks(n = 4)) +
+      scale_y_continuous(name = y_title,
+                         trans = scales::trans_new("shift",
+                                                   transform = function(x) {x-set_intercept},
+                                                   inverse = function(x) {x+set_intercept}))
   }
   
   return(p1)
@@ -199,7 +209,7 @@ plot_stratum_stacked_bar <- function(x,
     geom_bar(stat = "identity", 
              color = "black",
              position = "stack",
-             width = 0.8) +
+             width = 1) +
     facet_wrap(~display_name, ncol = 2, scales = "free_y") +
     scale_x_continuous(name = "Year") +
     scale_y_continuous(name = y_title) +
@@ -257,10 +267,15 @@ plot_species_stratum_bar <- function(x,
   
   region <- toupper(region)
   
-  stopifnot("Invalid region in plot_anomaly_timeseries. Must be 'BS', 'AI', or 'GOA'"  = (region %in% c("BS", "AI", "GOA")))
+  stopifnot("Invalid region in plot_anomaly_timeseries. Must be 'EBS', 'NBS', 'AI', or 'GOA'" = (region %in% c("EBS", "NBS", "AI", "GOA")))
   
-  x$display_name <- akfishcondition::set_plot_order(x$common_name, 
-                                                    region = region)
+  if(region %in% c("EBS", "NBS")) {
+    region_dir <- "BS"
+    region_order <- "BS"
+  } else {
+    region_dir <- region
+    region_order <- region
+  }
   
   names(x)[which(names(x) == var_x_name)] <- "var_x"
   names(x)[which(names(x) == var_y_name)] <- "var_y"
@@ -268,28 +283,34 @@ plot_species_stratum_bar <- function(x,
   names(x)[which(names(x) == var_y_se_name)] <- "var_y_se"
   x <- dplyr::filter(x, !is.na(var_y))
   
-  x$display_name <- akfishcondition::set_plot_order(x$common_name, region = region)
+  x$display_name <- akfishcondition::set_plot_order(x$common_name, region = region_order)
   
   unique_groups <- unique(x$display_name)
   
   out_list <- list()
   for(ii in 1:length(unique_groups)) {
+    spp_dir <- gsub(pattern = ">", replacement  = "gt", unique_groups[ii])
+    
+    if(!dir.exists(here::here("plots", region_dir, spp_dir))) {
+      dir.create(here::here("plots", region_dir, spp_dir), recursive = TRUE)
+    }
+    
     p1 <- 
       ggplot(data = x %>% 
                dplyr::filter(display_name == unique_groups[ii]),
              aes(x = var_x, 
                  y = var_y, 
-                 fill = set_stratum_order(trimws(var_group), region = region),
+                 fill = set_stratum_order(trimws(var_group), region = region_order),
                  ymin = var_y - 2*var_y_se,
                  ymax = var_y + 2*var_y_se)) +
       geom_hline(yintercept = 0) +
       geom_bar(stat = "identity", 
                color = "black", 
                position = "stack", 
-               width = 0.8) +
+               width = 1) +
       geom_errorbar(width = 0.8) +
       facet_wrap(~set_stratum_order(trimws(var_group), 
-                                    region = region), 
+                                    region = region_order), 
                  ncol = 2, 
                  scales = "free_y") +
       ggtitle(unique_groups[ii]) +
@@ -303,9 +324,163 @@ plot_species_stratum_bar <- function(x,
     
     
     if(write_plot) {
-      png(paste0("./plots/", region, "/", region, "_sppcond_", 
-                 gsub(pattern = ">", replacement  = "gt", unique_groups[ii]), ".png"), 
+      
+      png(here::here("plots", region_dir, spp_dir,
+                     paste0(region, "_STRATUM_CONDITION_", spp_dir, ".png")), 
           width = 6, height = 7, units = "in", res = 600)
+      print(p1 + theme_blue_strip() + 
+              theme(legend.position = "none",
+                    title = element_text(hjust = 0.5)))
+      dev.off()
+    }
+    
+    out_list[ii] <- p1
+    
+  }
+  
+  
+  return(out_list)
+  
+}
+
+
+
+#' Make single species bar plots
+#' 
+#' Make condition time series bar plots for single species.
+#' 
+#' @param x Input data.frame
+#' @param region Region. AI, BS, or GOA. Character (1L).
+#' @param var_x_name Name of the x (time variable). Character (1L).
+#' @param var_y_name Name of the y variable in the data.frame. Character (1L).
+#' @param var_y_se_name Name of the standard error for the y variable. Character (1L).
+#' @param y_title Y-axis title. Character (1L).
+#' @param fill_colors Fill color to use for bars. Character (1L).
+#' @param set_intercept Intercept to use for plots. Numeric (1L). 0 for residual, 1 for vAST relative condition, NULL for VAST a
+#' @param write_plot Should plots be written to the /plot/ directory?
+#' @return A list of bar plots as ggplot objects
+#' @examples 
+#' # EBS single species stratum bar plots
+#' 
+#' names(EBS_INDICATOR$STRATUM)
+#' 
+#' plot_species_stratum_bar(
+#' x = EBS_INDICATOR$STRATUM,
+#' region = "BS",
+#' var_x_name = "year",
+#' var_y_name = "stratum_resid_mean",
+#' var_y_se_name = "stratum_resid_se",
+#' y_title = "Length-weight residual (ln(g))",
+#' write_plot = FALSE)
+#' @export
+
+plot_species_bar <- function(x, 
+                             region, 
+                             var_x_name = "year", 
+                             var_y_name, 
+                             var_y_se_name, 
+                             fill_color = "#0085CA",
+                             y_title = "Length-weight residual (ln(g))",
+                             set_intercept = NULL,
+                             write_plot = TRUE) {
+  
+  region <- toupper(region)
+  
+  stopifnot("Invalid region in plot_anomaly_timeseries. Must be 'EBS', 'NBS', 'AI', or 'GOA'" = (region %in% c("EBS", "NBS", "AI", "GOA")))
+  
+  if(region %in% c("EBS", "NBS")) {
+    region_dir <- "BS"
+    region_order <- "BS"
+  } else {
+    region_dir <- region
+    region_order <- region
+  }
+  
+  x$display_name <- akfishcondition::set_plot_order(x$common_name, 
+                                                    region = region_order)
+  
+  names(x)[which(names(x) == var_x_name)] <- "var_x"
+  names(x)[which(names(x) == var_y_name)] <- "var_y"
+  names(x)[which(names(x) == var_y_se_name)] <- "var_y_se"
+  x <- dplyr::filter(x, !is.na(var_y))
+  
+  # Anomalies
+  x_anomaly <- x %>%
+    dplyr::group_by(common_name,
+                    display_name) %>%
+    dplyr::summarise(mean_var_y = mean(var_y),
+                     sd_var_y = sd(var_y))
+  
+  if(!is.null(set_intercept)) {
+    x_anomaly$mean_var_y <- set_intercept
+  }
+  
+  unique_groups <- unique(x$display_name)
+  
+
+  
+  out_list <- list()
+  for(ii in 1:length(unique_groups)) {
+    spp_dir <- gsub(pattern = ">", replacement  = "gt", unique_groups[ii])
+    
+    if(!dir.exists(here::here("plots", region_dir, spp_dir))) {
+      dir.create(here::here("plots", region_dir, spp_dir), recursive = TRUE)
+    }
+    
+    if(is.null(set_intercept)) {
+      set_intercept <- 0
+    }
+    
+    sel_anomaly <- dplyr::filter(x_anomaly, display_name ==  unique_groups[ii])
+    
+    p1 <- 
+      ggplot(data = x %>% 
+               dplyr::filter(display_name == unique_groups[ii]),
+             aes(x = var_x, 
+                 y = var_y, 
+                 ymin = var_y - 2*var_y_se,
+                 ymax = var_y + 2*var_y_se)) +
+      geom_hline(data = sel_anomaly,
+                 mapping = aes(yintercept = mean_var_y),
+                 linetype = 1,
+                 color = "grey50") +
+      geom_hline(data = sel_anomaly,
+                 mapping = aes(yintercept = mean_var_y + sd_var_y),
+                 linetype = 2,
+                 color = "grey50") +
+      geom_hline(data = sel_anomaly,
+                 mapping = aes(yintercept = mean_var_y - sd_var_y),
+                 linetype = 2,
+                 color = "grey50") +
+      geom_hline(data = sel_anomaly,
+                 mapping = aes(yintercept = mean_var_y + 2*sd_var_y),
+                 linetype = 3,
+                 color = "grey50") +
+      geom_hline(data = sel_anomaly,
+                 mapping = aes(yintercept = mean_var_y - 2*sd_var_y),
+                 linetype = 3,
+                 color = "grey50") +
+      geom_bar(stat = "identity", 
+               color = "black",
+               fill = fill_color,
+               width = 1) +
+      geom_errorbar(width = 0.8) +
+      facet_grid(~display_name) +
+      scale_x_continuous(name = "Year", breaks = scales::pretty_breaks(n = 4)) +
+      scale_y_continuous(name = y_title,
+                         trans = scales::trans_new("shift",
+                                                   transform = function(x) {x-set_intercept},
+                                                   inverse = function(x) {x+set_intercept})) +
+      scale_fill_manual(name = )
+      theme(legend.position = "none",
+            title = element_text(hjust = 0.5))
+    
+    
+    if(write_plot) {
+      
+      png(here::here("plots", region_dir, spp_dir,
+                     paste0(region, "_CONDITION_", spp_dir, ".png")), 
+          width = 6, height = 4, units = "in", res = 600)
       print(p1 + theme_blue_strip() + 
               theme(legend.position = "none",
                     title = element_text(hjust = 0.5)))
@@ -449,11 +624,6 @@ plot_two_timeseries <- function(x_1,
     geom_hline(yintercept = c(-2,2),
                linetype = 3,
                color = "grey50") +
-    # geom_line(data = x_combined, 
-    #           aes(x = var_x, 
-    #               y = var_y, 
-    #               group = interaction(grp, series)),
-    #           color = "black") +
     geom_point(data = x_combined, 
                aes(x = var_x, 
                    y = var_y, 

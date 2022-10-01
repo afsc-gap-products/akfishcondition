@@ -94,10 +94,10 @@ if(make_map){
 
 ```
 
-Contributed by Bianca Prohaska^1^, Sean Rohan^1^, and Cecilia O'Leary^1^
+Contributed by Sean Rohan^1^, Bianca Prohaska^1^, and Cecilia O'Leary^1^
 ^1^Resource Assessment and Conservation Engineering Division, Alaska Fisheries Science Center, National Marine Fisheries Service, NOAA  
 **Contact**: sean.rohan@noaa.gov
-**Last updated**:  October 2021
+**Last updated**:  October 2022
 
 **Description of Indicator**: Length-weight residuals represent how heavy a fish is per unit body length and are an indicator of somatic growth variability [@Brodeur2004]. Therefore, length-weight residuals can be considered indicators of prey availability, growth, general health, and habitat condition [@Blackwell2000; @Froese2006]. Positive length-weight residuals indicate better condition (i.e., heavier per unit length) and negative residuals indicate poorer condition (i.e., lighter per unit length) [@Froese2006]. Fish condition calculated in this way reflects realized outcomes of intrinsic and extrinsic processes that affect fish growth which can have implications for biological productivity through direct effects on growth and indirect effects on demographic processes such as, reproduction, and mortality (e.g., @Rodgveller2019; @Barbeaux2020).
 
@@ -118,19 +118,23 @@ To calculate indicators, length-weight relationships were estimated from linear 
 fig2  <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION,
                         region = "BS",
                         fill_color = "#0085CA",
-                        var_y_name = "vast_condition",
-                        var_y_se_name = "vast_condition_se",
+                        var_y_name = "vast_relative_condition",
+                        var_y_se_name = "vast_relative_condition_se",
                         var_x_name = "year",
-                        y_title = expression("VAST Condition "~((grams/cm)^beta)),
+                        y_title = "VAST relative condition", # expression("VAST Condition "~((grams/cm)^beta)),
+                        plot_type = "bar",
+                        set_intercept = 1,
                         format_for = "rmd")
 
 fig2_png  <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION,
                         region = "BS",
                         fill_color = "#0085CA",
-                        var_y_name = "vast_condition",
-                        var_y_se_name = "vast_condition_se",
+                        var_y_name = "vast_relative_condition",
+                        var_y_se_name = "vast_relative_condition_se",
                         var_x_name = "year",
-                        y_title = expression("VAST Condition "~((grams/cm)^beta)),
+                        y_title = "VAST relative condition", # expression("VAST Condition "~((grams/cm)^beta)),
+                        plot_type = "bar",
+                        set_intercept = 1,
                         format_for = "png")
 
 print(fig2 + theme_condition_index())
@@ -147,39 +151,45 @@ dev.off()
 fig3 <- plot_two_timeseries(x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION,
                                 x_2 = akfishcondition::EBS_INDICATOR$FULL_REGION,
                                 region = "BS",
-                                series_name_1 = "SBW (Historical)",
-                                series_name_2 = "VAST (New)",
+                                series_name_1 = "Length-weight residual (Historical)",
+                                series_name_2 = "VAST relative condition (New)",
                                 var_y_name_1 = "mean_wt_resid",
                                 var_x_name_1 = "year",
-                                var_y_name_2 = "vast_condition",
+                                var_y_name_2 = "vast_relative_condition",
                                 var_x_name_2 = "year",
                                 y_title = "Condition anomaly (Z-score)",
                                 scale_y = TRUE,
                                 year_break = 2020,
-                                fill_colors = c("#0085CA", "#001743"),
+                                fill_colors = c("#001743", "#0085CA"),
                                 format_for = "rmd")
 
 fig3_png <- plot_two_timeseries(x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION,
                                 x_2 = akfishcondition::EBS_INDICATOR$FULL_REGION,
                                 region = "BS",
-                                series_name_1 = "SBW (Historical)",
-                                series_name_2 = "VAST (New)",
+                                series_name_1 = "Length-weight residual (Historical)",
+                                series_name_2 = "VAST relative condition (New)",
                                 var_y_name_1 = "mean_wt_resid",
                                 var_x_name_1 = "year",
-                                var_y_name_2 = "vast_condition",
+                                var_y_name_2 = "vast_relative_condition",
                                 var_x_name_2 = "year",
                                 y_title = "Condition anomaly (Z-score)",
                                 scale_y = TRUE,
                                 year_break = 2020,
-                                fill_colors = c("#0085CA", "#001743"),
+                                fill_colors = c("#001743", "#0085CA"),
                                 format_for = "png")
 
-print(fig3 + theme_condition_index())
+print(fig3 + 
+        theme_condition_index() + 
+        theme(legend.position = "bottom",
+              legend.title = element_blank()))
 ```
 
 ```{r figure 3 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png(here::here("plots", region, "EBS_VAST_HISTORICAL_timeseries.png"),width=6,height=7,units="in",res=300)
-print(fig3_png + theme_blue_strip())
+png(here::here("plots", region, "EBS_VAST_SBW_timeseries.png"),width=6,height=7,units="in",res=300)
+print(fig3_png + 
+        theme_blue_strip() + 
+        theme(legend.position = "bottom",
+              legend.title = element_blank()))
 dev.off()
 ```
 
@@ -188,13 +198,13 @@ fig4 <- akfishcondition::plot_xy_corr(
   x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION,
   x_2 = akfishcondition::EBS_INDICATOR$FULL_REGION,
   region = region,
-  series_name_1 = "Stratum-biomass-weighted (Historical)",
-  series_name_2 = "VAST (New)",
+  series_name_1 = "Length-weight residual (Historical)",
+  series_name_2 = "VAST relative condition (New)",
   var_y_name_1 = "mean_wt_resid",
   var_y_se_name_1 = "se_wt_resid",
   var_x_name_1 = "year",
-  var_y_name_2 = "vast_condition",
-  var_y_se_name_2 = "vast_condition_se",
+  var_y_name_2 = "vast_relative_condition",
+  var_y_se_name_2 = "vast_relative_condition_se",
   var_x_name_2 = "year",
   format_for = "rmd")
 
@@ -202,13 +212,13 @@ fig4_png <- akfishcondition::plot_xy_corr(
   x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION,
   x_2 = akfishcondition::EBS_INDICATOR$FULL_REGION,
   region = region,
-  series_name_1 = "Stratum-biomass-weighted (Historical)",
-  series_name_2 = "VAST (New)",
+  series_name_1 = "Length-weight residual (Historical)",
+  series_name_2 = "VAST relative condition (New)",
   var_y_name_1 = "mean_wt_resid",
   var_y_se_name_1 = "se_wt_resid",
   var_x_name_1 = "year",
-  var_y_name_2 = "vast_condition",
-  var_y_se_name_2 = "vast_condition_se",
+  var_y_name_2 = "vast_relative_condition",
+  var_y_se_name_2 = "vast_relative_condition_se",
   var_x_name_2 = "year",
   format_for = "png"
   )
@@ -220,7 +230,7 @@ print(fig4 +
 ```
 
 ```{r figure 4 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png(here::here("plots", region, "EBS_VAST_VS_HISTORICAL_scatterplot.png"), width = 6, height = 7, units = "in", res = 600)
+png(here::here("plots", region, "EBS_VAST_VS_SBW_scatterplot.png"), width = 6, height = 7, units = "in", res = 600)
 print(fig4_png + theme_blue_strip())
 dev.off()
 ```
@@ -229,20 +239,20 @@ dev.off()
 ```{r figure 5 grid, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
 fig5 <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
                         region = "BS", 
-                        fill_color = "#0085CA", 
-                        var_y_name = "vast_condition", 
-                        var_y_se_name = "vast_condition_se",
+                        fill_color = "#54ADDB", 
+                        var_y_name = "vast_relative_condition", 
+                        var_y_se_name = "vast_relative_condition_se",
                         var_x_name = "year",
-                        y_title = expression("VAST Condition "~((grams/cm)^beta)),
+                        y_title = "VAST relative condition", # expression("VAST Condition "~((grams/cm)^beta)),
                         format_for = "rmd")
 
 fig5_png <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
                         region = "BS", 
-                        fill_color = "#0085CA", 
-                        var_y_name = "vast_condition", 
-                        var_y_se_name = "vast_condition_se",
+                        fill_color = "#54ADDB", 
+                        var_y_name = "vast_relative_condition", 
+                        var_y_se_name = "vast_relative_condition_se",
                         var_x_name = "year",
-                        y_title = expression("VAST Condition "~((grams/cm)^beta)),
+                        y_title = "VAST relative condition", # expression("VAST Condition "~((grams/cm)^beta)),
                         format_for = "png")
 
 
@@ -260,30 +270,28 @@ In 2021, negative length-weight residuals were observed for large walleye polloc
 In 2021, similar to 2010-2019, Pacific cod condition was generally negative on the middle and outer northern shelf and outer southern shelf (Strata 40, 50, and 60); however, condition was also negative on the inner southern shelf and inner northern shelf (strata 10, 20 and 30) indicating a decline in condition on these strata since 2019. Large walleye pollock (>250 mm) condition was primarily negative on all strata in 2021, which is consistent with the observed condition on the inner shelf since 2015. In 2021, small walleye pollock (100–250 mm) condition was generally positive, and consistent with observed condition on the inner shelf since 2014. In 2021, condition was observed in all EBS strata for northern rock sole, Alaska plaice, flathead sole and arrowtooth flounder. The remaining species, yellowfin sole, had positive residuals on the outer shelf (Stratum 40).
 
 ```{r figure 6 set up, include=FALSE, fig.height=4, fig.width=4, message=FALSE, warning=FALSE}
-fig6 <- akfishcondition::plot_two_timeseries(
-  x_1 = akfishcondition::NBS_INDICATOR$FULL_REGION,
-  x_2 = akfishcondition::NBS_INDICATOR$FULL_REGION,
-  region = region,
-  series_name_1 = "Mean residual (Historical)",
-  series_name_2 = "VAST (New)",
-  var_y_name_1 = "mean_resid",
-  var_x_name_1 = "year",
-  var_y_name_2 = "vast_condition",
-  var_x_name_2 = "year",
-  format_for = "rmd")
+# Set factor levels for plotting order
+fig6  <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
+                        region = "BS",
+                        fill_color = "#54ADDB",
+                        var_y_name = "vast_relative_condition",
+                        var_y_se_name = "vast_relative_condition_se",
+                        var_x_name = "year",
+                        y_title = "VAST relative condition", # "VAST relative condition", # expression("VAST Condition "~((grams/cm)^beta)),
+                        plot_type = "bar",
+                        set_intercept = 1,
+                        format_for = "rmd")
 
-fig6_png <- akfishcondition::plot_two_timeseries(
-  x_1 = akfishcondition::NBS_INDICATOR$FULL_REGION,
-  x_2 = akfishcondition::NBS_INDICATOR$FULL_REGION,
-  region = region,
-  series_name_1 = "Mean residual (Historical)",
-  series_name_2 = "VAST (New)",
-  var_y_name_1 = "mean_resid",
-  var_x_name_1 = "year",
-  var_y_name_2 = "vast_condition",
-  var_x_name_2 = "year",
-  format_for = "png"
-  )
+fig6_png  <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
+                        region = "BS",
+                        fill_color = "#54ADDB",
+                        var_y_name = "vast_relative_condition",
+                        var_y_se_name = "vast_relative_condition_se",
+                        var_x_name = "year",
+                        y_title = "VAST relative condition", # expression("VAST Condition "~((grams/cm)^beta)),
+                        plot_type = "bar",
+                        set_intercept = 1,
+                        format_for = "png")
 ```
 
 ```{r figure 6 grid, include=TRUE, echo=FALSE, fig.height=14, fig.width=12, fig.cap="\\label{fig:figs}Figure 4. Length-weight residuals by survey stratum (10-60) for seven eastern Bering Sea shelf groundfish species and age 1–2 walleye pollock (100–250 mm) sampled in the AFSC/RACE GAP standard summer bottom trawl survey, 1999-2021. Length-weight residuals are not weighted by stratum biomass.",message=FALSE, warning=FALSE}
@@ -292,7 +300,7 @@ print(fig6 +
 ```
 
 ```{r figure 6 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png(here::here("plots", region, "NBS_VAST_VS_HISTORICAL_timeseries.png"), width = 6, height = 7, units = "in", res = 600)
+png(here::here("plots", region, "NBS_condition.png"), width = 6, height = 7, units = "in", res = 600)
 print(fig6_png + theme_blue_strip())
 dev.off()
 ```
@@ -302,13 +310,13 @@ fig7 <- akfishcondition::plot_xy_corr(
   x_1 = akfishcondition::NBS_INDICATOR$FULL_REGION,
   x_2 = akfishcondition::NBS_INDICATOR$FULL_REGION,
   region = region,
-  series_name_1 = "Mean residual (Historical)",
-  series_name_2 = "VAST",
+  series_name_1 = "Length-weight residual (Historical)",
+  series_name_2 = "VAST relative condition (New)",
   var_y_name_1 = "mean_resid",
   var_y_se_name_1 = "se",
   var_x_name_1 = "year",
-  var_y_name_2 = "vast_condition",
-  var_y_se_name_2 = "vast_condition_se",
+  var_y_name_2 = "vast_relative_condition",
+  var_y_se_name_2 = "vast_relative_condition_se",
   var_x_name_2 = "year",
   format_for = "rmd")
 
@@ -316,13 +324,13 @@ fig7_png <- akfishcondition::plot_xy_corr(
   x_1 = akfishcondition::NBS_INDICATOR$FULL_REGION,
   x_2 = akfishcondition::NBS_INDICATOR$FULL_REGION,
   region = region,
-  series_name_1 = "Mean residual (Historical)",
-  series_name_2 = "VAST",
+  series_name_1 = "Length-weight residual (Historical)",
+  series_name_2 = "VAST relative condition (New)",
   var_y_name_1 = "mean_resid",
   var_y_se_name_1 = "se",
   var_x_name_1 = "year",
-  var_y_name_2 = "vast_condition",
-  var_y_se_name_2 = "vast_condition_se",
+  var_y_name_2 = "vast_relative_condition",
+  var_y_se_name_2 = "vast_relative_condition_se",
   var_x_name_2 = "year",
   format_for = "png"
   )
@@ -334,7 +342,7 @@ print(fig7 +
 ```
 
 ```{r figure 7 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png(here::here("plots", region, "NBS_VAST_VS_HISTORICAL_scatterplot.png"), width = 6, height = 7, units = "in", res = 600)
+png(here::here("plots", region, "NBS_VAST_VS_SBW_scatterplot.png"), width = 6, height = 7, units = "in", res = 600)
 print(fig7_png + theme_blue_strip())
 dev.off()
 ```
@@ -368,12 +376,12 @@ ebs_stacked_bar <- akfishcondition::plot_stratum_stacked_bar(x = EBS_INDICATOR$S
                                                          fill_palette = "BrBG")
 
 png(here::here("plots", region, "EBS_SBW_stratum_stacked_bar.png"), width = 6, height = 7, units = "in", res = 600)
-print(ebs_stacked_bar + akfishcondition::theme_blue_strip())
+print(ebs_stacked_bar + theme_blue_strip())
 dev.off()
 
 # EBS single species stratum plots
 akfishcondition::plot_species_stratum_bar(x = EBS_INDICATOR$STRATUM, 
-                                          region = region, 
+                                          region = "EBS", 
                                           var_x_name = "year", 
                                           var_y_name = "stratum_resid_mean", 
                                           var_y_se_name = "stratum_resid_se",
@@ -382,6 +390,28 @@ akfishcondition::plot_species_stratum_bar(x = EBS_INDICATOR$STRATUM,
                                           fill_title = "Stratum",
                                           fill_palette = "BrBG",
                                           write_plot = TRUE)
+
+# EBS single species anomaly plots
+akfishcondition::plot_species_bar(x = EBS_INDICATOR$FULL_REGION, 
+                                  region = "EBS", 
+                                  var_x_name = "year", 
+                                  var_y_name = "vast_relative_condition", 
+                                  var_y_se_name = "vast_relative_condition_se",
+                                  y_title = "VAST relative condition",
+                                  fill_color = "#0085CA",
+                                  set_intercept = 1,
+                                  write_plot = TRUE)
+
+# NBS_single species anomaly plots
+akfishcondition::plot_species_bar(x = NBS_INDICATOR$FULL_REGION, 
+                                  region = "NBS", 
+                                  var_x_name = "year", 
+                                  var_y_name = "vast_relative_condition", 
+                                  var_y_se_name = "vast_relative_condition_se",
+                                  y_title = "VAST relative condition",
+                                  fill_color = "#54ADDB",
+                                  set_intercept = 1,
+                                  write_plot = TRUE)
 
 # NBS stratum-biomass weighted residual time series anomaly
 nbs_sbw_timeseries <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
@@ -397,6 +427,25 @@ nbs_sbw_timeseries <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
 
 png(here::here("plots", region, "NBS_SBW_timeseries.png"), width = 6, height = 7, units = "in", res = 600)
 print(nbs_sbw_timeseries + akfishcondition::theme_blue_strip())
+dev.off()
+
+# NBS anomaly timeseries
+nbs_anomaly_timeseries_png <- akfishcondition::plot_two_timeseries(
+  x_1 = akfishcondition::NBS_INDICATOR$FULL_REGION,
+  x_2 = akfishcondition::NBS_INDICATOR$FULL_REGION,
+  region = region,
+  series_name_1 = "Length-weight residual (Historical)",
+  series_name_2 = "VAST relative condition (New)",
+  var_y_name_1 = "mean_resid",
+  var_x_name_1 = "year",
+  var_y_name_2 = "vast_relative_condition",
+  var_x_name_2 = "year",
+  fill_colors = c("#001743", "#0085CA"),
+  format_for = "png"
+  )
+
+png(here::here("plots", region, "NBS_VAST_VS_SBW_timeseries.png"), width = 6, height = 7, units = "in", res = 600)
+print(nbs_anomaly_timeseries_png + theme_blue_strip() + theme(legend.position = "bottom"))
 dev.off()
 ```
 

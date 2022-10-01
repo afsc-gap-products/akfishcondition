@@ -13,7 +13,7 @@
 #' @export
 
 bundle_vast_condition <- function(region, years) {
-  
+
   region <- toupper(region)
   if(region == "BS") {
     region <- "EBS"
@@ -27,28 +27,31 @@ bundle_vast_condition <- function(region, years) {
   
   for(jj in 1:length(spp_folders)) {
     if(file.exists(here::here("results", region, spp_folders[jj], "index.csv"))) {
-      vast_condition_df <- vast_condition_df |> 
-        dplyr::bind_rows(
-          read.csv(file = here::here("results", region, spp_folders[jj], "index.csv")) |>
-            dplyr::filter(Category == "Condition (grams per cm^power)", 
-                          Time %in% years) |>
-            dplyr::mutate(species_code = as.numeric(spp_folders[jj])) |> 
-            dplyr::rename(year = Time,
-                          vast_condition = Estimate,
-                          vast_condition_se = Std..Error.for.Estimate,
-                          vast_condition_se_for_ln_estimate = Std..Error.for.ln.Estimate.) |>
-            dplyr::mutate(scaled_vast_condition = scale(vast_condition)[,1]) |>
-            dplyr::select(-Stratum, -Units, -Category)
-        )
+      
+      sel_spp_df <- read.csv(file = here::here("results", region, spp_folders[jj], "index.csv")) |>
+        dplyr::filter(Category == "Condition (grams per cm^power)", 
+                      Time %in% years) |>
+        dplyr::mutate(species_code = as.numeric(spp_folders[jj])) |> 
+        dplyr::rename(year = Time,
+                      vast_condition = Estimate,
+                      vast_condition_se = Std..Error.for.Estimate) |>
+        dplyr::select(-Stratum, -Units, -Category)
+      
+      # Handle corner cases
+      if(region == "EBS") {
+        sel_spp_df <- sel_spp_df |>
+          dplyr::filter(!(year == 2015 & species_code == 10285)) |>
+          dplyr::filter(!(year == 2007 & species_code == 10110)) |>
+          dplyr::filter(!(year == 2013 & species_code == 10110))
+      }
+      
+      sel_spp_df <- sel_spp_df |>
+        dplyr::mutate(scaled_vast_condition = scale(vast_condition)[,1],
+                      vast_relative_condition = vast_condition/mean(vast_condition),
+                      vast_relative_condition_se = vast_condition_se/mean(vast_condition))
+      
+      vast_condition_df <- dplyr::bind_rows(vast_condition_df, sel_spp_df)
     }
-  }
-  
-  # Handle corner cases
-  if(region == "EBS") {
-    vast_condition_df <- vast_condition_df |>
-      dplyr::filter(!(year == 2015 & species_code == 10285)) |>
-      dplyr::filter(!(year == 2007 & species_code == 10110)) |>
-      dplyr::filter(!(year == 2013 & species_code == 10110))
   }
   
   # Append common name

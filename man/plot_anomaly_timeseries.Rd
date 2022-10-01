@@ -33,6 +33,8 @@ plot_anomaly_timeseries(
 \item{y_title}{Y-axis title. Character (1L).}
 
 \item{format_for}{"rmd" or "png"}
+
+\item{set_intercept}{Intercept to use for plots. Numeric (1L). 0 for residual, 1 for vAST relative condition, NULL for VAST a}
 }
 \value{
 A ggplot object of the time series

@@ -3,17 +3,17 @@
 
 theme_condition_index <- function() {
   theme_bw() %+replace%
-    theme(plot.title = element_text(size = 18, face = "bold"),
+    theme(plot.title = element_text(size = 20),
           panel.grid.major = element_blank(),
           axis.text.x = element_text(size = 22),
           axis.text.y = element_text(size = 22),
-          axis.title.x = element_text(size = 22),
-          axis.title.y = element_text(size = 22, angle = 90),
-          legend.title = element_text(size = 22, face = "bold"),
-          legend.text = element_text(size = 20),
+          axis.title.x = element_text(size = 26),
+          axis.title.y = element_text(size = 26, angle = 90),
+          legend.title = element_text(size = 26),
+          legend.text = element_text(size = 24),
           legend.position = "right",
           panel.grid.minor = element_blank(),
-          strip.text = element_text(size = 20,
+          strip.text = element_text(size = 24,
                                     color = "white",
                                     face = "bold",
                                     margin = margin(0.5, 0, 0.5, 0, "mm")),
@@ -35,7 +35,7 @@ theme_pngs <- function() {
           legend.title = element_text(size = 11, face = "bold"),
           legend.text = element_text(size = 11),
           panel.grid.minor = element_blank(),
-          strip.text = element_text(size = 11),
+          strip.text = element_text(size = 11, face = "bold"),
           strip.background = element_blank())
 } 
 

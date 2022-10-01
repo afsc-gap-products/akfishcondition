@@ -26,9 +26,9 @@ The data in the package are used to calculate the summer groundfish morphometric
 library(akfishcondition)
 library(VAST)
 
-channel <- akfishcondition:::get_connected(schema = "AFSC")
-
-akfishcondition::get_condition_data(channel = channel)
+# channel <- akfishcondition:::get_connected(schema = "AFSC")
+# 
+# akfishcondition::get_condition_data(channel = channel)
 
 # akfishcondition:::make_data_summary(dat_csv = here::here("data", "nbs_all_species.csv"), region = "NBS")
 # akfishcondition:::make_data_summary(dat_csv = here::here("data", "ebs_all_species.csv"), region = "EBS")
@@ -76,6 +76,37 @@ ESR_SETTINGS <- list(ESR_SPECIES = data.frame(common_name = c(
                            400, 600, 400, 400, 400, 400, 400,
                            200, 200, 200, 200))
     )
+
+ESP_SETTINGS <- list(ESP_SPECIES = 
+                       data.frame(
+                         common_name = c("Pacific cod (juvenile)", "Pacific cod (adult)"),
+                         species_code = c(21721, 21722),
+                         AI = c(TRUE, TRUE),
+                         GOA = c(TRUE, TRUE),
+                         EBS = c(TRUE, TRUE),
+                         NBS = c(FALSE, FALSE)),
+                     VAST_SETTINGS = data.frame(species_code = c(21721, 21722,
+                                                                 21721, 21722,
+                                                                 21721, 21722),
+                                                region = c("GOA", "GOA",
+                                                           "AI", "AI",
+                                                           "EBS", "EBS"),
+                                                ObsModel_1 = c(2, 2,
+                                                               2, 2,
+                                                               2, 2),
+                                                ObsModel_2 = c(1, 1,
+                                                               1, 1,
+                                                               1, 1),
+                                                ObsModel_3 = c(3, 3,
+                                                               4, 4,
+                                                               4, 4),
+                                                ObsModel_4 = c(3, 3,
+                                                               4, 4,
+                                                               4, 4),
+                                                n_knots = c(400, 400,
+                                                            400, 400,
+                                                            600, 600))
+)
 ```
 
 
