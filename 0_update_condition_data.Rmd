@@ -26,7 +26,7 @@ The data in the package are used to calculate the summer groundfish morphometric
 library(akfishcondition)
 library(VAST)
 
-# channel <- akfishcondition:::get_connected(schema = "AFSC")
+channel <- akfishcondition:::get_connected(schema = "AFSC")
 # 
 # akfishcondition::get_condition_data(channel = channel)
 
@@ -65,15 +65,15 @@ ESR_SETTINGS <- list(ESR_SPECIES = data.frame(common_name = c(
                               1, 1, 1, 1), 
                ObsModel_3 = c(3, 3, 3, 3, 4, 4, 4,
                               3, 3, 3, 3, 4, 3, 4,
-                              3, 3, 3, 4, 4, 4, 3,
+                              3, 3, 3, 4, 3, 4, 3,
                               4, 4, 3, 4),
                ObsModel_4 = c(3, 3, 3, 3, 4, 4, 4,
                               3, 3, 3, 3, 4, 3, 4,
-                              3, 3, 3, 4, 4, 4, 3,
+                              3, 3, 3, 4, 3, 4, 3,
                               4, 4, 3, 4),
                n_knots = c(400, 400, 400, 400, 400, 400, 400,
                            400, 600, 400, 400, 400, 400, 400,
-                           400, 600, 400, 400, 400, 400, 400,
+                           400, 600, 400, 400, 300, 400, 400,
                            200, 200, 200, 200))
     )
 
@@ -157,16 +157,9 @@ save(AI_raw,
 ai_spp <-  dplyr::filter(ESR_SETTINGS$VAST_SETTINGS, 
                           region == "AI")
 
-ai_run_check <- character()
-
 for(ii in 1:nrow(ai_spp)) {
-  fit_check <- NA
-  fit_check <- try(
     akfishcondition::run_vast_condition(x = ai_spp[ii,], 
-                                        response = "count"),
-    silent = TRUE)
-  
-  ai_run_check <- c(ai_run_check, class(fit_check)[1])
+                                        response = "count")
   gc()
 }
 ```
@@ -177,16 +170,10 @@ for(ii in 1:nrow(ai_spp)) {
 goa_spp <-  dplyr::filter(ESR_SETTINGS$VAST_SETTINGS, 
                          region == "GOA")
 
-goa_run_check <- character()
-
 for(ii in 1:nrow(goa_spp)) {
-  fit_check <- NA
-  fit_check <- try(
+
     akfishcondition::run_vast_condition(x = goa_spp[ii,], 
-                                        response = "count"),
-    silent = TRUE)
-  
-  goa_run_check <- c(goa_run_check, class(fit_check)[1])
+                                        response = "count")
   gc()
 }
 ```
@@ -195,18 +182,11 @@ for(ii in 1:nrow(goa_spp)) {
 
 ```{r vast_ebs}
 ebs_spp <-  dplyr::filter(ESR_SETTINGS$VAST_SETTINGS, 
-                    region == "EBS", species_code %in% c(10261, 10110))
-
-ebs_run_check <- character()
+                    region == "EBS")
 
 for(ii in 1:nrow(ebs_spp)) {
-  fit_check <- NA
-  fit_check <- try(
     akfishcondition::run_vast_condition(x = ebs_spp[ii,], 
-                                        response = "count"),
-    silent = TRUE)
-  
-  ebs_run_check <- c(ebs_run_check, class(fit_check)[1])
+                                        response = "count")
   gc()
 }
 ```
@@ -217,16 +197,9 @@ for(ii in 1:nrow(ebs_spp)) {
 nbs_spp <-  dplyr::filter(ESR_SETTINGS$VAST_SETTINGS, 
                           region == "NBS")
 
-nbs_run_check <- character()
-
 for(ii in 1:nrow(nbs_spp)) {
-  fit_check <- NA
-  fit_check <- try(
     akfishcondition::run_vast_condition(x = nbs_spp[ii,], 
-                                        response = "count"),
-    silent = TRUE)
-  
-  nbs_run_check <- c(nbs_run_check, class(fit_check)[1])
+                                        response = "count")
   gc()
 }
 ```
