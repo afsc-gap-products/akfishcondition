@@ -26,7 +26,7 @@ The data in the package are used to calculate the summer groundfish morphometric
 library(akfishcondition)
 library(VAST)
 
-channel <- akfishcondition:::get_connected(schema = "AFSC")
+# channel <- akfishcondition:::get_connected(schema = "AFSC")
 # 
 # akfishcondition::get_condition_data(channel = channel)
 
@@ -73,7 +73,7 @@ ESR_SETTINGS <- list(ESR_SPECIES = data.frame(common_name = c(
                               4, 4, 3, 4),
                n_knots = c(400, 400, 400, 400, 400, 400, 400,
                            400, 600, 400, 400, 400, 400, 400,
-                           400, 600, 400, 400, 300, 400, 400,
+                           400, 600, 400, 400, 750, 400, 400,
                            200, 200, 200, 200))
     )
 
