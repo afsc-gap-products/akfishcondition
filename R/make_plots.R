@@ -106,13 +106,6 @@ plot_anomaly_timeseries <- function(x,
     }
     
     p1 <- ggplot() + 
-      geom_bar(data = x, 
-               aes(x = var_x, 
-                   y = var_y),
-               stat = "identity", 
-               fill = fill_color, 
-               color = "black",
-               width = 1) +
       geom_hline(data = x_anomaly,
                  mapping = aes(yintercept = mean_var_y),
                  linetype = 1,
@@ -137,6 +130,64 @@ plot_anomaly_timeseries <- function(x,
                      aes(x = var_x, 
                          ymax = var_y + 2*se_var_y,
                          ymin = var_y - 2*se_var_y)) + 
+      geom_bar(data = x, 
+               aes(x = var_x, 
+                   y = var_y),
+               stat = "identity", 
+               fill = fill_color, 
+               color = "black",
+               width = 1) +
+      facet_wrap(~display_name, ncol = 2, scales = "free_y") +
+      scale_x_continuous(name = "Year", 
+                         breaks = scales::pretty_breaks(n = 4)) +
+      scale_y_continuous(name = y_title,
+                         trans = scales::trans_new("shift",
+                                                   transform = function(x) {x-set_intercept},
+                                                   inverse = function(x) {x+set_intercept}))
+  } else if(plot_type == "box") {
+    if(is.null(set_intercept)) {
+      set_intercept <- 0
+    }
+    
+    p1 <- ggplot() +
+      geom_hline(data = x_anomaly,
+                 mapping = aes(yintercept = mean_var_y),
+                 linetype = 1,
+                 color = "grey50") +
+      geom_hline(data = x_anomaly,
+                 mapping = aes(yintercept = mean_var_y + sd_var_y),
+                 linetype = 2,
+                 color = "grey50") +
+      geom_hline(data = x_anomaly,
+                 mapping = aes(yintercept = mean_var_y - sd_var_y),
+                 linetype = 2,
+                 color = "grey50") +
+      geom_hline(data = x_anomaly,
+                 mapping = aes(yintercept = mean_var_y + 2*sd_var_y),
+                 linetype = 3,
+                 color = "grey50") +
+      geom_hline(data = x_anomaly,
+                 mapping = aes(yintercept = mean_var_y - 2*sd_var_y),
+                 linetype = 3,
+                 color = "grey50") +
+      geom_linerange(data = x,
+                     mapping = aes(x = var_x,
+                                   ymax = var_y + 2*se_var_y,
+                                   ymin = var_y - 2*se_var_y),
+                     color = "black") +
+      geom_rect(data = x,
+                mapping = aes(xmin = var_x+0.4,
+                              xmax = var_x-0.4,
+                              ymax = var_y + se_var_y,
+                              ymin = var_y - se_var_y),
+                fill = fill_color) +
+      geom_segment(data = x, 
+                   aes(x = var_x+0.4,
+                       xend = var_x-0.4,
+                       y = var_y,
+                       yend = var_y,
+                       group = var_x),
+                   color = "black") +
       facet_wrap(~display_name, ncol = 2, scales = "free_y") +
       scale_x_continuous(name = "Year", 
                          breaks = scales::pretty_breaks(n = 4)) +
@@ -304,11 +355,11 @@ plot_species_stratum_bar <- function(x,
                  ymin = var_y - 2*var_y_se,
                  ymax = var_y + 2*var_y_se)) +
       geom_hline(yintercept = 0) +
+      geom_linerange() +
       geom_bar(stat = "identity", 
                color = "black", 
                position = "stack", 
                width = 1) +
-      geom_linerange() +
       facet_wrap(~set_stratum_order(trimws(var_group), 
                                     region = region_order), 
                  ncol = 2, 
@@ -434,12 +485,7 @@ plot_species_bar <- function(x,
     sel_anomaly <- dplyr::filter(x_anomaly, display_name ==  unique_groups[ii])
     
     p1 <- 
-      ggplot(data = x %>% 
-               dplyr::filter(display_name == unique_groups[ii]),
-             aes(x = var_x, 
-                 y = var_y, 
-                 ymin = var_y - 2*var_y_se,
-                 ymax = var_y + 2*var_y_se)) +
+      ggplot() +
       geom_hline(data = sel_anomaly,
                  mapping = aes(yintercept = mean_var_y),
                  linetype = 1,
@@ -460,11 +506,32 @@ plot_species_bar <- function(x,
                  mapping = aes(yintercept = mean_var_y - 2*sd_var_y),
                  linetype = 3,
                  color = "grey50") +
-      geom_bar(stat = "identity", 
-               color = "black",
-               fill = fill_color,
-               width = 1) +
-      geom_linerange() + 
+      geom_linerange(data = x %>% 
+                       dplyr::filter(display_name == unique_groups[ii]),
+                     mapping = aes(x = var_x,
+                                   ymax = var_y + 2*var_y_se,
+                                   ymin = var_y - 2*var_y_se),
+                     color = "black") +
+      geom_rect(data = x %>% 
+                  dplyr::filter(display_name == unique_groups[ii]),
+                mapping = aes(xmin = var_x+0.4,
+                              xmax = var_x-0.4,
+                              ymax = var_y + var_y_se,
+                              ymin = var_y - var_y_se),
+                fill = fill_color) +
+      geom_segment(data = x %>% 
+                     dplyr::filter(display_name == unique_groups[ii]), 
+                   aes(x = var_x+0.4,
+                       xend = var_x-0.4,
+                       y = var_y,
+                       yend = var_y,
+                       group = var_x),
+                   color = "black") +
+      # geom_bar(stat = "identity", 
+      #          color = "black",
+      #          fill = fill_color,
+      #          width = 1) +
+      # geom_linerange() + 
       facet_grid(~display_name) +
       scale_x_continuous(name = "Year", breaks = scales::pretty_breaks(n = 4)) +
       scale_y_continuous(name = y_title,

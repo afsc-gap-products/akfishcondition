@@ -53,7 +53,7 @@ fig2  <- plot_anomaly_timeseries(x = AI_INDICATOR$FULL_REGION,
                         var_y_se_name = "vast_relative_condition_se",
                         var_x_name = "year",
                         y_title = "VAST relative condition", # expression("VAST Condition "~((grams/cm)^beta)),
-                        plot_type = "bar",
+                        plot_type = "box",
                         set_intercept = 1,
                         format_for = "rmd")
 
@@ -64,7 +64,7 @@ fig2_png  <- plot_anomaly_timeseries(x = AI_INDICATOR$FULL_REGION,
                         var_y_se_name = "vast_relative_condition_se",
                         var_x_name = "year",
                         y_title = "VAST relative condition", # expression("VAST Condition "~((grams/cm)^beta)),
-                        plot_type = "bar",
+                        plot_type = "box",
                         set_intercept = 1,
                         format_for = "png")
 
@@ -171,7 +171,7 @@ sbw_timeseries <- plot_anomaly_timeseries(x = AI_INDICATOR$FULL_REGION,
                         var_y_se_name = "se_wt_resid",
                         var_x_name = "year",
                         y_title = "Length-weight residual (ln(g))",
-                        plot_type = "bar",
+                        plot_type = "box",
                         format_for = "png",
                         set_intercept = 0)
 

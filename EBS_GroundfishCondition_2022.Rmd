@@ -122,7 +122,7 @@ fig2  <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION,
                         var_y_se_name = "vast_relative_condition_se",
                         var_x_name = "year",
                         y_title = "VAST relative condition", # expression("VAST Condition "~((grams/cm)^beta)),
-                        plot_type = "bar",
+                        plot_type = "box",
                         set_intercept = 1,
                         format_for = "rmd")
 
@@ -133,7 +133,7 @@ fig2_png  <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION,
                         var_y_se_name = "vast_relative_condition_se",
                         var_x_name = "year",
                         y_title = "VAST relative condition", # expression("VAST Condition "~((grams/cm)^beta)),
-                        plot_type = "bar",
+                        plot_type = "box",
                         set_intercept = 1,
                         format_for = "png")
 
@@ -141,7 +141,7 @@ print(fig2 + theme_condition_index())
 ```
 
 ```{r figure 2 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png(here::here("plots", region, "EBS_condition.png"),width=6,height=7,units="in",res=300)
+png(here::here("plots", region, "EBS_condition.png"),width=6,height=7,units="in",res=600)
 print(fig2_png + theme_blue_strip())
 dev.off()
 ```
@@ -185,7 +185,7 @@ print(fig3 +
 ```
 
 ```{r figure 3 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png(here::here("plots", region, "EBS_VAST_SBW_timeseries.png"),width=6,height=7,units="in",res=300)
+png(here::here("plots", region, "EBS_VAST_SBW_timeseries.png"),width=6,height=7,units="in",res=600)
 print(fig3_png + 
         theme_blue_strip() + 
         theme(legend.position = "bottom",
@@ -244,6 +244,7 @@ fig5 <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
                         var_y_se_name = "vast_relative_condition_se",
                         var_x_name = "year",
                         y_title = "VAST relative condition", # expression("VAST Condition "~((grams/cm)^beta)),
+                        plot_type = "box",
                         format_for = "rmd")
 
 fig5_png <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
@@ -253,6 +254,7 @@ fig5_png <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
                         var_y_se_name = "vast_relative_condition_se",
                         var_x_name = "year",
                         y_title = "VAST relative condition", # expression("VAST Condition "~((grams/cm)^beta)),
+                        plot_type = "box",
                         format_for = "png")
 
 
@@ -260,7 +262,7 @@ fig5_png <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
 ```
 
 ```{r figure 5 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png(here::here("plots", region, "NBS_condition.png"), width=6, height=7, units="in", res=300)
+png(here::here("plots", region, "NBS_condition.png"), width=6, height=7, units="in", res=600)
 print(fig5_png + theme_blue_strip())
 dev.off()
 ```
@@ -270,7 +272,6 @@ In 2021, negative length-weight residuals were observed for large walleye polloc
 In 2021, similar to 2010-2019, Pacific cod condition was generally negative on the middle and outer northern shelf and outer southern shelf (Strata 40, 50, and 60); however, condition was also negative on the inner southern shelf and inner northern shelf (strata 10, 20 and 30) indicating a decline in condition on these strata since 2019. Large walleye pollock (>250 mm) condition was primarily negative on all strata in 2021, which is consistent with the observed condition on the inner shelf since 2015. In 2021, small walleye pollock (100–250 mm) condition was generally positive, and consistent with observed condition on the inner shelf since 2014. In 2021, condition was observed in all EBS strata for northern rock sole, Alaska plaice, flathead sole and arrowtooth flounder. The remaining species, yellowfin sole, had positive residuals on the outer shelf (Stratum 40).
 
 ```{r figure 6 set up, include=FALSE, fig.height=4, fig.width=4, message=FALSE, warning=FALSE}
-# Set factor levels for plotting order
 fig6  <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
                         region = "BS",
                         fill_color = "#54ADDB",
@@ -278,7 +279,7 @@ fig6  <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
                         var_y_se_name = "vast_relative_condition_se",
                         var_x_name = "year",
                         y_title = "VAST relative condition", # "VAST relative condition", # expression("VAST Condition "~((grams/cm)^beta)),
-                        plot_type = "bar",
+                        plot_type = "box",
                         set_intercept = 1,
                         format_for = "rmd")
 
@@ -289,7 +290,7 @@ fig6_png  <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
                         var_y_se_name = "vast_relative_condition_se",
                         var_x_name = "year",
                         y_title = "VAST relative condition", # expression("VAST Condition "~((grams/cm)^beta)),
-                        plot_type = "bar",
+                        plot_type = "box",
                         set_intercept = 1,
                         format_for = "png")
 ```
@@ -357,7 +358,7 @@ ebs_sbw_timeseries <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION,
                         var_y_se_name = "se_wt_resid",
                         var_x_name = "year",
                         y_title = "Length-weight residual (ln(g))",
-                        plot_type = "bar",
+                        plot_type = "box",
                         format_for = "png",
                         set_intercept = 0)
 
@@ -421,7 +422,7 @@ nbs_sbw_timeseries <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
                         var_y_se_name = "se",
                         var_x_name = "year",
                         y_title = "Length-weight residual (ln(g))",
-                        plot_type = "bar",
+                        plot_type = "box",
                         format_for = "png",
                         set_intercept = 0)
 
