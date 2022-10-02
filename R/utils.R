@@ -118,7 +118,13 @@ select_species <- function(species_code, region, remove_outliers = TRUE, bonferr
   all_species$year <- as.numeric(all_species$year)
   all_species$cpue_kg_km2 <- as.numeric(all_species$cpue_kg_km2)
   
-  specimen_sub <- all_species[which(all_species$species_code == species_code),]
+  if(species_code %in% c(21721, 21722, 21741, 21742)) {
+    sel_code <- ifelse(species_code %in% c(21721, 21722), 21720, 21740)
+  } else {
+    sel_code <- species_code
+  }
+  
+  specimen_sub <- all_species[which(all_species$species_code == sel_code),]
   
   if(!is.null(fork_lengths_mm)) {
     fl_range <- range(fork_lengths_mm)

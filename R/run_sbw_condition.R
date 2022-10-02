@@ -74,16 +74,20 @@ run_sbw_condition <- function(region, stratum_col = NULL, biomass_col = NULL, co
               LAST_UPDATE = Sys.Date())
   
   message("Splitting Pacific cod and pollock for ESP and ESR length cutoffs.")
+  
+  # Create separate data.frames for adult and juvenile poollock and cod
   pcod <- dat %>% dplyr::filter(species_code == 21720)
   pcod$species_code[pcod$length < cod_juv_cutoff_mm] <- 21721
   pcod$species_code[pcod$length >= cod_juv_cutoff_mm] <- 21722
-  pcod$common_name[pcod$species_code == 21721] <- "Pacific cod juvenile"
-  pcod$common_name[pcod$species_code == 21722] <- "Pacific cod adult"
+  pcod$common_name[pcod$species_code == 21721] <- "Pacific cod (juvenile)"
+  pcod$common_name[pcod$species_code == 21722] <- "Pacific cod (adult)"
   pollock <- dplyr::filter(dat, species_code == 21740)
   dat$species_code[dat$species_code == 21740 & dat$length_mm >= 100 & dat$length_mm <= 250] <- 21741
   dat$common_name[dat$species_code == 21741] <- "walleye pollock (100–250 mm)"
   dat$species_code[dat$species_code == 21740] <- 21742
   dat$common_name[dat$species_code == 21742] <- "walleye pollock (>250 mm)"
+  
+  # Bind adult and juvenile pollock and cod to dat
   dat <- dplyr::bind_rows(dat, pollock)
   dat <- dplyr::bind_rows(dat, pcod)
   
@@ -130,7 +134,6 @@ run_sbw_condition <- function(region, stratum_col = NULL, biomass_col = NULL, co
     
     stratum_resids <- NULL
     
-    # Biomass-weighted residuals by year
     ann_mean_resid_df <- dat %>% 
       dplyr::group_by(common_name, year) %>%
       dplyr::summarise(mean_resid = mean(resid, na.rm = TRUE),

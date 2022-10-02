@@ -99,20 +99,20 @@ ESP_SETTINGS <- list(ESP_SPECIES =
                                                                1, 1),
                                                 ObsModel_3 = c(3, 3,
                                                                4, 4,
-                                                               4, 4),
+                                                               3, 3),
                                                 ObsModel_4 = c(3, 3,
                                                                4, 4,
-                                                               4, 4),
+                                                               3, 3),
                                                 n_knots = c(400, 400,
                                                             400, 400,
-                                                            600, 600))
+                                                            200, 200))
 )
 ```
 
 
 # 1. Update stratum-biomass weighted condition inidicators
 
-```{r get_ai, message=FALSE, warning=FALSE}
+```{r get_ai, message=TRUE, warning=TRUE}
 # Aleutian Islands
 ai_sbw <- akfishcondition:::run_sbw_condition(
   region = "AI",
@@ -205,6 +205,20 @@ for(ii in 1:nrow(nbs_spp)) {
 ```
 
 
+## 3.5 Run VAST: ESP Pacific cod
+
+```{r}
+pcod_spp <-  dplyr::filter(ESP_SETTINGS$VAST_SETTINGS, 
+                    region == "EBS")
+
+for(ii in 1:nrow(pcod_spp)) {
+    akfishcondition::run_vast_condition(x = pcod_spp[ii,], 
+                                        response = "count")
+  gc()
+}
+```
+
+
 # 4. Load VAST indicators
 
 ```{r load_vast_indicators}
@@ -227,66 +241,81 @@ ai_vast_df <- akfishcondition::bundle_vast_condition(region = "AI",
 Update sysdata.rda with raw data for the condition indicator and write raw data to inst/extdata.
 
 ```{r save_to_sysdata, message=FALSE, warning=FALSE}
-esp_spp <- c("Pacific cod adult", "Pacific cod juvenile")
+esp_spp <- c("Pacific cod (adult)", "Pacific cod (juvenile)")
 EBS_INDICATOR <- list(
-  FULL_REGION = as.data.frame(dplyr::full_join(dplyr::filter(ebs_sbw$full_sbw, !(
-    common_name %in% esp_spp)),
-    ebs_vast_df)),
-  STRATUM = as.data.frame(dplyr::filter(
-    ebs_sbw$stratum_sbw, !(common_name %in% esp_spp)
-  )),
+  FULL_REGION = as.data.frame(
+    dplyr::full_join(
+      dplyr::filter(ebs_sbw$full_sbw, !(
+        common_name %in% esp_spp)),
+      ebs_vast_df)),
+  STRATUM = as.data.frame(
+    dplyr::filter(
+      ebs_sbw$stratum_sbw, !(common_name %in% esp_spp)
+    )),
   LAST_UPDATE = Sys.Date()
 )
 NBS_INDICATOR <- list(
-  FULL_REGION = as.data.frame(dplyr::full_join(
-    dplyr::filter(nbs_sbw$full_sbw, !(common_name %in% esp_spp)),
-    nbs_vast_df
-  )),
+  FULL_REGION = as.data.frame(
+    dplyr::full_join(
+      dplyr::filter(nbs_sbw$full_sbw, !(common_name %in% esp_spp)),
+      nbs_vast_df
+    )),
   STRATUM = NA,
   LAST_UPDATE = Sys.Date()
 )
 GOA_INDICATOR <- list(
-  FULL_REGION = as.data.frame(dplyr::filter(goa_sbw$full_sbw, !(
-    common_name %in% esp_spp
-  ))),
-  STRATUM = as.data.frame(dplyr::filter(
-    goa_sbw$stratum_sbw, !(common_name %in% esp_spp)
-  )),
+  FULL_REGION = as.data.frame(
+    dplyr::filter(goa_sbw$full_sbw, !(
+      common_name %in% esp_spp
+    ))),
+  STRATUM = as.data.frame(
+    dplyr::filter(
+      goa_sbw$stratum_sbw, !(common_name %in% esp_spp)
+    )),
   LAST_UPDATE = Sys.Date()
 )
 AI_INDICATOR <- list(
-  FULL_REGION = as.data.frame(dplyr::full_join(
-    dplyr::filter(ai_sbw$full_sbw, !(common_name %in% esp_spp)),
-    ai_vast_df
-  )),
-  STRATUM = as.data.frame(dplyr::filter(
-    ai_sbw$stratum_sbw, !(common_name %in% esp_spp)
-  )),
+  FULL_REGION = as.data.frame(
+    dplyr::full_join(
+      dplyr::filter(ai_sbw$full_sbw, !(common_name %in% esp_spp)),
+      ai_vast_df
+    )),
+  STRATUM = as.data.frame(
+    dplyr::filter(
+      ai_sbw$stratum_sbw, !(common_name %in% esp_spp)
+    )),
   LAST_UPDATE = Sys.Date()
 )
 
 PCOD_ESP <- list(
-  FULL_REGION_EBS = as.data.frame(dplyr::filter(
-    ebs_sbw$full_sbw, common_name %in% esp_spp
-  )),
-  FULL_REGION_GOA = as.data.frame(dplyr::filter(
-    goa_sbw$full_sbw, common_name %in% esp_spp
-  )),
-  FULL_REGION_AI = as.data.frame(dplyr::filter(
-    ai_sbw$full_sbw, common_name %in% esp_spp
-  )),
-  FULL_REGION_NBS = as.data.frame(dplyr::filter(
-    nbs_sbw$full_sbw, common_name %in% esp_spp
-  )),
-  stratum_EBS = as.data.frame(dplyr::filter(
-    ebs_sbw$stratum_sbw, common_name %in% esp_spp
-  )),
-  stratum_GOA = as.data.frame(dplyr::filter(
-    goa_sbw$stratum_sbw, common_name %in% esp_spp
-  )),
-  stratum_AI = as.data.frame(dplyr::filter(
-    ai_sbw$stratum_sbw, common_name %in% esp_spp
-  )),
+  FULL_REGION_EBS = as.data.frame(
+    dplyr::filter(
+      ebs_sbw$full_sbw, common_name %in% esp_spp
+    )),
+  FULL_REGION_GOA = as.data.frame(
+    dplyr::filter(
+      goa_sbw$full_sbw, common_name %in% esp_spp
+    )),
+  FULL_REGION_AI = as.data.frame(
+    dplyr::filter(
+      ai_sbw$full_sbw, common_name %in% esp_spp
+    )),
+  FULL_REGION_NBS = as.data.frame(
+    dplyr::filter(
+      nbs_sbw$full_sbw, common_name %in% esp_spp
+    )),
+  stratum_EBS = as.data.frame(
+    dplyr::filter(
+      ebs_sbw$stratum_sbw, common_name %in% esp_spp
+    )),
+  stratum_GOA = as.data.frame(
+    dplyr::filter(
+      goa_sbw$stratum_sbw, common_name %in% esp_spp
+    )),
+  stratum_AI = as.data.frame(
+    dplyr::filter(
+      ai_sbw$stratum_sbw, common_name %in% esp_spp
+    )),
   stratum_NBS = NA,
   LAST_UPDATE = Sys.Date()
 )
@@ -304,6 +333,7 @@ save(
   AI_INDICATOR,
   PCOD_ESP,
   ESR_SETTINGS,
+  ESP_SETTINGS,
   file = here::here("R", "sysdata.rda")
 )
 ```
