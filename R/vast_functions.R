@@ -93,6 +93,10 @@ run_vast_condition <- function(x, n_knots = NULL, response = "count", fork_lengt
     start_time <- Sys.time()
     dir.create(paste0(getwd(),"/results/", x$region[ii], "/", x$species_code[ii],"/"), recursive = TRUE)
     
+    if(is.null(fork_lengths_mm)) {
+      fork_lengths_mm <- c(x$fl_min[ii], x$fl_max[ii])
+    }
+    
     specimen_sub <- akfishcondition:::select_species(species_code = x$species_code[ii], 
                                                      region = x$region[ii],
                                                      fork_lengths_mm = fork_lengths_mm)

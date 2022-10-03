@@ -115,7 +115,8 @@ To calculate indicators, length-weight relationships were estimated from linear 
 
 ```{r figure 2 grid, include=TRUE, echo=FALSE, fig.height=14,fig.width=12,fig.cap="\\label{fig:figs}Figure 2. Weighted length-weight residuals for seven groundfish species and age 1–2 walleye pollock (100–250 mm) collected during AFSC/RACE GAP standard summer bottom trawl surveys of the eastern Bering Sea shelf, 1999-2021. Filled bars denote weighted length-weight residuals using this year's indicator calculation. Error bars denote two standard errors",  message=FALSE, warning=FALSE}
 # Set factor levels for plotting order
-fig2  <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION,
+fig2  <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$EBS]),
                         region = "BS",
                         fill_color = "#0085CA",
                         var_y_name = "vast_relative_condition",
@@ -126,7 +127,8 @@ fig2  <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION,
                         set_intercept = 1,
                         format_for = "rmd")
 
-fig2_png  <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION,
+fig2_png  <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$EBS]),
                         region = "BS",
                         fill_color = "#0085CA",
                         var_y_name = "vast_relative_condition",
@@ -148,8 +150,10 @@ dev.off()
 
 
 ```{r figure 3 grid, include=TRUE, echo=FALSE, fig.height=14,fig.width=12,fig.cap="\\label{fig:figs}Figure 3. Length-weight residuals for groundfish species and age 1–2 walleye pollock (100–250 mm) collected during AFSC/RACE GAP summer bottom trawl surveys of the Northern Bering Sea, 2010 and 2017–2021. Error bars denote two standard errors.",  message=FALSE, warning=FALSE}
-fig3 <- plot_two_timeseries(x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION,
-                                x_2 = akfishcondition::EBS_INDICATOR$FULL_REGION,
+fig3 <- plot_two_timeseries(x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$EBS]),
+                                x_2 = akfishcondition::EBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$EBS]),
                                 region = "BS",
                                 series_name_1 = "Length-weight residual (Historical)",
                                 series_name_2 = "VAST relative condition (New)",
@@ -163,8 +167,10 @@ fig3 <- plot_two_timeseries(x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION,
                                 fill_colors = c("#001743", "#0085CA"),
                                 format_for = "rmd")
 
-fig3_png <- plot_two_timeseries(x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION,
-                                x_2 = akfishcondition::EBS_INDICATOR$FULL_REGION,
+fig3_png <- plot_two_timeseries(x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$EBS]),
+                                x_2 = akfishcondition::EBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$EBS]),
                                 region = "BS",
                                 series_name_1 = "Length-weight residual (Historical)",
                                 series_name_2 = "VAST relative condition (New)",
@@ -195,8 +201,10 @@ dev.off()
 
 ```{r figure 4 set up, include=FALSE, fig.height=4, fig.width=4, message=FALSE, warning=FALSE}
 fig4 <- akfishcondition::plot_xy_corr(
-  x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION,
-  x_2 = akfishcondition::EBS_INDICATOR$FULL_REGION,
+  x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$EBS]),
+  x_2 = akfishcondition::EBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$EBS]),
   region = region,
   series_name_1 = "Length-weight residual (Historical)",
   series_name_2 = "VAST relative condition (New)",
@@ -209,8 +217,10 @@ fig4 <- akfishcondition::plot_xy_corr(
   format_for = "rmd")
 
 fig4_png <- akfishcondition::plot_xy_corr(
-  x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION,
-  x_2 = akfishcondition::EBS_INDICATOR$FULL_REGION,
+  x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$EBS]),
+  x_2 = akfishcondition::EBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$EBS]),
   region = region,
   series_name_1 = "Length-weight residual (Historical)",
   series_name_2 = "VAST relative condition (New)",
@@ -237,7 +247,8 @@ dev.off()
 
 
 ```{r figure 5 grid, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-fig5 <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
+fig5 <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$NBS]),
                         region = "BS", 
                         fill_color = "#54ADDB", 
                         var_y_name = "vast_relative_condition", 
@@ -247,7 +258,8 @@ fig5 <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
                         plot_type = "box",
                         format_for = "rmd")
 
-fig5_png <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
+fig5_png <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$NBS]),
                         region = "BS", 
                         fill_color = "#54ADDB", 
                         var_y_name = "vast_relative_condition", 
@@ -272,7 +284,8 @@ In 2021, negative length-weight residuals were observed for large walleye polloc
 In 2021, similar to 2010-2019, Pacific cod condition was generally negative on the middle and outer northern shelf and outer southern shelf (Strata 40, 50, and 60); however, condition was also negative on the inner southern shelf and inner northern shelf (strata 10, 20 and 30) indicating a decline in condition on these strata since 2019. Large walleye pollock (>250 mm) condition was primarily negative on all strata in 2021, which is consistent with the observed condition on the inner shelf since 2015. In 2021, small walleye pollock (100–250 mm) condition was generally positive, and consistent with observed condition on the inner shelf since 2014. In 2021, condition was observed in all EBS strata for northern rock sole, Alaska plaice, flathead sole and arrowtooth flounder. The remaining species, yellowfin sole, had positive residuals on the outer shelf (Stratum 40).
 
 ```{r figure 6 set up, include=FALSE, fig.height=4, fig.width=4, message=FALSE, warning=FALSE}
-fig6  <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
+fig6  <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$NBS]),
                         region = "BS",
                         fill_color = "#54ADDB",
                         var_y_name = "vast_relative_condition",
@@ -283,7 +296,8 @@ fig6  <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
                         set_intercept = 1,
                         format_for = "rmd")
 
-fig6_png  <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
+fig6_png  <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$NBS]),
                         region = "BS",
                         fill_color = "#54ADDB",
                         var_y_name = "vast_relative_condition",
@@ -308,8 +322,10 @@ dev.off()
 
 ```{r figure 7 set up, include=FALSE, fig.height=4, fig.width=4, message=FALSE, warning=FALSE}
 fig7 <- akfishcondition::plot_xy_corr(
-  x_1 = akfishcondition::NBS_INDICATOR$FULL_REGION,
-  x_2 = akfishcondition::NBS_INDICATOR$FULL_REGION,
+  x_1 = akfishcondition::NBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$NBS]),
+  x_2 = akfishcondition::NBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$NBS]),
   region = region,
   series_name_1 = "Length-weight residual (Historical)",
   series_name_2 = "VAST relative condition (New)",
@@ -322,8 +338,10 @@ fig7 <- akfishcondition::plot_xy_corr(
   format_for = "rmd")
 
 fig7_png <- akfishcondition::plot_xy_corr(
-  x_1 = akfishcondition::NBS_INDICATOR$FULL_REGION,
-  x_2 = akfishcondition::NBS_INDICATOR$FULL_REGION,
+  x_1 = akfishcondition::NBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$NBS]),
+  x_2 = akfishcondition::NBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$NBS]),
   region = region,
   series_name_1 = "Length-weight residual (Historical)",
   series_name_2 = "VAST relative condition (New)",
@@ -351,7 +369,8 @@ dev.off()
 
 ```{r sbw_legacy_plots, include=FALSE, message=FALSE, warning=FALSE}
 # EBS stratum-biomass weighted residual time series anomaly
-ebs_sbw_timeseries <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION,
+ebs_sbw_timeseries <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$EBS]),
                         region = region, 
                         fill_color = "#0085CA", 
                         var_y_name = "mean_wt_resid", 
@@ -367,7 +386,8 @@ print(ebs_sbw_timeseries + akfishcondition::theme_blue_strip())
 dev.off()
 
 # EBS stratum-biomass weighted residual stratum stacked bar plots
-ebs_stacked_bar <- akfishcondition::plot_stratum_stacked_bar(x = EBS_INDICATOR$STRATUM, 
+ebs_stacked_bar <- akfishcondition::plot_stratum_stacked_bar(x = EBS_INDICATOR$STRATUM %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$EBS]), 
                                                          region = region, 
                                                          var_x_name = "year", 
                                                          var_y_name = "stratum_resid_mean", 
@@ -381,7 +401,8 @@ print(ebs_stacked_bar + theme_blue_strip())
 dev.off()
 
 # EBS single species stratum plots
-akfishcondition::plot_species_stratum_bar(x = EBS_INDICATOR$STRATUM, 
+akfishcondition::plot_species_stratum_bar(x = EBS_INDICATOR$STRATUM %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$EBS]), 
                                           region = "EBS", 
                                           var_x_name = "year", 
                                           var_y_name = "stratum_resid_mean", 
@@ -393,7 +414,8 @@ akfishcondition::plot_species_stratum_bar(x = EBS_INDICATOR$STRATUM,
                                           write_plot = TRUE)
 
 # EBS single species anomaly plots
-akfishcondition::plot_species_bar(x = EBS_INDICATOR$FULL_REGION, 
+akfishcondition::plot_species_bar(x = EBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$EBS]), 
                                   region = "EBS", 
                                   var_x_name = "year", 
                                   var_y_name = "vast_relative_condition", 
@@ -404,7 +426,8 @@ akfishcondition::plot_species_bar(x = EBS_INDICATOR$FULL_REGION,
                                   write_plot = TRUE)
 
 # NBS_single species anomaly plots
-akfishcondition::plot_species_bar(x = NBS_INDICATOR$FULL_REGION, 
+akfishcondition::plot_species_bar(x = NBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$NBS]), 
                                   region = "NBS", 
                                   var_x_name = "year", 
                                   var_y_name = "vast_relative_condition", 
@@ -415,7 +438,8 @@ akfishcondition::plot_species_bar(x = NBS_INDICATOR$FULL_REGION,
                                   write_plot = TRUE)
 
 # NBS stratum-biomass weighted residual time series anomaly
-nbs_sbw_timeseries <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
+nbs_sbw_timeseries <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$NBS]),
                         region = region, 
                         fill_color = "#0085CA", 
                         var_y_name = "mean_resid", 
@@ -432,8 +456,10 @@ dev.off()
 
 # NBS anomaly timeseries
 nbs_anomaly_timeseries_png <- akfishcondition::plot_two_timeseries(
-  x_1 = akfishcondition::NBS_INDICATOR$FULL_REGION,
-  x_2 = akfishcondition::NBS_INDICATOR$FULL_REGION,
+  x_1 = akfishcondition::NBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$NBS]),
+  x_2 = akfishcondition::NBS_INDICATOR$FULL_REGION %>%
+                                   dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$NBS]),
   region = region,
   series_name_1 = "Length-weight residual (Historical)",
   series_name_2 = "VAST relative condition (New)",

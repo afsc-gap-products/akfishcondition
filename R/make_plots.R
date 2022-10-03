@@ -340,6 +340,11 @@ plot_species_stratum_bar <- function(x,
   
   out_list <- list()
   for(ii in 1:length(unique_groups)) {
+    
+    if(is.na(unique_groups[ii])) {
+      next
+    }
+    
     spp_dir <- gsub(pattern = ">", replacement  = "gt", unique_groups[ii])
     
     if(!dir.exists(here::here("plots", region_dir, spp_dir))) {
@@ -472,6 +477,11 @@ plot_species_bar <- function(x,
   
   out_list <- list()
   for(ii in 1:length(unique_groups)) {
+    
+    if(is.na(unique_groups[ii])) {
+      next
+    }
+    
     spp_dir <- gsub(pattern = ">", replacement  = "gt", unique_groups[ii])
     
     if(!dir.exists(here::here("plots", region_dir, spp_dir))) {

@@ -75,7 +75,7 @@ run_sbw_condition <- function(region, stratum_col = NULL, biomass_col = NULL, co
   
   message("Splitting Pacific cod and pollock for ESP and ESR length cutoffs.")
   
-  # Create separate data.frames for adult and juvenile poollock and cod
+  # Create separate data.frames for adult and juvenile pollock and cod
   pcod <- dat %>% dplyr::filter(species_code == 21720)
   pcod$species_code[pcod$length < cod_juv_cutoff_mm] <- 21721
   pcod$species_code[pcod$length >= cod_juv_cutoff_mm] <- 21722

@@ -127,10 +127,12 @@ select_species <- function(species_code, region, remove_outliers = TRUE, bonferr
   specimen_sub <- all_species[which(all_species$species_code == sel_code),]
   
   if(!is.null(fork_lengths_mm)) {
+    
+    message("run_vast_condition: Selecting fork length range ", paste(fork_lengths_mm, collapse = "-"), " mm")
     fl_range <- range(fork_lengths_mm)
     
     cpue_sub <- dplyr::filter(specimen_sub, !is.na(number_fish) & !is.na(effort_km2))
-    lw_sub <- dplyr::filter(specimen_sub, length_mm >= fl_range[1] & specimen_sub$length <= fl_range[2])
+    lw_sub <- dplyr::filter(specimen_sub, length_mm >= fl_range[1] & length_mm <= fl_range[2])
       
     specimen_sub <- dplyr::bind_rows(lw_sub, cpue_sub)
   }
