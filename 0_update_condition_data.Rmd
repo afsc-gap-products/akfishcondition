@@ -112,7 +112,7 @@ ESP_SETTINGS <- list(ESP_SPECIES =
                                                                4, 4,
                                                                3, 3),
                                                 n_knots = c(400, 400,
-                                                            400, 400,
+                                                            400, 600,
                                                             750, 750),
                                                 fl_min = c(0, 421,
                                                            0, 461,
@@ -307,30 +307,34 @@ AI_INDICATOR <- list(
 
 PCOD_ESP <- list(
   FULL_REGION_EBS = as.data.frame(
+    dplyr::full_join(ebs_sbw$full_sbw, ebs_vast_df) %>%
     dplyr::filter(
-      ebs_sbw$full_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
+      common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
     )),
   FULL_REGION_GOA = as.data.frame(
-    dplyr::filter(
-      goa_sbw$full_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
+        # dplyr::full_join(goa_sbw$full_sbw, goa_vast_df) %>%
+    dplyr::filter(goa_sbw$full_sbw,
+      common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
     )),
   FULL_REGION_AI = as.data.frame(
-    dplyr::filter(
-      ai_sbw$full_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
-    )),
+    dplyr::full_join(ai_sbw$full_sbw, ai_vast_df) %>%
+      dplyr::filter(
+        common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
+      )),
   FULL_REGION_NBS = as.data.frame(
+    # dplyr::full_join(nbs_sbw$full_sbw, nbs_vast_df) %>%
     dplyr::filter(
       nbs_sbw$full_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
     )),
-  stratum_EBS = as.data.frame(
+  STRATUM_EBS = as.data.frame(
     dplyr::filter(
       ebs_sbw$stratum_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
     )),
-  stratum_GOA = as.data.frame(
+  STRATUM_GOA = as.data.frame(
     dplyr::filter(
       goa_sbw$stratum_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
     )),
-  stratum_AI = as.data.frame(
+  STRATUM_AI = as.data.frame(
     dplyr::filter(
       ai_sbw$stratum_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
     )),
