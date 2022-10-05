@@ -1,18 +1,23 @@
 Package: akfishcondition
 Type: Package
 Title: Groundfish condition index
-Version: 2.3.0
+Version: 3.0.7
 Authors@R: c(person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre")),
-    person("Ned", "Laman", email = "ned.laman@noaa.gov", role = c("ctb")),
-    person("Cecilia", "O'Leary", email = "cecilia.oleary@noaa.gov", role = c("ctb")))
+    person("Cecilia", "O'Leary", email = "cecilia.oleary@noaa.gov", role = c("aut")),
+    person("Bianca", "Prohaska", email = "bianca.prohaska@noaa.gov", role = c("ctb")),
+    person("Ned", "Laman", email = "ned.laman@noaa.gov", role = c("ctb")))
 Maintainer: Sean Rohan <sean.rohan@noaa.gov>
 Depends: R (>= 3.5),
+    car,
     dplyr,
     ggplot2,
+    lubridate,
     magrittr,
     plyr,
     reshape,
-    readr
+    readr,
+    here,
+    stringr
 Description: This package calculates groundfish condition based on length-weight regressions.
 License: GPL (>=2)
 Encoding: UTF-8
@@ -20,5 +25,12 @@ LazyData: false
 RoxygenNote: 7.2.1
 Imports: colorspace,
     viridis
-Suggests: knitr, rmarkdown, RODBC, getPass, stringr, VAST (>= 3.9.0), FishStatsUtils (>= 2.11.0), tictoc
+Suggests: knitr, 
+    rmarkdown, 
+    RODBC, 
+    getPass, 
+    VAST (>= 3.8.2), 
+    FishStatsUtils (>= 2.11.0), 
+    ggthemes,
+    akgfmaps
 VignetteBuilder: knitr

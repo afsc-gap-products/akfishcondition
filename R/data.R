@@ -162,3 +162,13 @@
 #' @source \url{https://www.fisheries.noaa.gov/contact/groundfish-assessment-program}
 #' @export
 "PCOD_ESP"
+
+
+
+#' ESR settings
+#' 
+#' ESR species and VAST settings
+#' 
+#' @format A list containing two data.frames (list of species for each region, VAST settings)
+#' @export
+"ESR_SETTINGS"

@@ -28,13 +28,13 @@
 *_cache/
 /cache/
 
-# Temporary files created by R markdown
 *.utf8.md
 *.knit.md
 inst/doc
+/*.png
+/plots/*.csv
 doc
 Meta
-*.png
 /output/
 /data/*.csv
 /data/*.rds
@@ -42,7 +42,6 @@ Meta
 /archive/
 *.csv
 0_update_condition_data.html
-
-# Local .csl and .bib
-*.bib
-*.csl
+/*.bib
+/*.csl
+/*.docx

@@ -12,7 +12,9 @@ plot_anomaly_timeseries(
   var_y_se_name = "se_wt_resid",
   var_x_name = "year",
   y_title = "Length-weight residual (ln(g))",
-  format_for = "rmd"
+  format_for = "rmd",
+  plot_type = "point",
+  set_intercept = NULL
 )
 }
 \arguments{
@@ -31,10 +33,25 @@ plot_anomaly_timeseries(
 \item{y_title}{Y-axis title. Character (1L).}
 
 \item{format_for}{"rmd" or "png"}
+
+\item{set_intercept}{Intercept to use for plots. Numeric (1L). 0 for residual, 1 for vAST relative condition, NULL for VAST a}
 }
 \value{
 A ggplot object of the time series
 }
 \description{
 Make condition time series plot
+}
+\examples{
+# EBS anomaly timeseries plot
+
+names(EBS_INDICATOR$FULL_REGION)
+
+plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION,
+fill_color = "#0085CA", 
+var_y_name = "mean_wt_resid", 
+var_y_se_name = "se_wt_resid",
+var_x_name = "year",
+y_title = "Length-weight residual (ln(g))",
+format_for = "png")
 }

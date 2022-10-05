@@ -3,17 +3,17 @@
 
 theme_condition_index <- function() {
   theme_bw() %+replace%
-    theme(plot.title = element_text(size = 18, face = "bold"),
+    theme(plot.title = element_text(size = 20),
           panel.grid.major = element_blank(),
-          axis.text.x = element_text(size = 18),
-          axis.text.y = element_text(size = 18),
-          axis.title.x = element_text(size = 18),
-          axis.title.y = element_text(size = 18, angle = 90),
-          legend.title = element_text(size = 18, face = "bold"),
-          legend.text = element_text(size = 18),
+          axis.text.x = element_text(size = 22),
+          axis.text.y = element_text(size = 22),
+          axis.title.x = element_text(size = 26),
+          axis.title.y = element_text(size = 26, angle = 90),
+          legend.title = element_text(size = 26),
+          legend.text = element_text(size = 24),
           legend.position = "right",
           panel.grid.minor = element_blank(),
-          strip.text = element_text(size = 20,
+          strip.text = element_text(size = 24,
                                     color = "white",
                                     face = "bold",
                                     margin = margin(0.5, 0, 0.5, 0, "mm")),
@@ -35,7 +35,7 @@ theme_pngs <- function() {
           legend.title = element_text(size = 11, face = "bold"),
           legend.text = element_text(size = 11),
           panel.grid.minor = element_blank(),
-          strip.text = element_text(size = 11),
+          strip.text = element_text(size = 11, face = "bold"),
           strip.background = element_blank())
 } 
 
@@ -63,6 +63,8 @@ theme_blue_strip <- function() {
                                           color = NA))
 }
 
+
+
 #' Set species plotting order
 #' @param common_name Vector of common names
 #' @param region Character vector of length one indicating whether the region is AI, GOA, or BS
@@ -74,17 +76,23 @@ set_plot_order <- function(common_name, region) {
   }
   if(region == "AI") {
     return(factor(common_name, 
-                  levels = c("walleye pollock (>250 mm)",
+                  levels = c("walleye pollock", 
+                             "walleye pollock (>250 mm)",
                              "walleye pollock (100–250 mm)",
                              "Pacific cod",
+                             "Pacific cod (juvenile)",
+                             "Pacific cod (adult)",
                              "southern rock sole",
                              "arrowtooth flounder",
                              "Atka mackerel",
                              "northern rockfish",
                              "Pacific ocean perch"),
-                  labels = c("walleye pollock (>250 mm)",
+                  labels = c("walleye pollock", 
+                             "walleye pollock (>250 mm)",
                              "walleye pollock (100–250 mm)",
                              "Pacific cod",
+                             "Pacific cod (juvenile)",
+                             "Pacific cod (adult)",
                              "southern rock sole",
                              "arrowtooth flounder",
                              "Atka mackerel",
@@ -92,17 +100,23 @@ set_plot_order <- function(common_name, region) {
                              "Pacific ocean perch")))
   } else if(region == "GOA") {
   return(factor(common_name,
-                levels = c("walleye pollock (>250 mm)",
+                levels = c("walleye pollock", 
+                           "walleye pollock (>250 mm)",
                            "walleye pollock (100–250 mm)",
                            "Pacific cod",
+                           "Pacific cod (juvenile)",
+                           "Pacific cod (adult)",
                            "arrowtooth flounder",
                            "southern rock sole",
                            "dusky rockfish",
                            "northern rockfish",
                            "Pacific ocean perch"),
-                labels = c("walleye pollock (>250 mm)",
+                labels = c("walleye pollock", 
+                           "walleye pollock (>250 mm)",
                            "walleye pollock (100–250 mm)",
                            "Pacific cod",
+                           "Pacific cod (juvenile)",
+                           "Pacific cod (adult)",
                            "arrowtooth flounder",
                            "southern rock sole",
                            "dusky rockfish",
@@ -110,17 +124,23 @@ set_plot_order <- function(common_name, region) {
                            "Pacific ocean perch")))
   } else if(region %in% c("BS", "EBS")) {
     return(factor(common_name, 
-                  levels = c("walleye pollock (>250 mm)",
+                  levels = c("walleye pollock", 
+                             "walleye pollock (>250 mm)",
                              "walleye pollock (100–250 mm)",
                              "Pacific cod",
+                             "Pacific cod (juvenile)",
+                             "Pacific cod (adult)",
                              "northern rock sole",
                              "yellowfin sole",
                              "arrowtooth flounder",
                              "Alaska plaice",
                              "flathead sole"),
-                  labels = c("walleye pollock (>250 mm)",
+                  labels = c("walleye pollock", 
+                             "walleye pollock (>250 mm)",
                              "walleye pollock (100–250 mm)",
                              "Pacific cod",
+                             "Pacific cod (juvenile)",
+                             "Pacific cod (adult)",
                              "northern rock sole",
                              "yellowfin sole",
                              "arrowtooth flounder",
@@ -130,6 +150,7 @@ set_plot_order <- function(common_name, region) {
 }
 
 #' Set stratum plotting order
+#' 
 #' @param common_name Vector of stratum names
 #' @param region Character vector of length one indicating whether the region is AI, GOA, or BS
 #' @export

@@ -13,119 +13,113 @@ addr:
   l3: Seattle, WA 98115
 ---
 
-# Update ESP
-
-This code updates Gulf of Alaska and Eastern Bering Sea Pacific cod juvenile and adult morphometric condition indicators for the ESP. 
-
-```{r write_pacific_cod_esp, include=FALSE}
-library(akfishcondition)
-
-akfishcondition:::PCOD_ESP$FULL_REGION_EBS %>%
-  dplyr::filter(COMMON_NAME == "Pacific cod juvenile") %>%
-  dplyr::mutate(INDICATOR_NAME = "Summer_Pacific_Cod_Condition_Juvenile_EBS_Survey",
-                DATA_VALUE = mean_wt_resid) %>%
-  dplyr::select(YEAR, INDICATOR_NAME, DATA_VALUE) %>%
-  write.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Juvenile_EBS_Survey.csv"),
-                   row.names = FALSE)
-  
-akfishcondition:::PCOD_ESP$FULL_REGION_EBS %>%
-  dplyr::filter(COMMON_NAME == "Pacific cod adult") %>%
-  dplyr::mutate(INDICATOR_NAME = "Summer_Pacific_Cod_Condition_Adult_EBS_Survey",
-                DATA_VALUE = mean_wt_resid) %>%
-  dplyr::select(YEAR, INDICATOR_NAME, DATA_VALUE) %>%
-  write.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Adult_EBS_Survey.csv"),
-                   row.names = FALSE)
-
-akfishcondition:::PCOD_ESP$FULL_REGION_GOA %>%
-  dplyr::filter(COMMON_NAME == "Pacific cod juvenile") %>%
-  dplyr::mutate(INDICATOR_NAME = "Summer_Pacific_Cod_Condition_Juvenile_GOA_Survey",
-                DATA_VALUE = mean_wt_resid) %>%
-  dplyr::select(YEAR, INDICATOR_NAME, DATA_VALUE) %>%
-  write.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Juvenile_GOA_Survey.csv"),
-                   row.names = FALSE)
-
-akfishcondition:::PCOD_ESP$FULL_REGION_GOA %>%
-  dplyr::filter(COMMON_NAME == "Pacific cod adult") %>%
-  dplyr::mutate(INDICATOR_NAME = "Summer_Pacific_Cod_Condition_Adult_GOA_Survey",
-                DATA_VALUE = mean_wt_resid) %>%
-  dplyr::select(YEAR, INDICATOR_NAME, DATA_VALUE) %>%
-  write.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Adult_GOA_Survey.csv"),
-                   row.names = FALSE)
-
-print(paste0("Last Update: ", akfishcondition:::EBS_INDICATOR$LAST_UPDATE))
-```
-
-```{r setup_data, include=FALSE, message=FALSE}
-esp_pcod_df <- dplyr::bind_rows(
-  read.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Juvenile_EBS_Survey.csv")) %>%
-    dplyr::mutate(REGION = "EBS", STAGE = "Juvenile"),
-  read.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Adult_EBS_Survey.csv")) %>%
-    dplyr::mutate(REGION = "EBS", STAGE = "Adult"),
-  read.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Juvenile_GOA_Survey.csv")) %>%
-    dplyr::mutate(REGION = "GOA", STAGE = "Juvenile"),
-  read.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Adult_GOA_Survey.csv")) %>%
-    dplyr::mutate(REGION = "GOA", STAGE = "Adult"))
-
-esp_pcod_summary_df <- esp_pcod_df %>%
-  dplyr::group_by(INDICATOR_NAME, REGION, STAGE) %>%
-  dplyr::summarize(MEAN_DATA_VALUE = mean(DATA_VALUE),
-                SD_DATA_VALUE = sd(DATA_VALUE))
-
-esp_pcod_df <- esp_pcod_df %>% 
-  dplyr::inner_join(esp_pcod_summary_df) %>%
-  dplyr::mutate(sd_level = cut((DATA_VALUE-MEAN_DATA_VALUE)/SD_DATA_VALUE, breaks = c(-3,-2,-1,0,1,2,3,Inf)))
-
-cor(esp_pcod_df$DATA_VALUE[esp_pcod_df$INDICATOR_NAME == "Summer_Pacific_Cod_Condition_Adult_EBS_Survey"],
-    esp_pcod_df$DATA_VALUE[esp_pcod_df$INDICATOR_NAME == "Summer_Pacific_Cod_Condition_Juvenile_EBS_Survey"])
-
-cor(esp_pcod_df$DATA_VALUE[esp_pcod_df$INDICATOR_NAME == "Summer_Pacific_Cod_Condition_Adult_GOA_Survey"],
-    esp_pcod_df$DATA_VALUE[esp_pcod_df$INDICATOR_NAME == "Summer_Pacific_Cod_Condition_Juvenile_GOA_Survey"])
-
-```
-
-```{r figure, echo=FALSE, message=FALSE, fig.height=6, fig.width=6}
-print(ggplot() +
-  geom_point(data = esp_pcod_df,
-             aes(x = YEAR, 
-                 y = DATA_VALUE,
-                 fill = sd_level),
-             size = rel(3),
-             shape = 21) +
-  geom_hline(data = esp_pcod_summary_df,
-             aes(yintercept = MEAN_DATA_VALUE)) +
-    geom_hline(data = esp_pcod_summary_df,
-             aes(yintercept = MEAN_DATA_VALUE + SD_DATA_VALUE),
-             linetype = 2) +
-      geom_hline(data = esp_pcod_summary_df,
-             aes(yintercept = MEAN_DATA_VALUE - SD_DATA_VALUE),
-             linetype = 2) +
-        geom_hline(data = esp_pcod_summary_df,
-             aes(yintercept = MEAN_DATA_VALUE + 2*SD_DATA_VALUE),
-             linetype = 3) +
-        geom_hline(data = esp_pcod_summary_df,
-             aes(yintercept = MEAN_DATA_VALUE - 2*SD_DATA_VALUE),
-             linetype = 3) +
-  scale_x_continuous(name = "Year") +
-  scale_y_continuous(name = "Length-weight residual") +
-  scale_fill_brewer(name = "Std. dev.", palette = "BrBG") +
-  theme_bw() +
-    theme(legend.position = "bottom") +
-  facet_wrap(REGION ~ STAGE, nrow = 2, scales = "free_y"))
-```
-
 # Eastern Bering Sea Pacific cod
 
 ## Adults (&geq;46 cm FL)
 
-*Status and Trends:* In 2021, the morphometric condition of adult Pacific cod in the EBS was neutral (within one standard deviation of the time series mean), which continues the trend of neutral morphometric condition during the prior two survey years (2018–2019). Morphometric condition near the times series average in recent years (2018–2021) represents an increase in morphometric condition after three consecutive years with negative morphometric condition in 2015–2017. Historically, the morphometric condition of adult Pacific cod increased from the time series minimum in 1999 (a ‘cold’ year with an early survey start) to the time series maximum in 2003. After 2003, morphometric condition decreased towards the time series mean and has fluctuated within one standard deviation of the time series mean from 2006–2021, except for 2012, 2015, and 2017, years with morphometric condition >1 standard deviation below the mean.
+*Status and Trends:*  In 2022, the condition of adult Pacific cod in the EBS was neutral (within one standard deviation of the time series mean), which continues the trend of neutral morphometric condition since 2018. The neutral condition in recent years (2018–2022) represents an increase from the three prior years with negative to neutral condition from 2015–2017. The morphometric condition indicator was estimated using VAST in 2022 instead of the stratum biomass weighted length-weight residual method from previous years. Trends in the historical and new indicator are similar based on the strong correlation between the historical and new indicator (r = 0.87), although there are notable differences for some years. The year with the lowest condition for the old indicator was 1999 (a ‘cold’ year with an early survey start), with an anomaly greater than two standard deviations from the mean. Based on the new VAST relative condition indicator, 1999 was a neutral year and the year with the lowest condition was 2012. Despite these differences, new indicator trends generally match the trend from the old indicator with condition increasing from 1999 to 2003, decreasing from 2003 to 2006, then fluctuating around neutral from 2007 to 2022, aside from negative (>1 standard deviation below the mean) years in 2009, 2012, 2015, and 2017.
 
 ## Juveniles (<46 cm FL)
 
-*Status and Trends:* In 2021, the morphometric condition of juvenile Pacific cod in the EBS was neutral (within one standard deviation of the time series mean), which continues the trend of neutral morphometric condition during the prior two survey years (2018–2019). Neutral morphometric condition in recent years (2018–2021) represents a departure from negative condition in 2017 (~ 1 standard deviation below the mean) and highly positive condition in 2016 (~2 standard deviations above the mean). Historically, the morphometric condition of juvenile Pacific cod increased from the time series minimum in 1999 (a ‘cold’ year with an early survey start) to the second highest value in 2003. After 2003, morphometric condition decreased towards the time series mean and has fluctuated within one standard deviation of the time series mean from 2006–2021, except for 2009 (>1 standard deviation below the mean) and the record high in 2016 (>2 standard deviations above the mean).
+*Status and Trends:* In 2022, the condition of juvenile Pacific cod in the EBS was neutral (within one standard deviation of the time series mean), which continues the trend of neutral morphometric condition since 2017. The morphometric condition indicator was estimated using VAST in 2022 instead of the stratum biomass weighted length-weight residual method from previous years. Trends in the historical and new indicator are similar based on the strong correlation between the historical and new indicator (r = 0.91), although there are noteable differences in some years. Specifically, 2017 was a negative year using the old indicator (~1 standard deviation below the mean) but a neutral year with the new indicator, negative years in 2009 and 2012 are still negative but the anomaly is larger, and the anomaly in 1999 decreased from 3.2 standard deviations below them mean to 1.8 standard deviations below the mean (a ‘cold’ year with an early survey start). Despite these differences, new indicator trends generally match the trend from the old indicator with condition increasing from 1999 to 2004, decreasing from 2005 to 2010, then fluctuating around neutral from 2011 to 2022, aside from a negative year in 2012 and positive year in 2016.
 
 ## Influential Factors
 
-*Influential Factors:* Many factors contribute to variation in morphometric condition so it is unclear which specific factors contributed to neutral condition of adult Pacific cod in the EBS in 2021. Factors that may contribute to variation in morphometric condition include environmental conditions that affect prey quality and temperature-dependent metabolic rates, survey timing, stomach fullness of individual fish, fish migration patterns, and the distribution of samples within survey strata. Temperature is an important factor that can influence the morphometric condition of Pacific cod by influencing metabolic rates, prey availability, and prey quality. Historically in the eastern Bering Sea (EBS), ‘cold’ years (with a small cold pool) were associated with negative morphometric condition (e.g., 1999, 2012) and warm years (e.g., 2002-2005) were associated with positive morphometric condition. However, during recent (2018–2021) exceptionally warm recent years, the morphometric condition of Pacific cod has been neutral for adult and juvenile Pacific cod in the EBS. Temperature can negatively affect growth rates if prey resources are insufficient to make up for increased metabolic demand. In GOA, elevated temperatures during the 2014–2016 marine heatwave in the Gulf of Alaska were associated with lower growth rates of Pacific cod and lower morphometric condition in 2015 (adults and juveniles combined), likely because diminished prey resources during the heatwave were insufficient to make up for increased metabolic demand (Barbeaux et al., 2020). Additional information about the groundfish morphometric condition indicator and factors that can influence estimates of morphometric condition based on length-weight residuals in the Gulf of Alaska are described in Rohan and Prohaska (In prep).
+*Influential Factors:* Many factors contribute to variation in morphometric condition so it is unclear which specific factors contributed to neutral condition of adult Pacific cod in the EBS in 2022. Factors that may contribute to variation in morphometric condition include environmental conditions that affect prey quality and temperature-dependent metabolic rates, survey timing, stomach fullness of individual fish, fish migration patterns, and the distribution of samples within survey strata. Temperature is an important factor that can influence the morphometric condition of Pacific cod by influencing metabolic rates, prey availability, and prey quality. Historically in the eastern Bering Sea (EBS), ‘cold’ years (with a small cold pool) were associated with negative morphometric condition (e.g., 1999, 2012) and warm years (e.g., 2002-2005) were associated with positive morphometric condition. However, during recent (2018–2021) exceptionally warm recent years, the morphometric condition of Pacific cod was neutral for adult and juvenile Pacific cod and this trend continued into the average temperature year in 2022. Temperature can negatively affect growth rates if prey resources are insufficient to make up for increased metabolic demand. In GOA, elevated temperatures during the 2014–2016 marine heatwave in the Gulf of Alaska were associated with lower growth rates of Pacific cod and lower morphometric condition in 2015 (adults and juveniles combined), likely because diminished prey resources during the heatwave were insufficient to make up for increased metabolic demand (Barbeaux et al., 2020). Additional information about the groundfish morphometric condition indicator and factors that can influence estimates of morphometric condition are described in the EBS Groundfish Morphometric Condition contribution in the 2022 Eastern Bering Sea Ecosystem Status Report  (Rohan et al., _In prep_).
+
+```{r steup_data, include=FALSE}
+library(akfishcondition)
+
+akfishcondition:::PCOD_ESP$FULL_REGION_EBS %>%
+  dplyr::filter(common_name == "Pacific cod (juvenile)") %>%
+  dplyr::mutate(indicator_name = "Summer_Pacific_Cod_Condition_Juvenile_EBS_Survey",
+                data_value = vast_relative_condition) %>%
+  dplyr::select(year, indicator_name, data_value) %>%
+  write.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Juvenile_EBS_Survey.csv"),
+            row.names = FALSE)
+
+akfishcondition:::PCOD_ESP$FULL_REGION_EBS %>%
+  dplyr::filter(common_name == "Pacific cod (adult)") %>%
+  dplyr::mutate(indicator_name = "Summer_Pacific_Cod_Condition_Adult_EBS_Survey",
+                data_value = vast_relative_condition) %>%
+  dplyr::select(year, indicator_name, data_value) %>%
+  write.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Adult_EBS_Survey.csv"),
+            row.names = FALSE)
+
+print(paste0("Last Update: ", akfishcondition:::EBS_INDICATOR$LAST_UPDATE))
+```
+
+```{r ebs_anomaly, include=TRUE, echo=FALSE, fig.height=6,fig.width=12}
+fig1_rmd <- plot_anomaly_timeseries(x = akfishcondition::PCOD_ESP$FULL_REGION_EBS,
+                              region = "BS",
+                              fill_color = "#0085CA",
+                              var_y_name = "vast_relative_condition",
+                              var_y_se_name = "vast_relative_condition_se",
+                              var_x_name = "year",
+                              y_title = "VAST relative condition",
+                              plot_type = "box",
+                              set_intercept = 1,
+                              format_for = "rmd")
+
+fig1_png <- plot_anomaly_timeseries(x = akfishcondition::PCOD_ESP$FULL_REGION_EBS,
+                              region = "BS",
+                              fill_color = "#0085CA",
+                              var_y_name = "vast_relative_condition",
+                              var_y_se_name = "vast_relative_condition_se",
+                              var_x_name = "year",
+                              y_title = "VAST relative condition",
+                              plot_type = "box",
+                              set_intercept = 1,
+                              format_for = "png")
+
+print(fig1_rmd + theme_condition_index())
+```
+
+
+```{r ebs_anomaly_png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+png(here::here("plots", "BS", "ESP_EBS_PCOD_condition.png"),width=6,height=3,units="in",res=600)
+print(fig1_png + theme_blue_strip())
+dev.off()
+```
+
+```{r ebs_vast_sbw, include=TRUE, echo=FALSE, fig.height=6,fig.width=12}
+fig2_rmd <- plot_two_timeseries(x_1 = akfishcondition::PCOD_ESP$FULL_REGION_EBS,
+                    x_2 = akfishcondition::PCOD_ESP$FULL_REGION_EBS,
+                    region = "BS",
+                    series_name_1 = "Length-weight residual (Historical)",
+                    series_name_2 = "VAST relative condition (New)",
+                    var_y_name_1 = "mean_wt_resid",
+                    var_x_name_1 = "year",
+                    var_y_name_2 = "vast_relative_condition",
+                    var_x_name_2 = "year",
+                    y_title = "Condition anomaly (Z-score)",
+                    scale_y = TRUE,
+                    year_break = 2020,
+                    fill_colors = c("#001743", "#0085CA"),
+                    format_for = "rmd") 
+
+fig2_png <- plot_two_timeseries(x_1 = akfishcondition::PCOD_ESP$FULL_REGION_EBS,
+                    x_2 = akfishcondition::PCOD_ESP$FULL_REGION_EBS,
+                    region = "BS",
+                    series_name_1 = "Length-weight residual (Historical)",
+                    series_name_2 = "VAST relative condition (New)",
+                    var_y_name_1 = "mean_wt_resid",
+                    var_x_name_1 = "year",
+                    var_y_name_2 = "vast_relative_condition",
+                    var_x_name_2 = "year",
+                    y_title = "Condition anomaly (Z-score)",
+                    scale_y = TRUE,
+                    year_break = 2020,
+                    fill_colors = c("#001743", "#0085CA"),
+                    format_for = "png") 
+print(fig2_rmd + theme_condition_index() + theme(legend.position = "bottom"))
+```
+
+```{r ebs_vast_sbw_png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+png(file = here::here("plots", "BS", "ESP_PCOD_VAST_vs_SBW_time_series.png"), width = 6, height = 3, units = "in", res = 600)
+print(fig2_png + theme_blue_strip() + theme(legend.position = "bottom"))
+dev.off()
+```
 
 
 
@@ -142,11 +136,6 @@ print(ggplot() +
 ## Influential Factors
 
 *Influential Factors:* Many factors contribute to variation in morphometric condition and it is unclear which specific factors contributed to neutral condition in of adult Pacific cod in the GOA in 2021. Factors that may contribute to variation in morphometric condition include environmental conditions that affect prey quality and temperature-dependent metabolic rates, survey timing, stomach fullness of individual fish, fish migration patterns, and the distribution of samples within survey strata. Temperature is an important factor that can influence the morphometric condition of Pacific cod by influencing metabolic rates, prey availability, and prey quality. Historically in the eastern Bering Sea (EBS), ‘cold’ years (with a small cold pool) were associated with negative morphometric condition (e.g., 1999, 2012) and warm years (e.g., 2002-2005) were associated with positive morphometric condition. However, during recent (2018–2021) exceptionally warm recent years, the morphometric condition of Pacific cod has been neutral for adult and juvenile Pacific cod in the EBS. Temperature can negatively affect growth rates if prey resources are insufficient to make up for increased metabolic demand. In GOA, elevated temperatures during the 2014–2016 marine heatwave in the Gulf of Alaska were associated with lower growth rates of Pacific cod and lower morphometric condition in 2015 (adults and juveniles combined), likely because diminished prey resources during the heatwave were insufficient to make up for increased metabolic demand (Barbeaux et al., 2020). Additional information about the morphometric condition indicator and factors that can influence estimates of morphometric condition based on length-weight residuals in the Gulf of Alaska are described in O'Leary et al. (In prep).
-
-
-```{r make_table, include=FALSE, message=FALSE}
-print(esp_pcod_df)
-```
 
 # References
 

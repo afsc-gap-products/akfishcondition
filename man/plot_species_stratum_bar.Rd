@@ -44,3 +44,20 @@ A list of bar plots as ggplot objects
 \description{
 Make condition time series bar plots with separate panels for each stratum.
 }
+\examples{
+# EBS single species stratum bar plots
+
+names(EBS_INDICATOR$STRATUM)
+
+plot_species_stratum_bar(
+x = EBS_INDICATOR$STRATUM,
+region = "BS",
+var_x_name = "year",
+var_y_name = "stratum_resid_mean",
+var_y_se_name = "stratum_resid_se",
+y_title = "Length-weight residual (ln(g))",
+var_group_name = "stratum",
+fill_title = "Stratum",
+fill_palette = "BrBG",
+write_plot = FALSE)
+}

@@ -38,3 +38,17 @@ A ggplot object of the time series
 \description{
 Make condition time series stacked bar plot
 }
+\examples{
+# EBS strata stacked bar plot
+
+names(EBS_INDICATOR$STRATUM)
+
+plot_stratum_stacked_bar(x = EBS_INDICATOR$STRATUM,
+region = "BS",
+fill_palette = "BrBG",
+var_y_name = "stratum_resid_mean",
+var_x_name = "year",
+var_group_name = "stratum",
+fill_title = "Stratum",
+y_title = "Length-weight residual (ln(g))")
+}
