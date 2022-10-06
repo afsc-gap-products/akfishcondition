@@ -35,7 +35,7 @@ bundle_vast_condition <- function(region, years) {
         dplyr::rename(year = Time,
                       vast_condition = Estimate,
                       vast_condition_se = Std..Error.for.Estimate) |>
-        dplyr::select(-Stratum, -Units, -Category)
+        dplyr::select(-Stratum, -Units, -Category, -Std..Error.for.ln.Estimate.)
       
       # Handle corner cases
       if(region == "EBS") {
