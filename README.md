@@ -17,21 +17,21 @@ Estimating morphometric condition using the VAST package requires installation o
 
 <dl>
 <dt><b>AI_INDICATOR</b></dt>
-<dd><p>Data frame containing Aleutian Islands length-weight residual condition indicator and relative condition indicator estimated using VAST (years: 1986-2022).</p></dd>
+<dd><p>Data frame containing Aleutian Islands relative condition indicator estimated using VAST and length-weight residual condition indicator based on AFSC summer bottom trawl survey data from 1986 to 2022.</p></dd>
 <dt><b>GOA_INDICATOR</b></dt>
 <dd><p>Data frame containing Gulf of Alaska length-weight residual condition indicator (years: 1984-2021).</p></dd>
 <dt><b>EBS_INDICATOR</b></dt>
-<dd><p>Data frame containing Eastern Bering Sea length-weight residual condition indicator and residual condition indicator estimated using VAST (years: 1999-2022).</p></dd>
+<dd><p>Data frame containing Eastern Bering Sea relative condition indicator estimated using VAST and length-weight residual condition indicator based on AFSC summer bottom trawl survey data from 1999 to 2022.</p></dd>
 <dt><b>NBS_INDICATOR</b></dt>
-<dd><p>Data frame containing Northern Bering Sea length-weight residual condition indicator and residual condition indicator estimated using VAST (years: 2010-2022).</p></dd>
+<dd><p>Data frame containing Northern Bering Sea relative condition indicator estimated using VAST and length-weight residual condition indicator based on AFSC summer bottom trawl survey data from 2010 to 2022</p></dd>
 <dt><b>PCOD_ESP</b></dt>
-<dd><p>List containing data frames with adult and juvenile Pacific cod length-weight residual condition indicator and residual condition indicator estimated using VAST. Length cut-offs between adults and juveniles are region-specific and based on Essential Fish Habitat thresholds.</p></dd>
+<dd><p>List containing data frames with adult and juvenile Pacific cod length-weight relative condition indicator estimated using VAST and residual condition indicator from AFSC summer bottom trawl survey data from the eastern Bering Sea (1999-2022), Aleutian Islands (1986-2022), Gulf of Alaska (1984-2022). Length cut-offs between adults and juveniles are region-specific and based on Essential Fish Habitat thresholds.</p></dd>
 </dl>
 
 Fish length, weight, and design-based biomass index data are included in the package as external data sets that are accessible through system commands.
 
 
-# Instruction for updating condition indicators and built-in data sets
+# Instructions for updating condition indicators and built-in data sets
 
 1. Clone the akfishcondition package to a local directory.
 2. Set up an R Studio project in the local directory.
