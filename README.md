@@ -18,16 +18,12 @@ Estimating morphometric condition using the VAST package requires installation o
 <dl>
 <dt><b>AI_INDICATOR</b></dt>
 <dd><p>Data frame containing Aleutian Islands length-weight residual condition indicator and relative condition indicator estimated using VAST (years: 1986-2022).</p></dd>
-
 <dt><b>GOA_INDICATOR</b></dt>
 <dd><p>Data frame containing Gulf of Alaska length-weight residual condition indicator (years: 1984-2021).</p></dd>
-
 <dt><b>EBS_INDICATOR</b></dt>
 <dd><p>Data frame containing Eastern Bering Sea length-weight residual condition indicator and residual condition indicator estimated using VAST (years: 1999-2022).</p></dd>
-
 <dt><b>NBS_INDICATOR</b></dt>
 <dd><p>Data frame containing Northern Bering Sea length-weight residual condition indicator and residual condition indicator estimated using VAST (years: 2010-2022).</p></dd>
-
 <dt><b>PCOD_ESP</b></dt>
 <dd><p>List containing data frames with adult and juvenile Pacific cod length-weight residual condition indicator and residual condition indicator estimated using VAST. Length cut-offs between adults and juveniles are region-specific and based on Essential Fish Habitat thresholds.</p></dd>
 </dl>
