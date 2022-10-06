@@ -605,6 +605,7 @@ plot_two_timeseries <- function(x_1,
                                 series_name_2 = "VAST",
                                 var_y_name_2 = "mean_wt_resid", 
                                 var_x_name_2 = "year",
+                                var_group_name = "common_name",
                                 y_title = "Condition (Z-score)",
                                 fill_title = "Method",
                                 scale_y = TRUE,
@@ -623,8 +624,16 @@ plot_two_timeseries <- function(x_1,
   shared_cols <- c("var_x", "var_y", "var_y_se", "display_name", "common_name", "series")
   
   # Setup time series 1
-  x_1$display_name <- akfishcondition::set_plot_order(x_1$common_name, 
-                                                      region = region)
+  
+  names(x_1)[which(names(x_1) == var_group_name)] <- "var_group"
+  
+  if(var_group_name == "common_name") {
+    x_1$display_name <- akfishcondition::set_plot_order(x_1$var_group, 
+                                                        region = region)
+  } else {
+    x_1$display_name <- x_1$var_group
+  }
+  
   names(x_1)[which(names(x_1) == var_x_name_1)] <- "var_x"
   names(x_1)[which(names(x_1) == var_y_name_1)] <- "var_y"
   x_1$series <- series_name_1
@@ -632,8 +641,15 @@ plot_two_timeseries <- function(x_1,
   x_1 <- dplyr::filter(x_1, !is.na(var_y))
   
   # Setup time series 2
-  x_2$display_name <- akfishcondition::set_plot_order(x_2$common_name, 
-                                                      region = region)
+  names(x_2)[which(names(x_2) == var_group_name)] <- "var_group"
+  
+  if(var_group_name == "common_name") {
+    x_2$display_name <- akfishcondition::set_plot_order(x_2$var_group, 
+                                                        region = region)
+  } else {
+    x_2$display_name <- x_2$var_group
+  }
+
   names(x_2)[which(names(x_2) == var_x_name_2)] <- "var_x"
   names(x_2)[which(names(x_2) == var_y_name_2)] <- "var_y"
   x_2$series <- series_name_2
