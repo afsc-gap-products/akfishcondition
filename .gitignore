@@ -34,7 +34,6 @@ inst/doc
 /*.png
 /plots/*.csv
 /plots/*.zip
-doc
 Meta
 /output/
 /data/*.csv
