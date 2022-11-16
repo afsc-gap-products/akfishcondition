@@ -19,7 +19,8 @@ region_VAST <- ifelse(region_esr == "GOA", "gulf_of_alaska",
                              ifelse(region_esr == "EBS","Eastern_Bering_Sea","Northern_Bering_Sea")))
 
 # Create a directory to save results
-dir.create(paste0(getwd(),"/results/",region_esr,"/",species_code,"/"))
+dir.create(paste0(getwd(),"/results/",region_esr,"/",species_code,"/"),
+           recurive = TRUE)
 
 
 # EBS ... let's try ATF and YFS
@@ -89,11 +90,11 @@ fit = fit_model( settings = settings,
 )
 
 # save the VAST model
-saveRDS(fit,file = paste0(getwd(),"/results/",region,"/",species_code,"/",species_code,"_VASTfit.RDS"))
+saveRDS(fit,file = paste0(getwd(),"/results/",region_esr,"/",species_code,"/",species_code,"_VASTfit.RDS"))
 
 # standard plots
 plot(fit,
      plot_set = c(3,20,21),
      category_names=c("Numbers","Condition (grams per cm^power)"),
-     "working_dir" = paste0(getwd(),"/results/",region,"/",species_code,"/") )
+     "working_dir" = paste0(getwd(),"/results/",region_esr,"/",species_code,"/") )
 
