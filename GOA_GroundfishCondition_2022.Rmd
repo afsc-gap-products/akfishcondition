@@ -19,7 +19,7 @@ library(akfishcondition)
 library(knitr)
 
 # Unzip map files
-unzip(system.file("extdata/2021_ESR.zip", package = "akfishcondition"))
+unzip(system.file("extdata/2022_ESR.zip", package = "akfishcondition"))
 
 if(!dir.exists("plots")) {
   dir.create("plots")
