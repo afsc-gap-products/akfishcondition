@@ -8,8 +8,8 @@ calc_lw_residuals(
   len,
   wt,
   stratum = NA,
-  bias.correction = TRUE,
-  outlier.rm = FALSE,
+  bias_correction = TRUE,
+  outlier_rm = FALSE,
   make_diagnostics = FALSE,
   species_code = NA,
   year = NA,
@@ -19,8 +19,6 @@ calc_lw_residuals(
 }
 \arguments{
 \item{stratum}{Stratum code for length-weight regression by stratum.}
-
-\item{outlier.rm}{Should outliers be removed using Bonferoni test (cutoff = 0.7)}
 
 \item{make_diagnostics}{Output diagnostic plots and summaries? Default FALSE produces no diagnostics and summaries. If true, species_code and region should be specified.}
 
@@ -37,6 +35,8 @@ calc_lw_residuals(
 \item{weight}{Corresponding set of individual fish weights.}
 
 \item{bias.correct}{Bias corrected residuals following Brodziak (2012)}
+
+\item{outlier.rm}{Should outliers be removed using Bonferoni test (cutoff = 0.7)}
 }
 \description{
 This function makes a log-log regression of length and weight for individual fish and then calculates a residual. A Bonferroni-corrected outlier correction can be applied to remove outliers. Option to use separate covariates for different strata.

@@ -10,17 +10,19 @@ Eight data frames (indicator for the full region and indicator by stratum for th
      \itemize{
        \item FULL_REGION_* (data frame): Residuals for the full region
          \itemize{
-         \item{YEAR}{: Year}
-         \item{COMMON_NAME}{: Year}
+         \item{year}{: Year}
+         \item{common_name}{: Species common name}
          \item{mean_wt_resid}{: Mean residual for the full region}
          \item{se_wt_resid}{: Standard error of the indicator for the full region}
+         \item{vast_condition}{: Estimate of the allometric intercept,a, of the length-weight equation (W = aL^b), estimated using VAST.}
+         \item{vast_condition_se}{Standard error of a, estimated using VAST.}
          }
        \item STRATUM_* (data frame): Residuals by stratum
         \itemize{
-         \item{YEAR}{: Year}
-         \item{COMMON_NAME}{: Species Common name}
-         \item{SPECIES_CODE}{: RACE/GAP species code}
-         \item{INPFC_STRATUM}{: INPFC Stratum}
+         \item{year}{: Year}
+         \item{common_name}{: Species Common name}
+         \item{species_code}{: RACE/GAP species code}
+         \item{inpfc_stratum}{: INPFC Stratum}
          \item{stratum_resid_mean}{: Unweighted stratum mean residual}
          \item{n}{: Sample size for the stratum}
          \item{stratum_resid_sd}{: Standard error of the stratum mean residual}
