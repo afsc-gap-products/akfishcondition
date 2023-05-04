@@ -18,13 +18,21 @@
 calc_lw_residuals <- function(len, 
                               wt, 
                               stratum = NA, 
-                              bias.correction = TRUE, 
-                              outlier.rm = FALSE, 
+                              bias_correction = TRUE, 
+                              outlier_rm = FALSE, 
                               make_diagnostics = FALSE, 
                               species_code = NA, 
                               year = NA, 
                               region = NA,
                               include_ci = TRUE) {
+  
+  if(exists("outlier.rm")) {
+    outlier_rm <- outlier.rm
+  }
+  
+  if(exists("bias.correction")) {
+    bias_correction <- bias.correction
+  }
   
   loglen <- log(len)
   logwt <- log(wt)
