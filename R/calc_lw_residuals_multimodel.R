@@ -6,6 +6,7 @@
 #' @param weight Corresponding set of individual fish weights.
 #' @param stratum Stratum code for length-weight regression by stratum.
 #' @param sex Sex code for fish; convertible to a factor.
+#' @param day_of_year Day of year as an integer.
 #' @param bias_correct Bias corrected residuals following Brodziak (2012)
 #' @param outlier_rm Should outliers be removed using Bonferroni test (cutoff = 0.7)
 #' @param make_diagnostics Output diagnostic plots and summaries? Default FALSE produces no diagnostics and summaries. If true, species_code and region should be specified.
@@ -21,6 +22,7 @@ calc_lw_residuals_multimodel <- function(len,
                                          wt, 
                                          stratum = NULL, 
                                          sex = NULL, 
+                                         day_of_year = NULL,
                                          year = NULL, 
                                          region = "all", 
                                          species_code = NA, 
@@ -51,6 +53,10 @@ calc_lw_residuals_multimodel <- function(len,
   
   if(!is.null(stratum)) {
     m_dat$stratum <- factor(stratum)
+  }
+  
+  if(!is.null(day_of_year)) {
+    m_dat$day_of_year <- day_of_year
   }
   
   if(!is.null(species_code)) {
@@ -85,32 +91,26 @@ calc_lw_residuals_multimodel <- function(len,
   
   if(multiple_models) {
     
-    # Setup list for models
-    n_mod <- 15
-    
-    if(sum(c(is.null(sex), is.null(stratum))) == 2) {
-      n_mod <- 1
-    }
-    
-    if(sum(c(is.null(sex), is.null(stratum))) == 1) {
-      n_mod <- 4
-    }
-    
-    mod_list <- vector(mode = "list", length = n_mod)
+    mod_list <- vector(mode = "list", length = 1)
     
     # Fit models
     m_count <- 1
     
     mod_list[[m_count]] <- lm(logwt ~ loglen, na.action = na.exclude, data = m_dat)
     
+    if(!is.null(day_of_year)) {
+      m_count <- m_count + 1
+      mod_list[[m_count]] <- lm(logwt ~ loglen + day_of_year, na.action = na.exclude, data = m_dat)
+    }
+    
     if(!is.null(sex)) {
-      m_count <- m_count +1
+      m_count <- m_count + 1
       mod_list[[m_count]] <- lm(logwt ~ loglen + sex + 0, na.action = na.exclude, data = m_dat)
       
-      m_count <- m_count +1
+      m_count <- m_count + 1
       mod_list[[m_count]] <- lm(logwt ~ loglen:sex, na.action = na.exclude, data = m_dat)
       
-      m_count <- m_count +1
+      m_count <- m_count + 1
       mod_list[[m_count]] <- lm(logwt ~ loglen*sex + 0, na.action = na.exclude, data = m_dat)
     }
     
@@ -123,7 +123,6 @@ calc_lw_residuals_multimodel <- function(len,
       
       m_count <- m_count + 1
       mod_list[[m_count]] <- lm(logwt ~ loglen*stratum + 0, na.action = na.exclude, data = m_dat)
-      
     }
     
     if(!is.null(stratum) & !is.null(sex)) {
@@ -134,7 +133,7 @@ calc_lw_residuals_multimodel <- function(len,
       mod_list[[m_count]] <- lm(logwt ~ loglen + stratum:sex + 0, na.action = na.exclude, data = m_dat)
       
       m_count <- m_count + 1
-      mod_list[[m_count]] <- lm(logwt ~ loglen:stratum + stratum:sex + 0, na.action = na.exclude, data = m_dat)
+      mod_list[[m_count]] <- lm(logwt ~ loglen:stratum + stratum*sex + 0, na.action = na.exclude, data = m_dat)
       
       m_count <- m_count + 1
       mod_list[[m_count]] <- lm(logwt ~ loglen:sex + stratum + 0, na.action = na.exclude, data = m_dat)
@@ -152,6 +151,18 @@ calc_lw_residuals_multimodel <- function(len,
       mod_list[[m_count]] <- lm(logwt ~ loglen:stratum:sex + sex:stratum + 0, na.action = na.exclude, data = m_dat)
     }
     
+    if(!is.null(day_of_year) & !is.null(sex)) {
+      m_count <- m_count + 1
+      mod_list[[m_count]] <- lm(logwt ~ loglen + day_of_year + sex + 0, na.action = na.exclude, data = m_dat)
+      
+      m_count <- m_count + 1
+      mod_list[[m_count]] <- lm(logwt ~ loglen:sex + day_of_year + sex + 0, na.action = na.exclude, data = m_dat)
+      
+      m_count <- m_count + 1
+      mod_list[[m_count]] <- lm(logwt ~ loglen:sex + day_of_year:sex + sex + 0, na.action = na.exclude, data = m_dat)
+      
+    }
+    
     get_k <- function(x) {
       return(length(x$coefficients))
     }
@@ -160,10 +171,15 @@ calc_lw_residuals_multimodel <- function(len,
       return(deparse(formula(x)))
     }
     
+    get_n <- function(x) {
+      return(x$df.residual + x$rank)
+    }
+    
     # Compare models based on AIC
     mod_aic <- data.frame(mod = 1:length(mod_list),
                           formula = unlist(lapply(mod_list, get_formula)),
                           k = unlist(lapply(mod_list, get_k)),
+                          n =  unlist(lapply(mod_list, get_n)),
                           AIC = unlist(lapply(mod_list, AIC))) |>
       dplyr::arrange(AIC)
     

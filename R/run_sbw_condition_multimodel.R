@@ -31,6 +31,9 @@ run_sbw_condition_multimodel <- function(region, stratum_col = NULL, biomass_col
   
   lw <- read.csv(file = here::here("data", paste0(region, "_all_species.csv")))
   
+  lw$start_time <- as.POSIXct(lw$start_time)
+  lw$day_of_year <- lubridate::yday(lw$start_time)
+  
   if(region == "EBS") {
     lw <- lw %>%
       dplyr::filter(stratum < 70) %>%
@@ -102,6 +105,7 @@ run_sbw_condition_multimodel <- function(region, stratum_col = NULL, biomass_col
         wt = dat$weight_g[dat$species_code == spp_vec[i]], 
         sex = dat$sex[dat$species_code == spp_vec[i]],
         year = dat$year[dat$species_code == spp_vec[i]],
+        day_of_year = dat$day_of_year[dat$species_code == spp_vec[i]],
         stratum = NA,
         make_diagnostics = TRUE, # Make diagnostics
         include_ci = FALSE,
@@ -118,6 +122,7 @@ run_sbw_condition_multimodel <- function(region, stratum_col = NULL, biomass_col
         wt = dat$weight_g[dat$species_code == spp_vec[i]], 
         sex = dat$sex[dat$species_code == spp_vec[i]],
         year = dat$year[dat$species_code == spp_vec[i]],
+        day_of_year = dat$day_of_year[dat$species_code == spp_vec[i]],
         stratum = dat$survey_stratum[dat$species_code == spp_vec[i]],
         make_diagnostics = TRUE, # Make diagnostics
         bias_correction = TRUE, # Bias correction turned on

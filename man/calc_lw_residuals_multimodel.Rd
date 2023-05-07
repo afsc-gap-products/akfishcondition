@@ -9,6 +9,7 @@ calc_lw_residuals_multimodel(
   wt,
   stratum = NULL,
   sex = NULL,
+  day_of_year = NULL,
   year = NULL,
   region = "all",
   species_code = NA,
@@ -24,6 +25,8 @@ calc_lw_residuals_multimodel(
 \item{stratum}{Stratum code for length-weight regression by stratum.}
 
 \item{sex}{Sex code for fish; convertible to a factor.}
+
+\item{day_of_year}{Day of year as an integer.}
 
 \item{year}{Numeric vector for year (provide if make_diagnostics = TRUE)}
 
