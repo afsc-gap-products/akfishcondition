@@ -1,7 +1,7 @@
 # akfishcondition: Fish morphometric condition
-This repository contains an R package for calculating morphometric condition indicators (length-weight residuals) based on length-weight relationships and wrapper functions for estimating morphometric condition using the R package VAST ([https://github.com/James-Thorson-NOAA/VAST](https://github.com/James-Thorson-NOAA/VAST)). The code in this repository generates Groundfish Morphometric Condition Indicators for the Aleutian Islands, Bering Sea, and Gulf of Alaska Ecosystem Status Report and juvenile and adult Pacific cod condition indicators for Ecosystem and Socioeconomic Profiles. 
+This repository contains an R package for calculating morphometric condition indicators based on residuals of length-weight relationships. The package also includes functions to generate morphometric condition indicators using the R package VAST ([https://github.com/James-Thorson-NOAA/VAST](https://github.com/James-Thorson-NOAA/VAST)). The code in this repository generates Groundfish Morphometric Condition Indicators for the Aleutian Islands, Bering Sea, and Gulf of Alaska Ecosystem Status Report and juvenile and adult Pacific cod condition indicators for Ecosystem and Socioeconomic Profiles.
 
-The most recent version of this package was built in R 4.1.3. Condition indicators estimated using VAST were produced with VAST 3.8.2, FishStatsUtils 2.11.0, INLA 21.11.22, and TMB 1.8.1.
+The most recent version of this package was built in R 4.3.1.
 
 # Installation
 
@@ -17,15 +17,15 @@ Estimating morphometric condition using the VAST package requires installation o
 
 <dl>
 <dt><b>AI_INDICATOR</b></dt>
-<dd><p>Data frame containing Aleutian Islands relative condition indicator estimated using VAST and length-weight residual condition indicator based on AFSC summer bottom trawl survey data from 1986 to 2022.</p></dd>
+<dd><p>Data frame containing Aleutian Islands length-weight residual condition indicator based on AFSC summer bottom trawl survey data from 1986 to 2022.</p></dd>
 <dt><b>GOA_INDICATOR</b></dt>
 <dd><p>Data frame containing Gulf of Alaska length-weight residual condition indicator (years: 1984-2021).</p></dd>
 <dt><b>EBS_INDICATOR</b></dt>
-<dd><p>Data frame containing Eastern Bering Sea relative condition indicator estimated using VAST and length-weight residual condition indicator based on AFSC summer bottom trawl survey data from 1999 to 2022.</p></dd>
+<dd><p>Data frame containing Eastern Bering Sea length-weight residual condition indicator based on AFSC summer bottom trawl survey data from 1999 to 2022.</p></dd>
 <dt><b>NBS_INDICATOR</b></dt>
-<dd><p>Data frame containing Northern Bering Sea relative condition indicator estimated using VAST and length-weight residual condition indicator based on AFSC summer bottom trawl survey data from 2010 to 2022</p></dd>
+<dd><p>Data frame containing Northern Bering Sea length-weight residual condition indicator based on AFSC summer bottom trawl survey data from 2010 to 2022</p></dd>
 <dt><b>PCOD_ESP</b></dt>
-<dd><p>List containing data frames with adult and juvenile Pacific cod length-weight relative condition indicator estimated using VAST and residual condition indicator from AFSC summer bottom trawl survey data from the eastern Bering Sea (1999-2022), Aleutian Islands (1986-2022), Gulf of Alaska (1984-2022). Length cut-offs between adults and juveniles are region-specific and based on Essential Fish Habitat thresholds.</p></dd>
+<dd><p>List containing data frames with adult and juvenile Pacific cod length-weight residual condition indicator from AFSC summer bottom trawl survey data from the eastern Bering Sea (1999-2022), Aleutian Islands (1986-2022), Gulf of Alaska (1984-2022). Length cut-offs between adults and juveniles are region-specific and based on Essential Fish Habitat thresholds.</p></dd>
 </dl>
 
 Fish length, weight, and design-based biomass index data are included in the package as external data sets that are accessible through system commands.
