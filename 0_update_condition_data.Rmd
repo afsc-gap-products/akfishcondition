@@ -128,23 +128,43 @@ ESP_SETTINGS <- list(ESP_SPECIES =
 
 ```{r get_ai, message=TRUE, warning=TRUE}
 # Aleutian Islands
-ai_sbw <- akfishcondition:::run_sbw_condition(
+# ai_sbw <- akfishcondition:::run_sbw_condition(
+#   region = "AI",
+#   min_n = 10)
+
+ai_sbw <- akfishcondition:::run_sbw_condition_multimodel(
   region = "AI",
+  covariates_to_use = c('sex', 'stratum'),
   min_n = 10)
 
 # Gulf of Alaska
-goa_sbw <- akfishcondition:::run_sbw_condition(
+# goa_sbw <- akfishcondition:::run_sbw_condition(
+#   region = "GOA",
+#   min_n = 10)
+
+goa_sbw <- akfishcondition:::run_sbw_condition_multimodel(
   region = "GOA",
+  covariates_to_use = c('sex', 'stratum'),
   min_n = 10)
 
 # Eastern Bering Sea
-ebs_sbw <- akfishcondition:::run_sbw_condition(
+# ebs_sbw <- akfishcondition:::run_sbw_condition(
+#   region = "EBS",
+#   min_n = 10)
+
+ebs_sbw <- akfishcondition:::run_sbw_condition_multimodel(
   region = "EBS",
+  covariates_to_use = c('sex', 'stratum'),
   min_n = 10)
 
 # Northern Bering Sea
-nbs_sbw <- akfishcondition:::run_sbw_condition(
+# nbs_sbw <- akfishcondition:::run_sbw_condition(
+#   region = "NBS",
+#   min_n = 10)
+
+nbs_sbw <- akfishcondition:::run_sbw_condition_multimodel(
   region = "NBS",
+  covariates_to_use = 'sex',
   min_n = 10)
 ```
 
