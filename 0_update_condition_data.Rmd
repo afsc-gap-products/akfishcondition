@@ -164,7 +164,7 @@ ebs_sbw <- akfishcondition:::run_sbw_condition_multimodel(
 
 nbs_sbw <- akfishcondition:::run_sbw_condition_multimodel(
   region = "NBS",
-  covariates_to_use = 'sex',
+  covariates_to_use = c('sex', 'stratum'),
   min_n = 10)
 ```
 
@@ -296,7 +296,11 @@ NBS_INDICATOR <- list(
                            # nbs_vast_df) %>% 
       dplyr::filter( 
                     common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$NBS]),
-  STRATUM = NA,
+  STRATUM = as.data.frame(
+    dplyr::filter(
+      nbs_sbw$stratum_sbw, 
+      common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$EBS])
+    ),
   LAST_UPDATE = Sys.Date()
 )
 

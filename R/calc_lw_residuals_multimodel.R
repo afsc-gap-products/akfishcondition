@@ -33,22 +33,6 @@ calc_lw_residuals_multimodel <- function(len,
                                          multiple_models = TRUE,
                                          ...) {
   
-  
-  ###
-  # len = dat$length_mm[dat$species_code == spp_vec[i]]
-  # wt = dat$weight_g[dat$species_code == spp_vec[i]]
-  # sex = null_flag(use = use_sex, var = dat$sex[dat$species_code == spp_vec[i]])
-  # year = dat$year[dat$species_code == spp_vec[i]]
-  # day_of_year = null_flag(use = use_doy, var = dat$day_of_year[dat$species_code == spp_vec[i]])
-  # stratum = null_flag(use = use_stratum, var = dat$survey_stratum[dat$species_code == spp_vec[i]])
-  # make_diagnostics = TRUE # Make diagnostics
-  # include_ci = FALSE
-  # bias_correction = TRUE # Bias correction turned on
-  # outlier_rm = TRUE # Outlier removal turned off
-  # region = region
-  # species_code = dat$species_code[dat$species_code == spp_vec[i]]
-  ###
-  
   if(exists("outlier.rm")) {
     outlier_rm <- outlier.rm
   }

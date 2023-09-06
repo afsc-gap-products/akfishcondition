@@ -17,10 +17,6 @@ run_sbw_condition_multimodel <- function(region,
                                          covariates_to_use = c('sex', 'day_of_year', 'stratum'), 
                                          min_n = 10) {
   
-  # region = "NBS"
-  # covariates_to_use = c('sex')
-  # min_n = 10
-  
   region_index <- match(region, c("AI", "EBS", "NBS", "GOA"))
   
   null_flag <- function(use, var) {
@@ -68,9 +64,9 @@ run_sbw_condition_multimodel <- function(region,
       dplyr::mutate(stratum = floor(stratum/10)*10)
   }
   
-  if(region == "NBS") {
-    lw <- dplyr::mutate(lw, stratum = 999)
-  }
+  # if(region == "NBS") {
+  #   lw <- dplyr::mutate(lw, stratum = 999)
+  # }
   
   lw <- lw %>% 
     dplyr::filter(!is.na(length_mm)) %>%
@@ -127,23 +123,23 @@ run_sbw_condition_multimodel <- function(region,
   # Calculate length weight residuals
   for(i in 1:length(spp_vec)) {
     
-    if(region == "NBS") {
-      dat$resid[dat$species_code == spp_vec[i]] <- akfishcondition::calc_lw_residuals_multimodel(
-        len = dat$length_mm[dat$species_code == spp_vec[i]], 
-        wt = dat$weight_g[dat$species_code == spp_vec[i]], 
-        sex = null_flag(use = use_sex, var = dat$sex[dat$species_code == spp_vec[i]]),
-        year = dat$year[dat$species_code == spp_vec[i]],
-        day_of_year = null_flag(use = use_doy, var = dat$day_of_year[dat$species_code == spp_vec[i]]),
-        stratum = null_flag(use = use_stratum, var = dat$survey_stratum[dat$species_code == spp_vec[i]]),
-        make_diagnostics = TRUE, # Make diagnostics
-        include_ci = FALSE,
-        bias_correction = TRUE, # Bias correction turned on
-        outlier_rm = TRUE, # Outlier removal turned off
-        region = region,
-        species_code = dat$species_code[dat$species_code == spp_vec[i]]
-      )
-      
-    } else {
+    # if(region == "NBS") {
+    #   dat$resid[dat$species_code == spp_vec[i]] <- akfishcondition::calc_lw_residuals_multimodel(
+    #     len = dat$length_mm[dat$species_code == spp_vec[i]], 
+    #     wt = dat$weight_g[dat$species_code == spp_vec[i]], 
+    #     sex = null_flag(use = use_sex, var = dat$sex[dat$species_code == spp_vec[i]]),
+    #     year = dat$year[dat$species_code == spp_vec[i]],
+    #     day_of_year = null_flag(use = use_doy, var = dat$day_of_year[dat$species_code == spp_vec[i]]),
+    #     stratum = null_flag(use = use_stratum, var = dat$survey_stratum[dat$species_code == spp_vec[i]]),
+    #     make_diagnostics = TRUE, # Make diagnostics
+    #     include_ci = FALSE,
+    #     bias_correction = TRUE, # Bias correction turned on
+    #     outlier_rm = TRUE, # Outlier removal turned off
+    #     region = region,
+    #     species_code = dat$species_code[dat$species_code == spp_vec[i]]
+    #   )
+    #   
+    # } else {
       # Separate slope for each stratum. Bias correction according to Brodziak, no outlier detection.
       raw_resid_df <- akfishcondition::calc_lw_residuals_multimodel(
         len = dat$length_mm[dat$species_code == spp_vec[i]], 
@@ -162,21 +158,21 @@ run_sbw_condition_multimodel <- function(region,
       dat$resid_mean[dat$species_code == spp_vec[i]] <- raw_resid_df$lw.res_mean
       dat$resid_lwr[dat$species_code == spp_vec[i]] <- raw_resid_df$lw.res_lwr
       dat$resid_upr[dat$species_code == spp_vec[i]] <- raw_resid_df$lw.res_upr
-    }
+    # }
   }
   
-  if(region == "NBS") {
-    
-    stratum_resids <- NULL
-    
-    ann_mean_resid_df <- dat %>% 
-      dplyr::group_by(common_name, year) %>%
-      dplyr::summarise(mean_resid = mean(resid, na.rm = TRUE),
-                       se = sd(resid, na.rm = TRUE)/n(),
-                       n = n()) %>%
-      dplyr::filter(n >= min_n)
-    
-  } else {
+  # if(region == "NBS") {
+  #   
+  #   stratum_resids <- NULL
+  #   
+  #   ann_mean_resid_df <- dat %>% 
+  #     dplyr::group_by(common_name, year) %>%
+  #     dplyr::summarise(mean_resid = mean(resid, na.rm = TRUE),
+  #                      se = sd(resid, na.rm = TRUE)/n(),
+  #                      n = n()) %>%
+  #     dplyr::filter(n >= min_n)
+  #   
+  # } else {
     
     # Estimate mean and std. err for each stratum, filter out strata with less than min_n samples
     stratum_resids <- dat %>% 
@@ -212,7 +208,7 @@ run_sbw_condition_multimodel <- function(region,
     
     names(stratum_resids)[which(names(stratum_resids) == "survey_stratum")] <- stratum_col
     
-  }
+  # }
   
   names(biomass)[which(names(biomass) == "survey_stratum")] <- stratum_col
   names(lw)[which(names(lw) == "survey_stratum")] <- stratum_col
