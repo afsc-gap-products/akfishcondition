@@ -1,5 +1,5 @@
 # akfishcondition: Fish morphometric condition
-This repository contains an R package for calculating morphometric condition indicators based on residuals of length-weight relationships. The package also includes functions to generate morphometric condition indicators using the R package VAST ([https://github.com/James-Thorson-NOAA/VAST](https://github.com/James-Thorson-NOAA/VAST)). The code in this repository generates Groundfish Morphometric Condition Indicators for the Aleutian Islands, Bering Sea, and Gulf of Alaska Ecosystem Status Report and juvenile and adult Pacific cod condition indicators for Ecosystem and Socioeconomic Profiles.
+This repository contains an R package for calculating morphometric condition indicators based on residuals of length-weight relationships. The package also includes wrapper functions to generate morphometric condition indicators using the R package VAST ([https://github.com/James-Thorson-NOAA/VAST](https://github.com/James-Thorson-NOAA/VAST)). The code in this repository generates Groundfish Morphometric Condition Indicators for the Aleutian Islands, Bering Sea, and Gulf of Alaska Ecosystem Status Report and juvenile and adult Pacific cod condition indicators for Ecosystem and Socioeconomic Profiles.
 
 The most recent version of this package was built in R 4.3.1.
 
@@ -23,7 +23,7 @@ Estimating morphometric condition using the VAST package requires installation o
 <dt><b>EBS_INDICATOR</b></dt>
 <dd><p>Data frame containing Eastern Bering Sea length-weight residual condition indicator based on AFSC summer bottom trawl survey data from 1999 to 2023.</p></dd>
 <dt><b>NBS_INDICATOR</b></dt>
-<dd><p>Data frame containing Northern Bering Sea length-weight residual condition indicator based on AFSC summer bottom trawl survey data from 2010 to 2023</p></dd>
+<dd><p>Data frame containing Northern Bering Sea length-weight residual condition indicator based on AFSC summer bottom trawl survey data from 2010 to 2022</p></dd>
 <dt><b>PCOD_ESP</b></dt>
 <dd><p>List containing data frames with adult and juvenile Pacific cod length-weight residual condition indicator from AFSC summer bottom trawl survey data from the eastern Bering Sea (1999-2023), Aleutian Islands (1986-2022), Gulf of Alaska (1984-2023). Length cut-offs between adults and juveniles are region-specific and based on Essential Fish Habitat thresholds.</p></dd>
 </dl>
