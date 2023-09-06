@@ -24,30 +24,30 @@ The data in the package are used to calculate the summer groundfish morphometric
 
 ```{r get_connected, message=FALSE, warning=FALSE}
 library(akfishcondition)
-library(VAST)
+# library(VAST)
 
-# channel <- akfishcondition:::get_connected(schema = "AFSC")
-# 
-# akfishcondition::get_condition_data(channel = channel)
+channel <- akfishcondition:::get_connected(schema = "AFSC")
 
-# akfishcondition:::make_data_summary(dat_csv = here::here("data", "nbs_all_species.csv"), region = "NBS")
-# akfishcondition:::make_data_summary(dat_csv = here::here("data", "ebs_all_species.csv"), region = "EBS")
-# akfishcondition:::make_data_summary(dat_csv = here::here("data", "ai_all_species.csv"), region = "AI")
-# akfishcondition:::make_data_summary(dat_csv = here::here("data", "goa_all_species.csv"), region = "GOA")
+akfishcondition::get_condition_data(channel = channel)
+
+akfishcondition:::make_data_summary(dat_csv = here::here("data", "nbs_all_species.csv"), region = "NBS")
+akfishcondition:::make_data_summary(dat_csv = here::here("data", "ebs_all_species.csv"), region = "EBS")
+akfishcondition:::make_data_summary(dat_csv = here::here("data", "ai_all_species.csv"), region = "AI")
+akfishcondition:::make_data_summary(dat_csv = here::here("data", "goa_all_species.csv"), region = "GOA")
 
 ESR_SETTINGS <- list(ESR_SPECIES = data.frame(common_name = c(
     "walleye pollock", "walleye pollock (100–250 mm)", "walleye pollock (>250 mm)", "Pacific cod", 
     "Pacific cod (juvenile)", "Pacific cod (adult)", "Atka mackerel", "arrowtooth flounder", 
     "flathead sole", "yellowfin sole", "northern rock sole", "southern rock sole", "Alaska plaice",
-    "Pacific ocean perch", "dusky rockfish", "northern rockfish"),
+    "Pacific ocean perch", "dusky rockfish", "northern rockfish", "Dover sole", "rex sole", "shortraker rockfish", "rougheye rockfish", "blackspotted rockfish", "sharpchin rockfish"),
     species_code = c(21740, 21741, 21742, 21720, 21721, 21722, 21921, 10110, 10130,
-                     10210, 10261, 10262, 10285, 30060, 30152, 30420),
-    AI = c(FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, TRUE, FALSE, TRUE),
-    GOA = c(TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE),
-    EBS = c(FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE),
-    NBS = c(FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE)),
+                     10210, 10261, 10262, 10285, 30060, 30152, 30420, 10180, 10200, 30576, 30051, 30052, 30560),
+    AI = c(FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
+    GOA = c(FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE),
+    EBS = c(FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
+    NBS = c(FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)),
     VAST_SETTINGS = data.frame(species_code = c(30420, 30060, 10262, 21720, 21740, 10110, 30152,
-                                30420, 30060, 10262, 21720, 21740, 21921, 10110, 21741, 21742,
+                                30420, 30060, 10262, 21720, 21740, 21921, 10110, 21741, 21742, 
                                 10130, 10210, 10285, 21740, 21720, 10110, 10261, 21741, 21742,
                                 21740, 21720, 10210, 10285, 21741, 21742
                                 ),
@@ -128,23 +128,43 @@ ESP_SETTINGS <- list(ESP_SPECIES =
 
 ```{r get_ai, message=TRUE, warning=TRUE}
 # Aleutian Islands
-ai_sbw <- akfishcondition:::run_sbw_condition(
+# ai_sbw <- akfishcondition:::run_sbw_condition(
+#   region = "AI",
+#   min_n = 10)
+
+ai_sbw <- akfishcondition:::run_sbw_condition_multimodel(
   region = "AI",
+  covariates_to_use = c('sex', 'stratum'),
   min_n = 10)
 
 # Gulf of Alaska
-goa_sbw <- akfishcondition:::run_sbw_condition(
+# goa_sbw <- akfishcondition:::run_sbw_condition(
+#   region = "GOA",
+#   min_n = 10)
+
+goa_sbw <- akfishcondition:::run_sbw_condition_multimodel(
   region = "GOA",
+  covariates_to_use = c('sex', 'stratum'),
   min_n = 10)
 
 # Eastern Bering Sea
-ebs_sbw <- akfishcondition:::run_sbw_condition(
+# ebs_sbw <- akfishcondition:::run_sbw_condition(
+#   region = "EBS",
+#   min_n = 10)
+
+ebs_sbw <- akfishcondition:::run_sbw_condition_multimodel(
   region = "EBS",
+  covariates_to_use = c('sex', 'stratum'),
   min_n = 10)
 
 # Northern Bering Sea
-nbs_sbw <- akfishcondition:::run_sbw_condition(
+# nbs_sbw <- akfishcondition:::run_sbw_condition(
+#   region = "NBS",
+#   min_n = 10)
+
+nbs_sbw <- akfishcondition:::run_sbw_condition_multimodel(
   region = "NBS",
+  covariates_to_use = 'sex',
   min_n = 10)
 ```
 
@@ -168,68 +188,68 @@ save(AI_raw,
 ## 3.1 Run VAST: Aleutian Islands
 
 ```{r vast_ai}
-ai_spp <-  dplyr::filter(ESR_SETTINGS$VAST_SETTINGS, 
-                          region == "AI")
-
-for(ii in 1:nrow(ai_spp)) {
-    akfishcondition::run_vast_condition(x = ai_spp[ii,], 
-                                        response = "count")
-  gc()
-}
+# ai_spp <-  dplyr::filter(ESR_SETTINGS$VAST_SETTINGS, 
+#                           region == "AI")
+# 
+# for(ii in 1:nrow(ai_spp)) {
+#     akfishcondition::run_vast_condition(x = ai_spp[ii,], 
+#                                         response = "count")
+#   gc()
+# }
 ```
 
 ## 3.2 Run VAST: Gulf of Alaska
 
 ```{r vast_goa}
-goa_spp <-  dplyr::filter(ESR_SETTINGS$VAST_SETTINGS, 
-                         region == "GOA")
-
-for(ii in 1:nrow(goa_spp)) {
-
-    akfishcondition::run_vast_condition(x = goa_spp[ii,], 
-                                        response = "count")
-  gc()
-}
+# goa_spp <-  dplyr::filter(ESR_SETTINGS$VAST_SETTINGS, 
+#                          region == "GOA")
+# 
+# for(ii in 1:nrow(goa_spp)) {
+# 
+#     akfishcondition::run_vast_condition(x = goa_spp[ii,], 
+#                                         response = "count")
+#   gc()
+# }
 ```
 
 ## 3.3 Run VAST: EBS Shelf
 
 ```{r vast_ebs}
-ebs_spp <-  dplyr::filter(ESR_SETTINGS$VAST_SETTINGS, 
-                    region == "EBS")
-
-for(ii in 1:nrow(ebs_spp)) {
-    akfishcondition::run_vast_condition(x = ebs_spp[ii,], 
-                                        response = "count")
-  gc()
-}
+# ebs_spp <-  dplyr::filter(ESR_SETTINGS$VAST_SETTINGS, 
+#                     region == "EBS")
+# 
+# for(ii in 1:nrow(ebs_spp)) {
+#     akfishcondition::run_vast_condition(x = ebs_spp[ii,], 
+#                                         response = "count")
+#   gc()
+# }
 ```
 
 ## 3.4 Run VAST: NBS
 
 ```{r vast_nbs}
-nbs_spp <-  dplyr::filter(ESR_SETTINGS$VAST_SETTINGS, 
-                          region == "NBS")
-
-for(ii in 1:nrow(nbs_spp)) {
-    akfishcondition::run_vast_condition(x = nbs_spp[ii,], 
-                                        response = "count")
-  gc()
-}
+# nbs_spp <-  dplyr::filter(ESR_SETTINGS$VAST_SETTINGS, 
+#                           region == "NBS")
+# 
+# for(ii in 1:nrow(nbs_spp)) {
+#     akfishcondition::run_vast_condition(x = nbs_spp[ii,], 
+#                                         response = "count")
+#   gc()
+# }
 ```
 
 
 ## 3.5 Run VAST: ESP Pacific cod
 
 ```{r}
-pcod_spp <-  dplyr::filter(ESP_SETTINGS$VAST_SETTINGS, 
-                    region == "EBS")
-
-for(ii in 1:nrow(pcod_spp)) {
-    akfishcondition::run_vast_condition(x = pcod_spp[ii,], 
-                                        response = "count")
-  gc()
-}
+# pcod_spp <-  dplyr::filter(ESP_SETTINGS$VAST_SETTINGS, 
+#                     region == "EBS")
+# 
+# for(ii in 1:nrow(pcod_spp)) {
+#     akfishcondition::run_vast_condition(x = pcod_spp[ii,], 
+#                                         response = "count")
+#   gc()
+# }
 ```
 
 
@@ -237,17 +257,17 @@ for(ii in 1:nrow(pcod_spp)) {
 
 ```{r load_vast_indicators}
 # akfishcondition:::make_vast_table(region = "GOA", write_table = TRUE)
-akfishcondition:::make_vast_table(region = "EBS", write_table = TRUE)
-akfishcondition:::make_vast_table(region = "NBS", write_table = TRUE)
-akfishcondition:::make_vast_table(region = "AI", write_table = TRUE)
-
-# goa_vast_df <-bundle_vast_condition(region = "GOA", years = c(seq(1984, 1999, 3), seq(2001, 2022, 2)))
-ebs_vast_df <- akfishcondition::bundle_vast_condition(region = "EBS", years = c(1999:2019, 2021:2022))
-nbs_vast_df <- akfishcondition::bundle_vast_condition(region = "NBS", years = c(2010, 2017, 2019, 2021, 2022))
-ai_vast_df <- akfishcondition::bundle_vast_condition(region = "AI", 
-                                    years = c(1986, seq(1991, 2000, 3), 
-                                              seq(2002, 2006, 2), 
-                                              seq(2010, 2018, 2), 2022))
+# akfishcondition:::make_vast_table(region = "EBS", write_table = TRUE)
+# akfishcondition:::make_vast_table(region = "NBS", write_table = TRUE)
+# akfishcondition:::make_vast_table(region = "AI", write_table = TRUE)
+# 
+# # goa_vast_df <-bundle_vast_condition(region = "GOA", years = c(seq(1984, 1999, 3), seq(2001, 2022, 2)))
+# ebs_vast_df <- akfishcondition::bundle_vast_condition(region = "EBS", years = c(1999:2019, 2021:2022))
+# nbs_vast_df <- akfishcondition::bundle_vast_condition(region = "NBS", years = c(2010, 2017, 2019, 2021, 2022))
+# ai_vast_df <- akfishcondition::bundle_vast_condition(region = "AI", 
+#                                     years = c(1986, seq(1991, 2000, 3), 
+#                                               seq(2002, 2006, 2), 
+#                                               seq(2010, 2018, 2), 2022))
 ```
 
 # 5. Update version in DESCRIPTION file
@@ -257,8 +277,9 @@ Update sysdata.rda with raw data for the condition indicator and write raw data 
 ```{r save_to_sysdata, message=FALSE, warning=FALSE}
 EBS_INDICATOR <- list(
   FULL_REGION = as.data.frame(
-    dplyr::full_join(ebs_sbw$full_sbw,
-      ebs_vast_df)) %>%
+    # dplyr::full_join(
+      ebs_sbw$full_sbw) %>% #,
+      # ebs_vast_df)) %>%
     dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$EBS]),
   STRATUM = as.data.frame(
     dplyr::filter(
@@ -270,10 +291,11 @@ EBS_INDICATOR <- list(
 
 NBS_INDICATOR <- list(
   FULL_REGION = as.data.frame(
-    dplyr::full_join(nbs_sbw$full_sbw,
-                           nbs_vast_df) %>% 
+    # dplyr::full_join(
+      nbs_sbw$full_sbw) %>% #,
+                           # nbs_vast_df) %>% 
       dplyr::filter( 
-                    common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$NBS])),
+                    common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$NBS]),
   STRATUM = NA,
   LAST_UPDATE = Sys.Date()
 )
@@ -294,8 +316,10 @@ GOA_INDICATOR <- list(
 
 AI_INDICATOR <- list(
   FULL_REGION = as.data.frame(
-    dplyr::full_join(ai_sbw$full_sbw,
-      ai_vast_df)) %>%
+    # dplyr::full_join(
+      ai_sbw$full_sbw) %>% #,
+      # ai_vast_df)
+    # ) %>%
     dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$AI]),
   STRATUM = as.data.frame(
     dplyr::filter(
@@ -307,8 +331,8 @@ AI_INDICATOR <- list(
 
 PCOD_ESP <- list(
   FULL_REGION_EBS = as.data.frame(
-    dplyr::full_join(ebs_sbw$full_sbw, ebs_vast_df) %>%
-    dplyr::filter(
+    # dplyr::full_join(ebs_sbw$full_sbw, ebs_vast_df) %>%
+    dplyr::filter(ebs_sbw$full_sbw,
       common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
     )),
   FULL_REGION_GOA = as.data.frame(
@@ -317,8 +341,8 @@ PCOD_ESP <- list(
       common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
     )),
   FULL_REGION_AI = as.data.frame(
-    dplyr::full_join(ai_sbw$full_sbw, ai_vast_df) %>%
-      dplyr::filter(
+    # dplyr::full_join(ai_sbw$full_sbw, ai_vast_df) %>%
+      dplyr::filter(ai_sbw$full_sbw,
         common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
       )),
   FULL_REGION_NBS = as.data.frame(

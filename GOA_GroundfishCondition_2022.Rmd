@@ -18,16 +18,17 @@ addr:
 library(akfishcondition)
 library(knitr)
 
-# Unzip map files
-unzip(system.file("extdata/2021_ESR.zip", package = "akfishcondition"))
+region <- "GOA"
 
-if(!dir.exists("plots")) {
-  dir.create("plots")
-}
+# Unzip map files
+unzip(system.file("extdata/2022_ESR.zip", package = "akfishcondition"))
+
+dir.create(here::here("plots", region))
+
 
 # Load data
-goa_ann_mean_resid_df <- GOA_INDICATOR$FULL_REGION
-goa_stratum_resids_df <- GOA_INDICATOR$STRATUM
+# goa_ann_mean_resid_df <- GOA_INDICATOR$FULL_REGION
+# goa_stratum_resids_df <- GOA_INDICATOR$STRATUM
 ```
 
 Contributed by Cecilia O'Leary^1^ and Sean Rohan^1^
@@ -50,9 +51,21 @@ Length-weight relationships for each of the seven species were estimated within 
 
 **Status and Trends**: Residual body condition varied among survey years for all species considered (Figure 2). Fish condition indicators for all seven species were below average in 2021, but with the same condition or reduction in magnitude for most species in 2021 relative to 2019. Residual body condition for pollock, Pacific cod, and arrowtooth flounder remained constant relative to 2019. Southern rock sole residual body condition improved over the last four years, but the final two years remained a constant below average condition. Residual body condition for dusky and northern rockfish also improved, but are still below average. Finally, Pacific ocean perch residual body condition is below average and trending downward in the final four years. Prior to 2015, residual body condition indexes of these GOA species vary from survey to survey, cycling between negative and positive residuals with no clear temporal trends. Residual body condition of 100–250 mm walleye pollock in the GOA is strikingly positive during early years in the time series, but has remained mostly neutral or slightly negative since the early 1990s. Overall, GOA fish condition remains below average.
 
-```{r figure 2 grid, include = TRUE, echo = FALSE, fig.height = 14, fig.width = 12, fig.cap = "\\label{fig:figs}Figure 2. Biomass-weighted residual body condition index across survey years (1984-2021) for seven Gulf of Alaska groundfish species collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center Resource Assessment and Conservation Engineering (AFSC/RACE) Groundfish Assessment Program (GAP) standard summer bottom trawl survey. Filled bars denote weighted length-weight residuals, error bars denote two standard errors.",  message = FALSE, warning = FALSE}
+```{r figure 2a grid, include = TRUE, echo = FALSE, fig.height = 14, fig.width = 12, fig.cap = "\\label{fig:figs}Figure 2A. Biomass-weighted residual body condition index across survey years (1984-2021) for sixteen Gulf of Alaska groundfish species collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center Resource Assessment and Conservation Engineering (AFSC/RACE) Groundfish Assessment Program (GAP) standard summer bottom trawl survey. Filled bars denote weighted length-weight residuals, error bars denote two standard errors.",  message = FALSE, warning = FALSE}
 
-fig2  <- plot_anomaly_timeseries(x = GOA_INDICATOR$FULL_REGION,
+group_1 <- (set_plot_order(common_name = unique(GOA_INDICATOR$FULL_REGION$common_name), region = "GOA") |> 
+              factor() |>
+              levels() |>
+              as.character() |>
+              tolower())[1:8]
+group_2 <- (set_plot_order(common_name = unique(GOA_INDICATOR$FULL_REGION$common_name), region = "GOA") |> 
+              factor() |>
+              levels() |>
+              as.character() |>
+              tolower())[9:16] 
+
+fig2a  <- plot_anomaly_timeseries(x = dplyr::filter(GOA_INDICATOR$FULL_REGION, 
+                                                    tolower(common_name) %in% group_1),
                         region = "GOA", 
                         fill_color = "#0085CA", 
                         var_y_name = "mean_wt_resid", 
@@ -61,7 +74,7 @@ fig2  <- plot_anomaly_timeseries(x = GOA_INDICATOR$FULL_REGION,
                         y_title = "Length-weight residual (ln(g))",
                         format_for = "rmd")
 
-fig2_png  <- plot_anomaly_timeseries(x = GOA_INDICATOR$FULL_REGION,
+fig2a_png  <- plot_anomaly_timeseries(x = dplyr::filter(GOA_INDICATOR$FULL_REGION, tolower(common_name) %in% group_1),
                         region = "GOA", 
                         fill_color = "#0085CA", 
                         var_y_name = "mean_wt_resid", 
@@ -70,20 +83,46 @@ fig2_png  <- plot_anomaly_timeseries(x = GOA_INDICATOR$FULL_REGION,
                         y_title = "Length-weight residual (ln(g))",
                         format_for = "png")
 
-print(fig2 + theme_condition_index())
+print(fig2a + theme_condition_index())
+```
 
+```{r figure 2b grid, include = TRUE, echo = FALSE, fig.height = 14, fig.width = 12, fig.cap = "\\label{fig:figs}Figure 2B. Biomass-weighted residual body condition index across survey years (1984-2021) for sixteen Gulf of Alaska groundfish species collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center Resource Assessment and Conservation Engineering (AFSC/RACE) Groundfish Assessment Program (GAP) standard summer bottom trawl survey. Filled bars denote weighted length-weight residuals, error bars denote two standard errors.",  message = FALSE, warning = FALSE}
+fig2b  <- plot_anomaly_timeseries(x = dplyr::filter(GOA_INDICATOR$FULL_REGION, tolower(common_name) %in% group_2),
+                        region = "GOA", 
+                        fill_color = "#0085CA", 
+                        var_y_name = "mean_wt_resid", 
+                        var_y_se_name = "se_wt_resid",
+                        var_x_name = "year",
+                        y_title = "Length-weight residual (ln(g))",
+                        format_for = "rmd")
+
+fig2b_png  <- plot_anomaly_timeseries(x = dplyr::filter(GOA_INDICATOR$FULL_REGION, tolower(common_name) %in% group_2),
+                        region = "GOA", 
+                        fill_color = "#0085CA", 
+                        var_y_name = "mean_wt_resid", 
+                        var_y_se_name = "se_wt_resid",
+                        var_x_name = "year",
+                        y_title = "Length-weight residual (ln(g))",
+                        format_for = "png")
+
+print(fig2b + theme_condition_index())
 ```
 
 ```{r figure 2 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png(here::here("plots", "GOAbyyear.png"),width=6,height=7,units="in",res=300)
-print(fig2_png + theme_blue_strip())
+png(here::here("plots", region, "GOAbyyear_1.png"),width=6,height=7,units="in",res=300)
+print(fig2a_png + theme_blue_strip())
+dev.off()
+
+png(here::here("plots", region, "GOAbyyear_2.png"),width=6,height=7,units="in",res=300)
+print(fig2b_png + theme_blue_strip())
 dev.off()
 ```
 
 The general patterns of above and below average residual body condition index across recent survey years for the GOA as described above were also apparent in the spatial condition indicators across INPFC strata (Figure 3). The relative contribution of stratum-specific residual body condition to the overall trends (indicated by the height of each colored bar segment) does not demonstrate a clear pattern. Although, for many species, the direction of residual body condition (positive or negative) was synchronous among strata within years. For example, residual body condition for small pollock (100--250 mm) in Shumagin and Southeast were positive while other locations trended negative. Residual body condition for southern rock sole in Yakutat and Southeast were also positive, while the rest of the regions trended negative. While Pacific cod residuals trended negative again, residual body condition in the Kodiak strata remained positive. All other fish residual body condition was negative across all strata. Patterns of fish distribution are also apparent in the stratum condition indexes. For example, northern rockfish have primarily been collected from the Shumagin and Chirikof strata in recent surveys. 
 
-```{r figure 3 grid, include = TRUE, echo = FALSE, fig.height = 14, fig.width = 12, fig.cap = "\\label{fig:figs}Figure 3. Residual body condition index for seven Gulf of Alaska groundfish species collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center Resource Assessment and Conservation Engineering (AFSC/RACE) Groundfish Assessment Program (GAP) standard summer bottom trawl survey (1984--2021) grouped by International North Pacific Fisheries Commission (INPFC) statistical sampling strata.", message = FALSE, warning = FALSE}
-fig3 <- plot_stratum_stacked_bar(x = GOA_INDICATOR$STRATUM, 
+```{r figure 3a grid, include = TRUE, echo = FALSE, fig.height = 14, fig.width = 12, fig.cap = "\\label{fig:figs}Figure 3A. Residual body condition index for sixteen Gulf of Alaska groundfish species collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center Resource Assessment and Conservation Engineering (AFSC/RACE) Groundfish Assessment Program (GAP) standard summer bottom trawl survey (1984--2021) grouped by International North Pacific Fisheries Commission (INPFC) statistical sampling strata.", message = FALSE, warning = FALSE}
+fig3a <- plot_stratum_stacked_bar(x = dplyr::filter(GOA_INDICATOR$STRATUM, 
+                                                    tolower(common_name) %in% group_1), 
                                  region = "GOA", 
                                  fill_palette = "BrBG",
                                  var_y_name = "stratum_resid_mean", 
@@ -92,12 +131,31 @@ fig3 <- plot_stratum_stacked_bar(x = GOA_INDICATOR$STRATUM,
                                  fill_title = "Stratum",
                                  y_title = "Length-weight residual (ln(g))")
 
-print(fig3 + theme_condition_index())
+fig3b <- plot_stratum_stacked_bar(x = dplyr::filter(GOA_INDICATOR$STRATUM, 
+                                                    tolower(common_name) %in% group_2), 
+                                 region = "GOA", 
+                                 fill_palette = "BrBG",
+                                 var_y_name = "stratum_resid_mean", 
+                                 var_x_name = "year",
+                                 var_group_name = "inpfc_stratum",
+                                 fill_title = "Stratum",
+                                 y_title = "Length-weight residual (ln(g))")
+
+print(fig3a + theme_condition_index())
+
+```
+
+```{r figure 3b grid, include = TRUE, echo = FALSE, fig.height = 14, fig.width = 12, fig.cap = "\\label{fig:figs}Figure 3B. Residual body condition index for sixteen Gulf of Alaska groundfish species collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center Resource Assessment and Conservation Engineering (AFSC/RACE) Groundfish Assessment Program (GAP) standard summer bottom trawl survey (1984--2021) grouped by International North Pacific Fisheries Commission (INPFC) statistical sampling strata.", message = FALSE, warning = FALSE}
+print(fig3b + theme_condition_index())
 ```
 
 ```{r figure 3 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png(here::here("plots", "GOA_condition_by_stratum.png") ,width=6,height=7,units="in",res=300)
-print(fig3 + theme_blue_strip())
+png(here::here("plots", region, "GOA_condition_by_stratum_1.png") ,width=6,height=7,units="in",res=300)
+print(fig3a + theme_blue_strip())
+dev.off()
+
+png(here::here("plots", region, "GOA_condition_by_stratum_2.png") ,width=6,height=7,units="in",res=300)
+print(fig3b + theme_blue_strip())
 dev.off()
 
 plot_species_stratum_bar(

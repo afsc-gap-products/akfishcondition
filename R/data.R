@@ -207,35 +207,35 @@
 "ESR_SETTINGS"
 
 
-#' Ecosystem and Socioeconomic Profile (ESP) settings
-#' 
-#' ESP species and VAST settings for ESP species.
-#' 
-#' @format A list containing two data.frames (list of species for each region, VAST settings)
-#' \describe{
-#'      \itemize{
-#'        \item ESP_SPECIES (data frame): Species common names and species code to use for ESR regions
-#'          \itemize{
-#'            \item{common_name}{: Species common name}
-#'            \item{species_code}{: RACE/GAP species code}
-#'            \item{AI}{: Is the species used in the Aleutian Islands Ecosystem Status Report?}
-#'            \item{GOA}{: Is the species used in the Gulf of Alaska Ecosystem Status Report?}
-#'            \item{EBS}{: Is the EBS indicator used in the Bering Sea Ecosystem Status Report?}
-#'            \item{NBS}{: Is the NBS indicator used in the Bering Sea Ecosystem Status Report?}
-#'          }
-#'          }
-#'        \item VAST_SETTINGS (data.frame): Settings to use for VAST
-#'          \itemize{
-#'           \item{species_code}{: RACE/GAP species code}
-#'           \item{region}{: bottom trawl survey region}
-#'           \item{ObsModel_1}{: Setting for ObsModel_1 in VAST}
-#'           \item{ObsModel_2}{: Setting for ObsModel_2 in VAST}
-#'           \item{ObsModel_3}{: Setting for ObsModel_3 in VAST}
-#'           \item{ObsModel_4}{: Setting for ObsModel_4 in VAST}
-#'           \item{fl_min}{: Minimum fork length to include in millimeters}
-#'           \item{fl_max}{: Maximum fork length to include in millimeters}
-#'           \item{n_knots}{: Number of vertices ("knots") to use to construct the SPDE mesh.}
-#'          }
-#'     }
-#' @export   
-"ESP_SETTINGS"
+#' #' Ecosystem and Socioeconomic Profile (ESP) settings
+#' #' 
+#' #' ESP species and VAST settings for ESP species.
+#' #' 
+#' #' @format A list containing two data.frames (list of species for each region, VAST settings)
+#' #' \describe{
+#' #'      \itemize{
+#' #'        \item ESP_SPECIES (data frame): Species common names and species code to use for ESR regions
+#' #'          \itemize{
+#' #'            \item{common_name}{: Species common name}
+#' #'            \item{species_code}{: RACE/GAP species code}
+#' #'            \item{AI}{: Is the species used in the Aleutian Islands Ecosystem Status Report?}
+#' #'            \item{GOA}{: Is the species used in the Gulf of Alaska Ecosystem Status Report?}
+#' #'            \item{EBS}{: Is the EBS indicator used in the Bering Sea Ecosystem Status Report?}
+#' #'            \item{NBS}{: Is the NBS indicator used in the Bering Sea Ecosystem Status Report?}
+#' #'          }
+#' #'          }
+#' #'        \item VAST_SETTINGS (data.frame): Settings to use for VAST
+#' #'          \itemize{
+#' #'           \item{species_code}{: RACE/GAP species code}
+#' #'           \item{region}{: bottom trawl survey region}
+#' #'           \item{ObsModel_1}{: Setting for ObsModel_1 in VAST}
+#' #'           \item{ObsModel_2}{: Setting for ObsModel_2 in VAST}
+#' #'           \item{ObsModel_3}{: Setting for ObsModel_3 in VAST}
+#' #'           \item{ObsModel_4}{: Setting for ObsModel_4 in VAST}
+#' #'           \item{fl_min}{: Minimum fork length to include in millimeters}
+#' #'           \item{fl_max}{: Maximum fork length to include in millimeters}
+#' #'           \item{n_knots}{: Number of vertices ("knots") to use to construct the SPDE mesh.}
+#' #'          }
+#' #'     }
+#' #' @export   
+#' "ESP_SETTINGS"

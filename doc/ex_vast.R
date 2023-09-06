@@ -3,6 +3,7 @@
 
 # Load library
 library(akfishcondition)
+library(VAST)
 
 # Get data from RACEBASE
 akfishcondition::get_condition_data(channel = NULL)
@@ -20,7 +21,7 @@ region_VAST <- ifelse(region_esr == "GOA", "gulf_of_alaska",
 
 # Create a directory to save results
 dir.create(paste0(getwd(),"/results/",region_esr,"/",species_code,"/"),
-           recurive = TRUE)
+           recursive = TRUE)
 
 
 # EBS ... let's try ATF and YFS
@@ -86,7 +87,7 @@ fit = fit_model( settings = settings,
                  test_fit = FALSE,
                  #getJointPrecision = TRUE,
                  "optimize_args" =list("lower"=-Inf,"upper"=Inf),
-                 "working_dir" = paste0(getwd(),"/results/",region,"/",species_code,"/") #TMB argument (?fit_tmb)
+                 "working_dir" = paste0(getwd(),"/results/",region_esr,"/",species_code,"/") #TMB argument (?fit_tmb)
 )
 
 # save the VAST model

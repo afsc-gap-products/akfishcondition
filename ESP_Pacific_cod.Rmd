@@ -52,7 +52,7 @@ akfishcondition:::PCOD_ESP$FULL_REGION_EBS %>%
 print(paste0("Last Update: ", akfishcondition:::EBS_INDICATOR$LAST_UPDATE))
 ```
 
-```{r ebs_anomaly, include=TRUE, echo=FALSE, fig.height=6,fig.width=12, fig.cap="\\label{fig:figs}Figure 1. VAST relative condition for adult and juvenile Pacific cod collected during AFSC/RACE GAP standard summer bottom trawl surveys of the eastern Bering Sea shelf, 1999 to 2022. The dash in the blue boxes denote the mean for that year, the box denotes one standard error, and the lines on the boxes denote two standard error. Lines on each plot represent the historical mean, dashed lines denote one standard deviation, and dotted lines denote two standard deviations.",  message=FALSE, warning=FALSE}
+```{r ebs_anomaly, include=TRUE, echo=FALSE, fig.height=6,fig.width=12, fig.cap="\\label{fig:figs}Figure 1. VAST relative condition for adult and juvenile Pacific cod collected during AFSC/RACE GAP standard summer bottom trawl surveys of the eastern Bering Sea shelf, 1999 to 2022. The dash in the blue boxes denote the mean for that year, the blue box denotes one standard error, and the lines on the boxes denote two standard error. Horizontal lines on each plot represent the historical mean, dashed lines denote one standard deviation, and dotted lines denote two standard deviations.",  message=FALSE, warning=FALSE}
 fig1_rmd <- plot_anomaly_timeseries(x = akfishcondition::PCOD_ESP$FULL_REGION_EBS,
                               region = "BS",
                               fill_color = "#0085CA",

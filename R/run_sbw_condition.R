@@ -4,7 +4,7 @@
 #' 
 #' @param region Region as a character vector ("EBS", "NBS", "AI", or "GOA")
 #' @param stratum_col Optional. Name of the stratum column as a character vector.
-#' @param biomass_col Optional. Name of the biomass column as a charcater vector.
+#' @param biomass_col Optional. Name of the biomass column as a character vector.
 #' @param cod_juv_cutoff_mm Optional. Fork length cutoff for adult and juvenile 
 #' @param min_n Minimum number of samples for data from a stratum to be included in condition indicator calculations. Default = 10.
 #' @noRd

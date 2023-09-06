@@ -3,27 +3,33 @@
 \docType{data}
 \name{AI_INDICATOR}
 \alias{AI_INDICATOR}
-\title{Aleutian Islands (1986-2018)}
+\title{Aleutian Islands (1986-2022)}
 \format{
 A list containing two data frames (indicator for the full region, indicator by stratum) and a character vector.
 \describe{
      \itemize{
        \item FULL_REGION (data frame): Residuals for the full region
          \itemize{
-         \item{YEAR}{: Year}
-         \item{COMMON_NAME}{: Year}
+         \item{year}{: Year}
+         \item{common_name}{: Year}
          \item{mean_wt_resid}{: Mean residual for the full region}
          \item{se_wt_resid}{: Standard error of the indicator for the full region}
+         \item{vast_condition}{: Estimate of the allometric intercept,a, of the length-weight equation (W = aL^b), estimated using VAST.}
+         \item{vast_condition_se}{Standard error of a, estimated using VAST.}
+         \item{species_code}{: RACE/GAP species code}
+         \item{scaled_vast_condition}{: Anomaly (Z-score) of vast_condition}
+         \item{vast_relative_condition}{: Relative condition based on the allometric intercept estimated using VAST, i.e., allometric intercept divided by the time series mean allometric intercept.}
+         \item{vast_relative_condition_se}{: Standard error of vast_relative_condition.}
          }
        \item STRATUM (data frame): Residuals by stratum
         \itemize{
-         \item{YEAR}{: Year}
-         \item{COMMON_NAME}{: Species Common name}
-         \item{SPECIES_CODE}{: RACE/GAP species code}
-         \item{INPFC_STRATUM}{: INPFC Stratum}
+         \item{year}{: Year}
+         \item{common_name}{: Species Common name}
+         \item{species_code}{: RACE/GAP species code}
+         \item{inpfc_stratum}{: INPFC Stratum}
          \item{stratum_resid_mean}{: Unweighted stratum mean residual}
          \item{n}{: Sample size for the stratum}
-         \item{stratum_resid_sd}{: Standard error of the stratum mean residual}
+         \item{stratum_resid_se}{: Standard error of the stratum mean residual}
          \item{weighted_resid_mean}{: Stratum mean Residual weighted in proportion to stratum biomass}
          \item{weighted_resid_mean}{: Standard error of the stratum mean residual weighted in proportion to stratum biomass}
          }
@@ -38,6 +44,6 @@ A list containing two data frames (indicator for the full region, indicator by s
 AI_INDICATOR
 }
 \description{
-Morphometric condition indicators based on residuals from a length-weight regression for Pacific cod, walleye pollock (> 250 mm), walleye pollock (100-250 mm), southern rock sole, arrowtooth flounder, Atka mackerel, northern rockfish, and Pacific ocean perch in the Aleutian Islands.
+Morphometric condition indicators based on the allometric intercept estimated using VAST and residuals from a length-weight regression for Pacific cod, walleye pollock (> 250 mm), walleye pollock (100-250 mm), southern rock sole, arrowtooth flounder, Atka mackerel, northern rockfish, and Pacific ocean perch in the Aleutian Islands.
 }
 \keyword{datasets}

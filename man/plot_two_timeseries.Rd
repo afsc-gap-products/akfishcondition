@@ -14,6 +14,7 @@ plot_two_timeseries(
   series_name_2 = "VAST",
   var_y_name_2 = "mean_wt_resid",
   var_x_name_2 = "year",
+  var_group_name = "common_name",
   y_title = "Condition (Z-score)",
   fill_title = "Method",
   scale_y = TRUE,
