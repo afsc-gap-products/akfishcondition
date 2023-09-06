@@ -5,13 +5,41 @@
 #' @param region Region as a character vector ("EBS", "NBS", "AI", or "GOA")
 #' @param stratum_col Optional. Name of the stratum column as a character vector.
 #' @param biomass_col Optional. Name of the biomass column as a charcater vector.
-#' @param cod_juv_cutoff_mm Optional. Fork length cutoff for adult and juvenile 
+#' @param cod_juv_cutoff_mm Optional. Fork length cutoff for adult and juvenile.
+#' @param covariates_to_use Character vector indicating which variables to use ('sex', 'day_of_year', 'stratum').
 #' @param min_n Minimum number of samples for data from a stratum to be included in condition indicator calculations. Default = 10.
 #' @noRd
 
-run_sbw_condition_multimodel <- function(region, stratum_col = NULL, biomass_col = NULL, cod_juv_cutoff_mm = NULL, min_n = 10) {
+run_sbw_condition_multimodel <- function(region,
+                                         stratum_col = NULL, 
+                                         biomass_col = NULL, 
+                                         cod_juv_cutoff_mm = NULL, 
+                                         covariates_to_use = c('sex', 'day_of_year', 'stratum'), 
+                                         min_n = 10) {
+  
+  # region = "NBS"
+  # covariates_to_use = c('sex')
+  # min_n = 10
   
   region_index <- match(region, c("AI", "EBS", "NBS", "GOA"))
+  
+  null_flag <- function(use, var) {
+    return(unlist(ifelse(use, list(var), list(NULL))))
+  }
+  
+  use_doy <- use_sex <- use_stratum <- FALSE
+  
+  if("day_of_year" %in% covariates_to_use) {
+    use_doy <- TRUE
+  }
+  
+  if("sex" %in% covariates_to_use) {
+    use_sex <- TRUE
+  }
+  
+  if("stratum" %in% covariates_to_use) {
+    use_stratum <- TRUE
+  }
   
   if(is.null(cod_juv_cutoff_mm)) {
     cod_juv_cutoff_mm <- c(460, 460, 460, 420)[region_index]
@@ -103,10 +131,10 @@ run_sbw_condition_multimodel <- function(region, stratum_col = NULL, biomass_col
       dat$resid[dat$species_code == spp_vec[i]] <- akfishcondition::calc_lw_residuals_multimodel(
         len = dat$length_mm[dat$species_code == spp_vec[i]], 
         wt = dat$weight_g[dat$species_code == spp_vec[i]], 
-        sex = dat$sex[dat$species_code == spp_vec[i]],
+        sex = null_flag(use = use_sex, var = dat$sex[dat$species_code == spp_vec[i]]),
         year = dat$year[dat$species_code == spp_vec[i]],
-        day_of_year = dat$day_of_year[dat$species_code == spp_vec[i]],
-        stratum = NA,
+        day_of_year = null_flag(use = use_doy, var = dat$day_of_year[dat$species_code == spp_vec[i]]),
+        stratum = null_flag(use = use_stratum, var = dat$survey_stratum[dat$species_code == spp_vec[i]]),
         make_diagnostics = TRUE, # Make diagnostics
         include_ci = FALSE,
         bias_correction = TRUE, # Bias correction turned on
@@ -120,10 +148,10 @@ run_sbw_condition_multimodel <- function(region, stratum_col = NULL, biomass_col
       raw_resid_df <- akfishcondition::calc_lw_residuals_multimodel(
         len = dat$length_mm[dat$species_code == spp_vec[i]], 
         wt = dat$weight_g[dat$species_code == spp_vec[i]], 
-        sex = dat$sex[dat$species_code == spp_vec[i]],
+        sex = null_flag(use = use_sex, var = dat$sex[dat$species_code == spp_vec[i]]),
         year = dat$year[dat$species_code == spp_vec[i]],
-        day_of_year = dat$day_of_year[dat$species_code == spp_vec[i]],
-        stratum = dat$survey_stratum[dat$species_code == spp_vec[i]],
+        day_of_year = null_flag(use = use_doy, var = dat$day_of_year[dat$species_code == spp_vec[i]]),
+        stratum = null_flag(use = use_stratum, var = dat$survey_stratum[dat$species_code == spp_vec[i]]),
         make_diagnostics = TRUE, # Make diagnostics
         bias_correction = TRUE, # Bias correction turned on
         outlier_rm = TRUE, # Outlier removal turned off
