@@ -18,16 +18,17 @@ addr:
 library(akfishcondition)
 library(knitr)
 
+region <- "GOA"
+
 # Unzip map files
 unzip(system.file("extdata/2022_ESR.zip", package = "akfishcondition"))
 
-if(!dir.exists("plots")) {
-  dir.create("plots")
-}
+dir.create(here::here("plots", region))
+
 
 # Load data
-goa_ann_mean_resid_df <- GOA_INDICATOR$FULL_REGION
-goa_stratum_resids_df <- GOA_INDICATOR$STRATUM
+# goa_ann_mean_resid_df <- GOA_INDICATOR$FULL_REGION
+# goa_stratum_resids_df <- GOA_INDICATOR$STRATUM
 ```
 
 Contributed by Cecilia O'Leary^1^ and Sean Rohan^1^
@@ -108,11 +109,11 @@ print(fig2b + theme_condition_index())
 ```
 
 ```{r figure 2 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png(here::here("plots", "GOAbyyear_1.png"),width=6,height=7,units="in",res=300)
+png(here::here("plots", region, "GOAbyyear_1.png"),width=6,height=7,units="in",res=300)
 print(fig2a_png + theme_blue_strip())
 dev.off()
 
-png(here::here("plots", "GOAbyyear_2.png"),width=6,height=7,units="in",res=300)
+png(here::here("plots", region, "GOAbyyear_2.png"),width=6,height=7,units="in",res=300)
 print(fig2b_png + theme_blue_strip())
 dev.off()
 ```
@@ -149,11 +150,11 @@ print(fig3b + theme_condition_index())
 ```
 
 ```{r figure 3 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-png(here::here("plots", "GOA_condition_by_stratum_1.png") ,width=6,height=7,units="in",res=300)
+png(here::here("plots", region, "GOA_condition_by_stratum_1.png") ,width=6,height=7,units="in",res=300)
 print(fig3a + theme_blue_strip())
 dev.off()
 
-png(here::here("plots", "GOA_condition_by_stratum_2.png") ,width=6,height=7,units="in",res=300)
+png(here::here("plots", region, "GOA_condition_by_stratum_2.png") ,width=6,height=7,units="in",res=300)
 print(fig3b + theme_blue_strip())
 dev.off()
 

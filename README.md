@@ -19,7 +19,7 @@ Estimating morphometric condition using the VAST package requires installation o
 <dt><b>AI_INDICATOR</b></dt>
 <dd><p>Data frame containing Aleutian Islands length-weight residual condition indicator based on AFSC summer bottom trawl survey data from 1986 to 2022.</p></dd>
 <dt><b>GOA_INDICATOR</b></dt>
-<dd><p>Data frame containing Gulf of Alaska length-weight residual condition indicator (years: 1984-2021).</p></dd>
+<dd><p>Data frame containing Gulf of Alaska length-weight residual condition indicator (years: 1984-2023).</p></dd>
 <dt><b>EBS_INDICATOR</b></dt>
 <dd><p>Data frame containing Eastern Bering Sea length-weight residual condition indicator based on AFSC summer bottom trawl survey data from 1999 to 2022.</p></dd>
 <dt><b>NBS_INDICATOR</b></dt>

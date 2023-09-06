@@ -1,0 +1,478 @@
+---
+title: Eastern and Northern Bering Sea Groundfish Condition
+author: 
+- affiliation: RACE
+  description: Research Fisheries Biologist
+  email: Sean.Rohan@NOAA.gov
+  name: Sean Rohan
+output: word_document
+fontsize: 12pt
+bibliography: EBS_references.bib
+csl: fish-and-fisheries.csl
+addr: 
+  l1: 7600 Sand Point Way NE
+  l2: NMFS RACE Division, Groundfish Assessment Program
+  l3: Seattle, WA 98115
+---
+
+```{r setup, include=FALSE}
+# Load packages
+library(knitr)
+library(akfishcondition)
+
+region <- "BS"
+
+make_map <- TRUE
+pkg_version <- packageVersion("akfishcondition")
+
+# Unzip map files
+unzip(system.file("extdata/2022_ESR.zip", package = "akfishcondition"))
+
+if(!dir.exists(here::here("plots", region))) {
+  dir.create(here::here("plots", region), recursive = TRUE)
+}
+
+if(make_map){
+  library(akgfmaps)
+  
+  ebs_layers <- akgfmaps::get_base_layers(select.region = "ebs",
+                                          set.crs = "EPSG:3338")
+  
+  
+  # Simple version
+  survey_strata <- ebs_layers$survey.strata %>%
+    dplyr::mutate(agg_stratum = Stratum) %>%
+    dplyr::mutate(agg_stratum = replace(agg_stratum, agg_stratum %in% c(31,32), 30),
+                  agg_stratum = replace(agg_stratum, agg_stratum %in% c(41,42,43), 40),
+                  agg_stratum = replace(agg_stratum, agg_stratum %in% c(61,62), 60),
+                  SURVEY = replace(SURVEY, SURVEY == "EBS_SHELF",  "EBS Shelf"), 
+                  SURVEY = replace(SURVEY, SURVEY == "NBS_SHELF", "NBS")) %>% 
+    dplyr::group_by(agg_stratum, SURVEY) %>% 
+    dplyr::summarise()
+  
+  plot_ebs_nbs_survey_stations <- ggplot() +
+    geom_sf(data = survey_strata,
+            aes(fill = SURVEY),
+            color = "black") +
+    geom_sf_text(data = sf::st_centroid(survey_strata), 
+                 aes(label = agg_stratum),
+                 color = "black",
+                 size = rel(6)) +
+    geom_sf(data = sf::st_centroid(ebs_layers$survey.grid %>%
+                                     dplyr::mutate(lab = "Station Location")),
+            aes(shape = lab)) +
+    ggplot2::geom_sf(data = ebs_layers$akland, 
+                     fill = "grey85", 
+                     color = "black") +
+    geom_sf(data = ebs_layers$graticule,
+            size = 0.2,
+            alpha = 0.5) +
+    ggplot2::coord_sf(xlim = ebs_layers$plot.boundary$x, 
+                      ylim = ebs_layers$plot.boundary$y) +
+    ggplot2::scale_x_continuous(name = "Longitude", 
+                                breaks = ebs_layers$lon.breaks) + 
+    ggplot2::scale_y_continuous(name = "Latitude", 
+                                breaks = ebs_layers$lat.breaks) +
+    scale_shape_manual(values = "x") +
+    scale_fill_manual(values = c("#0085CA", "#54ADDB")) +
+    theme_bw() +
+    ggplot2::theme(axis.title = element_blank(),
+                   axis.text = element_text(color = "black"),
+                   axis.ticks = element_line(color = "black"),
+                   panel.border = element_rect(color = "black", fill = NA),
+                   panel.grid = element_blank(),
+                   panel.background = element_rect(color = "black", fill = "white"),
+                   legend.title = element_blank(),
+                   legend.margin = margin(-12,0,0,0),
+                   legend.position = c(0.2,0.1),
+                   legend.background = element_blank())
+  
+  png(filename = here::here("plots", region, "EBS_NBS_survey_area.png"), width = 5, height = 5, units = "in", res = 600)
+  print(plot_ebs_nbs_survey_stations)
+  dev.off()
+}
+
+```
+
+Contributed by Sean Rohan^1^, Bianca Prohaska^1^, and Cecilia O'Leary^1^
+^1^Resource Assessment and Conservation Engineering Division, Alaska Fisheries Science Center, National Marine Fisheries Service, NOAA  
+**Contact**: sean.rohan@noaa.gov
+**Last updated**:  October 2022
+
+**Description of Indicator**: Morphometric condition indicators based on length-weight relationships characterize variation in somatic growth and can be considered indicators of prey availability, growth, general health, and habitat condition [@Blackwell2000; @Froese2006]. This contribution presents two morphometric condition indicators based on length-weight relationships: a new relative condition indicator that is estimated using a spatiotemporal model and the historical indicator based on residuals of the length-weight relationship.
+
+The new model-based relative condition indicator (VAST relative condition) is the ratio of fish weight-at-length relative to the time series mean based on annual allometric intercepts, _a~year~_, in the length-weight equation (_W_ = _aL_^_b_^; _W_ is mass (g), _L_ is fork length (cm)), i.e., $condition = a_{year}/\overline{a}$. Relative condition greater than one indicates better condition (i.e., heavier per unit length) and relative condition less than one indicates poorer condition (i.e., lighter per unit length).
+
+The historical length-weight indicator based on residuals of the length-weight relationship represents how heavy a fish is per unit body length compared to the time series mean  [@Brodeur2004]. Positive length-weight residuals indicate better condition (i.e., heavier per unit length) and negative residuals indicate poorer condition (i.e., lighter per unit length) [@Froese2006]. Fish condition calculated in this way reflects realized outcomes of intrinsic and extrinsic processes that affect fish growth, which can have implications for biological productivity through direct effects on growth and indirect effects on demographic processes such as, reproduction, and mortality (e.g., (@Rodgveller2019); (@Barbeaux2020)).
+
+The model-based relative condition indicator was estimated using a spatiotemporal model with spatial random effects, implemented in the software VAST v3.8.2 [@Thorson2019; @Gruss2020a]. Allometric intercepts,  _a~year~_, are estimated as fixed effects using a multivariate generalized linear mixed model that jointly estimates spatial and temporal variation in _a_ and catch per unit effort (numbers of fish per area). Density-weighted average  _a~year~_ is a product of population density, local _a_, and area. Spatial variation in  _a~year~_ was represented using a Gaussian Markov random field. The model approximates  _a~year~_ using a log-link function and linear predictors [@Gruss2020a]. Parameters are estimated by identifying the values that maximize the marginal log-likelihood.
+
+```{r map, include=TRUE,out.width="200%",fig.cap="\\label{fig:figs}Figure 1. AFSC/RACE GAP summer bottom trawl survey strata (10-90) and station locations (x) in the eastern Bering Sea and northern Bering Sea. ",  echo=FALSE}
+  knitr::include_graphics(path = here::here("plots", region, "ebs_nbs_survey_area.png"))
+```
+
+The historical indicator was estimated from residuals of linear regression models based on a log-transformation of the exponential growth relationship from 1999 to 2022 (EBS: 1999–2022, NBS: 2010 & 2017–2019, 2022). A unique slope (_b_) was estimated for each survey stratum (Fig. 1) to account for spatial-temporal variation in growth and bottom trawl survey sampling. Survey strata 31 and 32 were combined as stratum 30; strata 41, 42, and 43 were combined as stratum 40; and strata 61 and 62 were combined as stratum 60. Northwest survey strata 82 and 90 were excluded from these analyses due to sample size considerations. Length-weight relationships for juvenile length walleye pollock (100–250 mm fork, corresponding with ages 1–2 years) were calculated separately from adult walleye pollock (> 250 mm). Residuals for individual fish were obtained by subtracting observed weights from bias-corrected weights-at-length that were estimated from regression models. 
+
+For the EBS shelf, individual length-weight residuals were averaged for each stratum and weighted in proportion to total biomass in each stratum from area-swept expansion of bottom-trawl survey catch per unit effort (CPUE; i.e., design-based stratum biomass estimates). Analysis for the NBS was conducted separately from the EBS because of the shorter time series and the NBS was treated as a single stratum without biomass weighting. To minimize the influence of unrepresentative samples on indicator calculations, combinations of species, stratum, and year with sample size <10 were used to fit length-weight regressions but were excluded from calculating length-weight residuals in the EBS.
+
+Both condition indicators were calculated from paired fork lengths and weights of individual fishes that were collected during bottom trawl surveys of the eastern Bering Sea (EBS) shelf and northern Bering Sea (NBS) which were conducted by the Alaska Fisheries Science Center’s Resource Assessment and Conservation Engineering (AFSC/RACE) Groundfish Assessment Program (GAP). Fish condition analyses were applied to walleye pollock (_Gadus chalcogrammus_), Pacific cod (_Gadus macrocephalus_), arrowtooth flounder (_Atheresthes stomias_), yellowfin sole (_Limanda aspera_), flathead sole (_Hippoglossoides elassodon_), northern rock sole (_Lepidopsetta polyxystra_), and Alaska plaice (_Pleuronectes quadrituberculatus_) collected in bottom trawls at standard survey stations (Fig. 1). 
+
+
+**Methodological Changes**: The historical length-weight residual indicator (used in 2020 and 2021) and new VAST relative condition indicator [@Gruss2020a] are both presented this year to allow comparison between methods. Overall, trends were similar between historical and new indicators based on the strong correlation (_r_ > 0.85) between indicators for most species (Figs. 3,4,6). An exception was large walleye pollock (> 250 mm) in the NBS (_r_ = 0.33), which may be due to the small sample size (_n_ = 4) collected exclusively from the southern end of the NBS survey area in 2010.  Mean estimates and confidence intervals for the new condition indicator are likely more reliable than the historical indicator because the new indicator affords more precise expansion of individual samples to the population. This indicator also better accounts for spatially and temporally unbalanced sampling that is characteristic of historical bottom trawl survey data due to changes in sampling protocols (e.g., transition from sex-and-length stratified to random sampling).
+
+**Status and Trends**: Fish condition, indicated by the model-based condition indicator (VAST relative condition), has varied over time for all species examined (Figs. 2 & 5). In 2019 in the EBS, an upward trend in VAST relative condition was observed for most species relative to 2017–2018; however, in 2021 VAST relative condition had a downward trend in most species examined. In 2022 in the EBS, VAST relative conditions were near the historical mean, or positive for all species examined except for arrowtooth flounder, and large walleye pollock (>250 mm), and while their VAST relative conditions were negative, the mean for both groups fell within one standard deviation of the historical mean (Fig. 2).
+
+```{r figure 2 grid, include=TRUE, echo=FALSE, fig.height=14,fig.width=12,fig.cap="\\label{fig:figs}Figure 2. VAST relative condition for groundfish species collected during AFSC/RACE GAP standard summer bottom trawl surveys of the eastern Bering Sea shelf, 1999 to 2022. The dash in the blue boxes denote the mean for that year, the box denotes one standard error, and the lines on the boxes denote two standard error. Lines on each plot represent the historical mean, dashed lines denote one standard deviation, and dotted lines denote two standard deviations.",  message=FALSE, warning=FALSE}
+# Set factor levels for plotting order
+fig2  <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION,
+                        region = "BS",
+                        fill_color = "#0085CA",
+                        var_y_name = "vast_relative_condition",
+                        var_y_se_name = "vast_relative_condition_se",
+                        var_x_name = "year",
+                        y_title = "VAST relative condition",
+                        plot_type = "box",
+                        set_intercept = 1,
+                        format_for = "rmd")
+
+fig2_png  <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION,
+                        region = "BS",
+                        fill_color = "#0085CA",
+                        var_y_name = "vast_relative_condition",
+                        var_y_se_name = "vast_relative_condition_se",
+                        var_x_name = "year",
+                        y_title = "VAST relative condition",
+                        plot_type = "box",
+                        set_intercept = 1,
+                        format_for = "png")
+
+print(fig2 + theme_condition_index())
+```
+
+```{r figure 2 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+png(here::here("plots", region, "EBS_condition.png"),width=6,height=7,units="in",res=600)
+print(fig2_png + theme_blue_strip())
+dev.off()
+```
+
+
+```{r figure 3 grid, include=TRUE, echo=FALSE, fig.height=14,fig.width=12,fig.cap="\\label{fig:figs}Figure 3. Time series of VAST relative condition and length-weight residual condition anomalies for the eastern Bering Sea. Triangles denote the length-weight residual, while circles denote the VAST relative condition. Lines represent the historical mean, dashed lines denote one standard deviation, and dotted lines denote two standard deviations. The Pearson correlation coefficient (_r_) is shown at the bottom right of each panel.",  message=FALSE, warning=FALSE}
+fig3 <- plot_two_timeseries(x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION,
+                                x_2 = akfishcondition::EBS_INDICATOR$FULL_REGION,
+                                region = "BS",
+                                series_name_1 = "Length-weight residual (Historical)",
+                                series_name_2 = "VAST relative condition (New)",
+                                var_y_name_1 = "mean_wt_resid",
+                                var_x_name_1 = "year",
+                                var_y_name_2 = "vast_relative_condition",
+                                var_x_name_2 = "year",
+                                y_title = "Condition anomaly (Z-score)",
+                                scale_y = TRUE,
+                                year_break = 2020,
+                                fill_colors = c("#001743", "#0085CA"),
+                                format_for = "rmd")
+
+fig3_png <- plot_two_timeseries(x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION,
+                                x_2 = akfishcondition::EBS_INDICATOR$FULL_REGION,
+                                region = "BS",
+                                series_name_1 = "Length-weight residual (Historical)",
+                                series_name_2 = "VAST relative condition (New)",
+                                var_y_name_1 = "mean_wt_resid",
+                                var_x_name_1 = "year",
+                                var_y_name_2 = "vast_relative_condition",
+                                var_x_name_2 = "year",
+                                y_title = "Condition anomaly (Z-score)",
+                                scale_y = TRUE,
+                                year_break = 2020,
+                                fill_colors = c("#001743", "#0085CA"),
+                                format_for = "png")
+
+print(fig3 + 
+        theme_condition_index() + 
+        theme(legend.position = "bottom",
+              legend.title = element_blank()))
+```
+
+```{r figure 3 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+png(here::here("plots", region, "EBS_VAST_SBW_timeseries.png"),width=6,height=7,units="in",res=600)
+print(fig3_png + 
+        theme_blue_strip() + 
+        theme(legend.position = "bottom",
+              legend.title = element_blank()))
+dev.off()
+```
+
+```{r figure 4 set up, include=FALSE, fig.height=4, fig.width=4, message=FALSE, warning=FALSE}
+fig4 <- akfishcondition::plot_xy_corr(
+  x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION,
+  x_2 = akfishcondition::EBS_INDICATOR$FULL_REGION,
+  region = region,
+  series_name_1 = "Length-weight residual (Historical)",
+  series_name_2 = "VAST relative condition (New)",
+  var_y_name_1 = "mean_wt_resid",
+  var_y_se_name_1 = "se_wt_resid",
+  var_x_name_1 = "year",
+  var_y_name_2 = "vast_relative_condition",
+  var_y_se_name_2 = "vast_relative_condition_se",
+  var_x_name_2 = "year",
+  format_for = "rmd")
+
+fig4_png <- akfishcondition::plot_xy_corr(
+  x_1 = akfishcondition::EBS_INDICATOR$FULL_REGION,
+  x_2 = akfishcondition::EBS_INDICATOR$FULL_REGION,
+  region = region,
+  series_name_1 = "Length-weight residual (Historical)",
+  series_name_2 = "VAST relative condition (New)",
+  var_y_name_1 = "mean_wt_resid",
+  var_y_se_name_1 = "se_wt_resid",
+  var_x_name_1 = "year",
+  var_y_name_2 = "vast_relative_condition",
+  var_y_se_name_2 = "vast_relative_condition_se",
+  var_x_name_2 = "year",
+  format_for = "png"
+  )
+```
+
+```{r figure 4 grid, include=TRUE, echo=FALSE, fig.height=14, fig.width=12, fig.cap="\\label{fig:figs}Figure 4. Length-weight residual condition versus VAST relative condition for the eastern Bering Sea. Points denote the mean, error bars denote two standard errors. The Pearson correlation coefficient (_r_) is shown at the bottom right of each panel.",message=FALSE, warning=FALSE}
+print(fig4 +
+  theme_condition_index())
+```
+
+```{r figure 4 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+png(here::here("plots", region, "EBS_VAST_VS_SBW_scatterplot.png"), width = 6, height = 7, units = "in", res = 600)
+print(fig4_png + theme_blue_strip())
+dev.off()
+```
+
+
+```{r figure 5 grid, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+fig5 <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
+                        region = "BS", 
+                        fill_color = "#54ADDB", 
+                        var_y_name = "vast_relative_condition", 
+                        var_y_se_name = "vast_relative_condition_se",
+                        var_x_name = "year",
+                        y_title = "VAST relative condition",
+                        plot_type = "box",
+                        format_for = "rmd")
+
+fig5_png <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
+                        region = "BS", 
+                        fill_color = "#54ADDB", 
+                        var_y_name = "vast_relative_condition", 
+                        var_y_se_name = "vast_relative_condition_se",
+                        var_x_name = "year",
+                        y_title = "VAST relative condition",
+                        plot_type = "box",
+                        format_for = "png")
+
+
+
+```
+
+```{r figure 5 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+png(here::here("plots", region, "NBS_condition.png"), width=6, height=7, units="in", res=600)
+print(fig5_png + theme_blue_strip())
+dev.off()
+```
+
+In the NBS in 2022, VAST relative condition of all species examined, including large (>250 mm) and small (100–250 mm) walleye pollock, were negative; however, despite being below the historical average, the VAST relative condition of all species were within one standard deviation of the time series mean (Fig. 5). 
+
+```{r figure 6 set up, include=FALSE, fig.height=4, fig.width=4, message=FALSE, warning=FALSE}
+fig6  <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
+                        region = "BS",
+                        fill_color = "#54ADDB",
+                        var_y_name = "vast_relative_condition",
+                        var_y_se_name = "vast_relative_condition_se",
+                        var_x_name = "year",
+                        y_title = "VAST relative condition",
+                        plot_type = "box",
+                        set_intercept = 1,
+                        format_for = "rmd")
+
+fig6_png  <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
+                        region = "BS",
+                        fill_color = "#54ADDB",
+                        var_y_name = "vast_relative_condition",
+                        var_y_se_name = "vast_relative_condition_se",
+                        var_x_name = "year",
+                        y_title = "VAST relative condition",
+                        plot_type = "box",
+                        set_intercept = 1,
+                        format_for = "png")
+```
+
+```{r figure 6 grid, include=TRUE, echo=FALSE, fig.height=14, fig.width=12, fig.cap="\\label{fig:figs}Figure 5. VAST relative condition for groundfish species collected during AFSC/RACE GAP summer bottom trawl surveys of the northern Bering Sea, 2010 and 2017 to 2022. The dash in the blue boxes denote the mean for that year, the box denotes one standard error, and the lines on the boxes denote two standard error. Lines on each plot represent the historical mean, dashed lines denote one standard deviation, and dotted lines denote two standard deviations.",message=FALSE, warning=FALSE}
+print(fig6 +
+  theme_condition_index())
+```
+
+```{r figure 6 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+png(here::here("plots", region, "NBS_condition.png"), width = 6, height = 7, units = "in", res = 600)
+print(fig6_png + theme_blue_strip())
+dev.off()
+```
+
+```{r figure 7 set up, include=FALSE, fig.height=4, fig.width=4, message=FALSE, warning=FALSE}
+fig7 <- akfishcondition::plot_xy_corr(
+  x_1 = akfishcondition::NBS_INDICATOR$FULL_REGION,
+  x_2 = akfishcondition::NBS_INDICATOR$FULL_REGION,
+  region = region,
+  series_name_1 = "Length-weight residual (Historical)",
+  series_name_2 = "VAST relative condition (New)",
+  var_y_name_1 = "mean_resid",
+  var_y_se_name_1 = "se",
+  var_x_name_1 = "year",
+  var_y_name_2 = "vast_relative_condition",
+  var_y_se_name_2 = "vast_relative_condition_se",
+  var_x_name_2 = "year",
+  format_for = "rmd")
+
+fig7_png <- akfishcondition::plot_xy_corr(
+  x_1 = akfishcondition::NBS_INDICATOR$FULL_REGION,
+  x_2 = akfishcondition::NBS_INDICATOR$FULL_REGION,
+  region = region,
+  series_name_1 = "Length-weight residual (Historical)",
+  series_name_2 = "VAST relative condition (New)",
+  var_y_name_1 = "mean_resid",
+  var_y_se_name_1 = "se",
+  var_x_name_1 = "year",
+  var_y_name_2 = "vast_relative_condition",
+  var_y_se_name_2 = "vast_relative_condition_se",
+  var_x_name_2 = "year",
+  format_for = "png"
+  )
+```
+
+```{r figure 7 grid, include=TRUE, echo=FALSE, fig.height=14, fig.width=12, fig.cap="\\label{fig:figs}Figure 6. Length-weight residual condition versus VAST relative condition for the northern Bering Sea (NBS). Points denote the mean, error bars denote two standard errors. The Pearson correlation coefficient (_r_) is shown at the bottom right of each panel. NBS length-weight residuals are not weighted by stratum biomass.",message=FALSE, warning=FALSE}
+print(fig7 +
+  theme_condition_index())
+```
+
+```{r figure 7 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+png(here::here("plots", region, "NBS_VAST_VS_SBW_scatterplot.png"), width = 6, height = 7, units = "in", res = 600)
+print(fig7_png + theme_blue_strip())
+dev.off()
+```
+
+
+```{r sbw_legacy_plots, include=FALSE, message=FALSE, warning=FALSE}
+# EBS stratum-biomass weighted residual time series anomaly
+ebs_sbw_timeseries <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION,
+                        region = region, 
+                        fill_color = "#0085CA", 
+                        var_y_name = "mean_wt_resid", 
+                        var_y_se_name = "se_wt_resid",
+                        var_x_name = "year",
+                        y_title = "Length-weight residual (ln(g))",
+                        plot_type = "box",
+                        format_for = "png",
+                        set_intercept = 0)
+
+png(here::here("plots", region, "EBS_SBW_timeseries.png"), width = 6, height = 7, units = "in", res = 600)
+print(ebs_sbw_timeseries + akfishcondition::theme_blue_strip())
+dev.off()
+
+# EBS stratum-biomass weighted residual stratum stacked bar plots
+ebs_stacked_bar <- akfishcondition::plot_stratum_stacked_bar(x = EBS_INDICATOR$STRATUM, 
+                                                         region = region, 
+                                                         var_x_name = "year", 
+                                                         var_y_name = "stratum_resid_mean", 
+                                                         y_title = "Length-weight residual (ln(g))",
+                                                         var_group_name = "stratum",
+                                                         fill_title = "Stratum",
+                                                         fill_palette = "BrBG")
+
+png(here::here("plots", region, "EBS_SBW_stratum_stacked_bar.png"), width = 6, height = 7, units = "in", res = 600)
+print(ebs_stacked_bar + theme_blue_strip())
+dev.off()
+
+# EBS single species stratum plots
+akfishcondition::plot_species_stratum_bar(x = EBS_INDICATOR$STRATUM, 
+                                          region = "EBS", 
+                                          var_x_name = "year", 
+                                          var_y_name = "stratum_resid_mean", 
+                                          var_y_se_name = "stratum_resid_se",
+                                          y_title = "Length-weight residual (ln(g))",
+                                          var_group_name = "stratum",
+                                          fill_title = "Stratum",
+                                          fill_palette = "BrBG",
+                                          write_plot = TRUE)
+
+# EBS single species anomaly plots
+akfishcondition::plot_species_bar(x = EBS_INDICATOR$FULL_REGION, 
+                                  region = "EBS", 
+                                  var_x_name = "year", 
+                                  var_y_name = "vast_relative_condition", 
+                                  var_y_se_name = "vast_relative_condition_se",
+                                  y_title = "VAST relative condition",
+                                  fill_color = "#0085CA",
+                                  set_intercept = 1,
+                                  write_plot = TRUE)
+
+# NBS_single species anomaly plots
+akfishcondition::plot_species_bar(x = NBS_INDICATOR$FULL_REGION, 
+                                  region = "NBS", 
+                                  var_x_name = "year", 
+                                  var_y_name = "vast_relative_condition", 
+                                  var_y_se_name = "vast_relative_condition_se",
+                                  y_title = "VAST relative condition",
+                                  fill_color = "#54ADDB",
+                                  set_intercept = 1,
+                                  write_plot = TRUE)
+
+# NBS stratum-biomass weighted residual time series anomaly
+nbs_sbw_timeseries <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
+                        region = region, 
+                        fill_color = "#0085CA", 
+                        var_y_name = "mean_resid", 
+                        var_y_se_name = "se",
+                        var_x_name = "year",
+                        y_title = "Length-weight residual (ln(g))",
+                        plot_type = "box",
+                        format_for = "png",
+                        set_intercept = 0)
+
+png(here::here("plots", region, "NBS_SBW_timeseries.png"), width = 6, height = 7, units = "in", res = 600)
+print(nbs_sbw_timeseries + akfishcondition::theme_blue_strip())
+dev.off()
+
+# NBS anomaly timeseries
+nbs_anomaly_timeseries_png <- akfishcondition::plot_two_timeseries(
+  x_1 = akfishcondition::NBS_INDICATOR$FULL_REGION,
+  x_2 = akfishcondition::NBS_INDICATOR$FULL_REGION,
+  region = region,
+  series_name_1 = "Length-weight residual (Historical)",
+  series_name_2 = "VAST relative condition (New)",
+  var_y_name_1 = "mean_resid",
+  var_x_name_1 = "year",
+  var_y_name_2 = "vast_relative_condition",
+  var_x_name_2 = "year",
+  fill_colors = c("#001743", "#0085CA"),
+  format_for = "png"
+  )
+
+png(here::here("plots", region, "NBS_VAST_VS_SBW_timeseries.png"), width = 6, height = 7, units = "in", res = 600)
+print(nbs_anomaly_timeseries_png + theme_blue_strip() + theme(legend.position = "bottom"))
+dev.off()
+```
+
+**Factors influencing observed trends**: Temperature appears to influence morphological condition of several species in the EBS and NBS, so near-average cold pool extent and water temperatures in 2022 likely played a role in the near-average condition (within 1 S.D. of the mean) for most species. Historically, particularly cold years tend to correspond with negative condition, while particularly warm years tend to correspond to positive condition. For example, water temperatures were particularly cold during the 1999 Bering Sea survey, a year in which negative condition was observed for all species that data were available. In addition, spatiotemporal factor analyses suggest the morphometric condition of age-7 walleye pollock is strongly correlated with cold pool extent in the EBS [@Gruss2021]. In recent years, warm temperatures across the Bering Sea shelf, since the record low seasonal sea ice extent in 2017–2018 and historical cold pool area minimum in 2018 [@Stabeno2019a], may have influenced the positive trend in the condition of several species from 2016 to 2019.
+
+Although warmer temperatures may increase growth rates if there is adequate prey to offset temperature-dependent increases in metabolic demand, growth rates may also decline if prey resources are insufficient to offset temperature-dependent increases in metabolic demand. The influence of temperature on growth rates depends on the physiology of predator species, prey availability, and the adaptive capacity of predators to respond to environmental change through migration, changes in behavior, and acclimatization. For example, elevated temperatures during the 2014–2016 marine heatwave in the Gulf of Alaska led to lower growth rates of Pacific cod and lower condition because available prey resources did not make up for increased metabolic demand [@Barbeaux2020]. 
+
+Other factors that could affect morphological condition include survey timing, stomach fullness, fish movement patterns, sex, and environmental conditions [@Froese2006]. The starting date of annual length-weight data collections has varied from late May to early June and ended in late July-early August in the EBS, and mid-August in the NBS. Although we account for some of this variation by using spatially-varying coefficients in the length-weight relationship, variation in condition could relate to variation in the timing of sample collection within survey strata. Survey timing can be further compounded by seasonal fluctuations in reproductive condition with the buildup and depletion of energy stores [@Wuenschel2019]. Another consideration is that fish weights sampled at sea include gut content weights, so variation in gut fullness may influence weight measurements. Since feeding conditions vary over space and time, prey consumption rates and the proportion of total body weight attributable to gut contents may be an important factor influencing the length-weight residuals. 
+
+Finally, although the condition indicators characterize temporal variation in morphometric condition for important fish species in the EBS and NBS they do not inform the mechanisms or processes behind the observed patterns.
+
+**Implications**: Fish morphometric condition can be considered an indicator of ecosystem productivity with implications for fish survival, maturity, and reproduction. For example, in Prince William Sound, the pre-winter condition of herring may determine their overwinter survival [@Paul1999], differences in feeding conditions have been linked to differences in morphometric condition of pink salmon in Prince William Sound [@Boldt2004], variation in morphometric condition has been linked to variation in maturity of sablefish [@Rodgveller2019], and lower morphometric condition of Pacific cod was associated with higher mortality and lower growth rates during the 2014–2016 marine heat wave in the Gulf of Alaska [@Barbeaux2020]. Thus, the condition of EBS and NBS groundfishes may provide insight into ecosystem productivity as well as fish survival, demographic status, and population health. However, survivorship is likely affected by many factors not examined here. 
+
+Another important considerations is that fish condition was computed for all sizes of fishes combined, except in the case of walleye pollock. Examining condition of early juvenile stage fishes not yet recruited to the fishery, or the condition of adult fishes separately, could provide greater insight into the value of length-weight residuals as an indicator of individual health or survivorship [@Froese2006], particularly since juvenile and adult walleye pollock exhibited opposite trends in condition in the EBS this year.
+
+The near-average  condition for most species in 2022 may be related to the near historical average temperatures observed. However, trends in recent years such as prolonged warmer water temperatures following the marine heat wave of 2014-16 [@Bond2015] and reduced sea ice and cold pool areal extent in the eastern Bering Sea [@Stabeno2019a] may affect fish condition in ways that have yet to be determined. As we continue to add years of length-weight data and expand our knowledge of relationships between condition, growth, production, survival, and the ecosystem, these data may increase our understanding of the health of fish populations in the EBS and NBS.
+
+ 
+**Research priorities**: The new model-based condition indicator (VAST relative condition) will be further explored for biases and sensitivities to data, model structure, and parameterization. Research is also being planned and implemented across multiple AFSC programs to explore standardization of statistical methods for calculating condition indicators, and to examine relationships among putatively similar indicators of fish condition (i.e., morphometric, bioenergetic, physiological). Finally, we plan to explore variation in condition indices between life history stages alongside density dependence and climate change effects [@Bolin2021; @Oke2022].
+
+
+## References
