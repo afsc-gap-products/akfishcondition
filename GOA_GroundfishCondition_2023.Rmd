@@ -72,6 +72,7 @@ fig2a  <- plot_anomaly_timeseries(x = dplyr::filter(GOA_INDICATOR$FULL_REGION,
                         var_y_se_name = "se_wt_resid",
                         var_x_name = "year",
                         y_title = "Length-weight residual (ln(g))",
+                        plot_type = "box",
                         format_for = "rmd")
 
 fig2a_png  <- plot_anomaly_timeseries(x = dplyr::filter(GOA_INDICATOR$FULL_REGION, tolower(common_name) %in% group_1),
@@ -81,6 +82,7 @@ fig2a_png  <- plot_anomaly_timeseries(x = dplyr::filter(GOA_INDICATOR$FULL_REGIO
                         var_y_se_name = "se_wt_resid",
                         var_x_name = "year",
                         y_title = "Length-weight residual (ln(g))",
+                        plot_type = "box",
                         format_for = "png")
 
 print(fig2a + theme_condition_index())
@@ -94,6 +96,7 @@ fig2b  <- plot_anomaly_timeseries(x = dplyr::filter(GOA_INDICATOR$FULL_REGION, t
                         var_y_se_name = "se_wt_resid",
                         var_x_name = "year",
                         y_title = "Length-weight residual (ln(g))",
+                        plot_type = "box",
                         format_for = "rmd")
 
 fig2b_png  <- plot_anomaly_timeseries(x = dplyr::filter(GOA_INDICATOR$FULL_REGION, tolower(common_name) %in% group_2),
@@ -103,6 +106,7 @@ fig2b_png  <- plot_anomaly_timeseries(x = dplyr::filter(GOA_INDICATOR$FULL_REGIO
                         var_y_se_name = "se_wt_resid",
                         var_x_name = "year",
                         y_title = "Length-weight residual (ln(g))",
+                        plot_type = "box",
                         format_for = "png")
 
 print(fig2b + theme_condition_index())

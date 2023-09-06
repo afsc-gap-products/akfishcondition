@@ -157,8 +157,8 @@ dev.off()
 fig5 <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
                         region = "BS", 
                         fill_color = "#54ADDB", 
-                        var_y_name = "mean_resid", 
-                        var_y_se_name = "se",
+                        var_y_name = "mean_wt_resid", 
+                        var_y_se_name = "se_wt_resid",
                         var_x_name = "year",
                         y_title = "Length-weight residual (ln(g))",
                         plot_type = "box",
@@ -167,8 +167,8 @@ fig5 <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
 fig5_png <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
                         region = "BS", 
                         fill_color = "#54ADDB", 
-                        var_y_name = "mean_resid", 
-                        var_y_se_name = "se",
+                        var_y_name = "mean_wt_resid", 
+                        var_y_se_name = "se_wt_resid",
                         var_x_name = "year",
                         y_title = "Length-weight residual (ln(g))",
                         plot_type = "box",
@@ -190,8 +190,8 @@ In the NBS in 2022, VAST relative condition of all species examined, including l
 fig6  <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
                         region = "BS",
                         fill_color = "#54ADDB",
-                        var_y_name = "mean_resid", 
-                        var_y_se_name = "se",
+                        var_y_name = "mean_wt_resid", 
+                        var_y_se_name = "se_wt_resid",
                         var_x_name = "year",
                         y_title = "Length-weight residual (ln(g))",
                         plot_type = "box",
@@ -200,8 +200,8 @@ fig6  <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
 fig6_png  <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
                         region = "BS",
                         fill_color = "#54ADDB",
-                        var_y_name = "mean_resid", 
-                        var_y_se_name = "se",
+                        var_y_name = "mean_wt_resid", 
+                        var_y_se_name = "se_wt_resid",
                         var_x_name = "year",
                         y_title = "Length-weight residual (ln(g))",
                         plot_type = "box",
@@ -267,8 +267,8 @@ akfishcondition::plot_species_stratum_bar(x = EBS_INDICATOR$STRATUM,
 nbs_sbw_timeseries <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
                         region = region, 
                         fill_color = "#0085CA", 
-                        var_y_name = "mean_resid", 
-                        var_y_se_name = "se",
+                        var_y_name = "mean_wt_resid", 
+                        var_y_se_name = "se_wt_resid",
                         var_x_name = "year",
                         y_title = "Length-weight residual (ln(g))",
                         plot_type = "box",
@@ -278,6 +278,33 @@ nbs_sbw_timeseries <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
 png(here::here("plots", region, "NBS_SBW_timeseries.png"), width = 6, height = 7, units = "in", res = 600)
 print(nbs_sbw_timeseries + akfishcondition::theme_blue_strip())
 dev.off()
+
+# NBS stratum-biomass weighted residual stratum stacked bar plots
+nbs_stacked_bar <- akfishcondition::plot_stratum_stacked_bar(x = NBS_INDICATOR$STRATUM, 
+                                                             region = region, 
+                                                             var_x_name = "year", 
+                                                             var_y_name = "stratum_resid_mean", 
+                                                             y_title = "Length-weight residual (ln(g))",
+                                                             var_group_name = "stratum",
+                                                             fill_title = "Stratum",
+                                                             fill_palette = "PuBu")
+
+png(here::here("plots", region, "NBS_SBW_stratum_stacked_bar.png"), width = 6, height = 7, units = "in", res = 600)
+print(nbs_stacked_bar + theme_blue_strip() + theme(legend.position = "right", legend.title = element_text(size = 9)))
+dev.off()
+
+
+# NBS single species stratum plots
+akfishcondition::plot_species_stratum_bar(x = NBS_INDICATOR$STRATUM, 
+                                          region = "NBS", 
+                                          var_x_name = "year", 
+                                          var_y_name = "stratum_resid_mean", 
+                                          var_y_se_name = "stratum_resid_se",
+                                          y_title = "Length-weight residual (ln(g))",
+                                          var_group_name = "stratum",
+                                          fill_title = "Stratum",
+                                          fill_palette = "PuBu",
+                                          write_plot = TRUE)
 
 ```
 
