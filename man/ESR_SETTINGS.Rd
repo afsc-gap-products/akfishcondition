@@ -18,6 +18,7 @@ A list containing two data.frames (list of species for each region, VAST setting
            \item{NBS}{: Is the NBS indicator used in the Bering Sea Ecosystem Status Report?}
          }
          }
+     \itemize{
        \item VAST_SETTINGS (data.frame): Settings to use for VAST
          \itemize{
           \item{species_code}{: RACE/GAP species code}
@@ -29,6 +30,7 @@ A list containing two data.frames (list of species for each region, VAST setting
           \item{fl_min}{: Minimum fork length to include in millimeters}
           \item{fl_max}{: Maximum fork length to include in millimeters}
           \item{n_knots}{: Number of vertices ("knots") to use to construct the SPDE mesh}
+         }
          }
     }
 }
