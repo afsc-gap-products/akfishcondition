@@ -3,7 +3,7 @@
 \docType{data}
 \name{GOA_INDICATOR}
 \alias{GOA_INDICATOR}
-\title{Gulf of Alaska (1984-2021)}
+\title{Gulf of Alaska (1990-2021)}
 \format{
 A list containing two data frames (indicator for the full region, indicator by stratum) and a character vector.
 \describe{
