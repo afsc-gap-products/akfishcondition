@@ -36,7 +36,7 @@ akfishcondition:::make_data_summary(dat_csv = here::here("data", "ai_all_species
 akfishcondition:::make_data_summary(dat_csv = here::here("data", "goa_all_species.csv"), region = "GOA")
 
 ESR_SETTINGS <- list(ESR_SPECIES = data.frame(common_name = c(
-    "walleye pollock", "walleye pollock (100–250 mm)", "walleye pollock (>250 mm)", "Pacific cod", 
+    "walleye pollock", "walleye pollock (100-250 mm)", "walleye pollock (>250 mm)", "Pacific cod", 
     "Pacific cod (juvenile)", "Pacific cod (adult)", "Atka mackerel", "arrowtooth flounder", 
     "flathead sole", "yellowfin sole", "northern rock sole", "southern rock sole", "Alaska plaice",
     "Pacific ocean perch", "dusky rockfish", "northern rockfish", "Dover sole", "rex sole", "shortraker rockfish", "rougheye rockfish", "blackspotted rockfish", "sharpchin rockfish"),

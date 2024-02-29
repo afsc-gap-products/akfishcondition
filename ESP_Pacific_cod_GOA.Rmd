@@ -1,0 +1,105 @@
+---
+title: Morphometric condition of Gulf of Alaska Pacific cod for 2023 Ecosystem and Socioeconomic Profile
+author: 
+- affiliation: RACE
+  description: Research Fisheries Biologist
+  email: Sean.Rohan@NOAA.gov
+  name: Sean Rohan
+output: word_document
+fontsize: 12pt
+bibliography: EBS_references.bib
+csl: fish-and-fisheries.csl
+addr: 
+  l1: 7600 Sand Point Way NE
+  l2: NMFS RACE Division, Groundfish Assessment Program
+  l3: Seattle, WA 98115
+---
+
+# Gulf of Alaska Pacific cod
+
+## Adults (&geq;42 cm FL)
+
+*Status and Trends:*  In 2023, the condition of adult Pacific cod in the GOA was neutral (within one standard deviation of the time series mean), which continues the trend of neutral morphometric condition observed since 2017.
+
+## Juveniles (<42 cm FL)
+
+*Status and Trends:* In 2023, the condition of juvenile Pacific cod in the EBS was neutral (within one standard deviation of the time series mean), which continues the trend of neutral morphometric condition observed since 2019.
+
+## Influential Factors
+
+*Influential Factors:* Many factors contribute to variation in morphometric condition so it is unclear which specific factors contributed to neutral condition of adult and juvenile Pacific cod in the GOA in 2023. Factors that may contribute to variation in morphometric condition include environmental conditions that affect prey quality and temperature-dependent metabolic rates, survey timing, stomach fullness of individual fish, fish migration patterns, and the distribution of samples within survey strata. 
+
+## Implications
+
+In the Gulf of Alaska, elevated temperatures during the 2014–2016 marine heatwave were associated with lower growth rates of Pacific cod and lower morphometric condition in 2015 (adults and juveniles combined), likely because diminished prey resources during the heatwave were insufficient to make up for increased metabolic demand [@Barbeaux2020]. Additional information about the groundfish morphometric condition indicator and factors that can influence estimates of morphometric condition are described in the GOA Groundfish Morphometric Condition contribution in the 2023 Gulf of Alaska Ecosystem Status Report (O'Leary and Rohan, _In prep_).
+
+
+```{r setup_data, include=FALSE}
+library(akfishcondition)
+
+akfishcondition:::PCOD_ESP$FULL_REGION_GOA %>%
+  dplyr::filter(common_name == "Pacific cod (juvenile)") %>%
+  dplyr::mutate(indicator_name = "Summer_Pacific_Cod_Condition_Juvenile_GOA_Survey",
+                data_value = mean_wt_resid) %>%
+  dplyr::select(year, indicator_name, data_value) %>%
+  write.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Juvenile_GOA_Survey.csv"),
+            row.names = FALSE)
+
+akfishcondition:::PCOD_ESP$FULL_REGION_GOA %>%
+  dplyr::filter(common_name == "Pacific cod (adult)") %>%
+  dplyr::mutate(indicator_name = "Summer_Pacific_Cod_Condition_Adult_GOA_Survey",
+                data_value = mean_wt_resid) %>%
+  dplyr::select(year, indicator_name, data_value) %>%
+  write.csv(file = here::here("output", "ESP_Summer_Pacific_Cod_Condition_Adult_GOA_Survey.csv"),
+            row.names = FALSE)
+
+print(paste0("Last Update: ", akfishcondition:::EBS_INDICATOR$LAST_UPDATE))
+```
+
+```{r ebs_anomaly, include=TRUE, echo=FALSE, fig.height=6,fig.width=12, fig.cap="\\label{fig:figs}Figure 1. Stratum-biomass weighted morphometric condition of adult and juvenile Pacific cod collected during AFSC/RACE GAP standard summer bottom trawl surveys of the eastern Bering Sea shelf, 1984 to 2023. The dash in the blue boxes denote the mean for that year, the blue box denotes one standard error, and the lines on the boxes denote two standard error. Horizontal lines on each plot represent the historical mean, dashed lines denote one standard deviation, and dotted lines denote two standard deviations.",  message=FALSE, warning=FALSE}
+fig1_rmd <- plot_anomaly_timeseries(x = akfishcondition::PCOD_ESP$FULL_REGION_GOA,
+                              region = "GOA",
+                              fill_color = "#0085CA",
+                              var_y_name = "mean_wt_resid",
+                              var_y_se_name = "se_wt_resid",
+                              var_x_name = "year",
+                              y_title = "Length-weight residual (ln(g))",
+                              plot_type = "box",
+                              format_for = "rmd")
+
+fig1_png <- plot_anomaly_timeseries(x = akfishcondition::PCOD_ESP$FULL_REGION_GOA,
+                              region = "GOA",
+                              fill_color = "#0085CA",
+                              var_y_name = "mean_wt_resid",
+                              var_y_se_name = "se_wt_resid",
+                              var_x_name = "year",
+                              y_title = "Length-weight residual (ln(g))",
+                              plot_type = "box",
+                              format_for = "png")
+
+print(fig1_rmd + theme_condition_index())
+```
+
+
+```{r ebs_anomaly_png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+png(here::here("plots", "GOA", "ESP_GOA_PCOD_condition.png"),width=6,height=3,units="in",res=600)
+print(fig1_png + theme_blue_strip())
+dev.off()
+```
+
+
+```{r make_txt, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+  con <- file(here::here("output", "ESP_GOA_PCOD_Adult.txt"))
+  
+  writeLines(text = paste(akfishcondition::PCOD_ESP$FULL_REGION_GOA$mean_wt_resid[akfishcondition::PCOD_ESP$FULL_REGION_GOA$common_name == "Pacific cod (adult)"], collapse = ", "), 
+             con = con)
+  close(con)
+  
+    con <- file(here::here("output", "ESP_GOA_PCOD_Juvenile.txt"))
+  
+  writeLines(text = paste(akfishcondition::PCOD_ESP$FULL_REGION_GOA$mean_wt_resid[akfishcondition::PCOD_ESP$FULL_REGION_GOA$common_name == "Pacific cod (juvenile)"], collapse = ", "), 
+             con = con)
+  close(con)
+```
+
+# References
