@@ -1,0 +1,360 @@
+---
+title: Eastern and Northern Bering Sea Groundfish Condition
+author: 
+- affiliation: RACE
+  description: Research Fisheries Biologist
+  email: Sean.Rohan@NOAA.gov
+  name: Sean Rohan
+output: word_document
+fontsize: 12pt
+bibliography: CopyOfEBS_references.bib
+csl: fish-and-fisheries.csl
+addr: 
+  l1: 7600 Sand Point Way NE
+  l2: NMFS RACE Division, Groundfish Assessment Program
+  l3: Seattle, WA 98115
+---
+
+```{r setup, include=FALSE}
+# Load packages
+library(knitr)
+library(akfishcondition)
+
+region <- "BS"
+
+make_map <- TRUE
+pkg_version <- packageVersion("akfishcondition")
+
+# Unzip map files
+unzip(system.file("extdata/2022_ESR.zip", package = "akfishcondition"))
+
+if(!dir.exists(here::here("plots", region))) {
+  dir.create(here::here("plots", region), recursive = TRUE)
+}
+
+if(make_map){
+  library(akgfmaps)
+  
+  ebs_layers <- akgfmaps::get_base_layers(select.region = "ebs",
+                                          set.crs = "EPSG:3338")
+  
+  
+  # Simple version
+  survey_strata <- ebs_layers$survey.strata %>%
+    dplyr::mutate(agg_stratum = Stratum) %>%
+    dplyr::mutate(agg_stratum = replace(agg_stratum, agg_stratum %in% c(31,32), 30),
+                  agg_stratum = replace(agg_stratum, agg_stratum %in% c(41,42,43), 40),
+                  agg_stratum = replace(agg_stratum, agg_stratum %in% c(61,62), 60),
+                  SURVEY = replace(SURVEY, SURVEY == "EBS_SHELF",  "EBS Shelf"), 
+                  SURVEY = replace(SURVEY, SURVEY == "NBS_SHELF", "NBS")) %>% 
+    dplyr::group_by(agg_stratum, SURVEY) %>% 
+    dplyr::summarise()
+  
+  plot_ebs_nbs_survey_stations <- ggplot() +
+    geom_sf(data = survey_strata,
+            aes(fill = SURVEY),
+            color = "black") +
+    geom_sf_text(data = sf::st_centroid(survey_strata), 
+                 aes(label = agg_stratum),
+                 color = "black",
+                 size = rel(6)) +
+    geom_sf(data = sf::st_centroid(ebs_layers$survey.grid %>%
+                                     dplyr::mutate(lab = "Station Location")),
+            aes(shape = lab)) +
+    ggplot2::geom_sf(data = ebs_layers$akland, 
+                     fill = "grey85", 
+                     color = "black") +
+    geom_sf(data = ebs_layers$graticule,
+            size = 0.2,
+            alpha = 0.5) +
+    ggplot2::coord_sf(xlim = ebs_layers$plot.boundary$x, 
+                      ylim = ebs_layers$plot.boundary$y) +
+    ggplot2::scale_x_continuous(name = "Longitude", 
+                                breaks = ebs_layers$lon.breaks) + 
+    ggplot2::scale_y_continuous(name = "Latitude", 
+                                breaks = ebs_layers$lat.breaks) +
+    scale_shape_manual(values = "x") +
+    scale_fill_manual(values = c("#0085CA", "#54ADDB")) +
+    theme_bw() +
+    ggplot2::theme(axis.title = element_blank(),
+                   axis.text = element_text(color = "black"),
+                   axis.ticks = element_line(color = "black"),
+                   panel.border = element_rect(color = "black", fill = NA),
+                   panel.grid = element_blank(),
+                   panel.background = element_rect(color = "black", fill = "white"),
+                   legend.title = element_blank(),
+                   legend.margin = margin(-12,0,0,0),
+                   legend.position = c(0.2,0.1),
+                   legend.background = element_blank())
+  
+  ragg::agg_png(filename = here::here("plots", region, "EBS_NBS_survey_area.png"), width = 5, height = 5, units = "in", res = 600)
+  print(plot_ebs_nbs_survey_stations)
+  dev.off()
+}
+
+```
+
+Contributed by Bianca Prohaska^1^ and Sean Rohan^1^
+
+^1^Resource Assessment and Conservation Engineering Division, Alaska Fisheries Science Center, National Marine Fisheries Service, NOAA  
+**Contact**: sean.rohan@noaa.gov
+**Last updated**:  October 2023
+
+**Description of Indicator**: Length-weight residuals represent how heavy a fish is per unit body length and are an indicator of somatic growth variability [@Brodeur2004]. Therefore, length-weight residuals can be considered indicators of prey availability, growth, general health, and habitat condition [@Blackwell2000; @Froese2006]. Positive length-weight residuals indicate better condition (i.e., heavier per unit length) and negative residuals indicate poorer condition (i.e., lighter per unit length) [@Froese2006]. Fish condition calculated in this way reflects realized outcomes of intrinsic and extrinsic processes that affect fish growth which can have implications for biological productivity through direct effects on growth and indirect effects on demographic processes such as, reproduction and mortality (e.g., [@Rodgveller2019; @Barbeaux2020]).
+
+```{r map, include=TRUE,out.width="200%",fig.cap="\\label{fig:figs}Figure 1. AFSC/RACE GAP summer bottom trawl survey strata (10-90) and station locations (x) in the eastern Bering Sea and northern Bering Sea. ",  echo=FALSE}
+  knitr::include_graphics(path = here::here("plots", region, "ebs_nbs_survey_area.png"))
+```
+
+The groundfish morphometric condition indicator is calculated from paired fork lengths (mm) and weights (g) of individual fishes that were collected during bottom trawl surveys of the eastern Bering Sea (EBS) shelf and northern Bering Sea (NBS), which were conducted by the Alaska Fisheries Science Center’s Resource Assessment and Conservation Engineering (AFSC/RACE) Groundfish Assessment Program (GAP). Fish condition analyses were applied to walleye pollock (_Gadus chalcogrammus_), Pacific cod (_Gadus macrocephalus_), arrowtooth flounder (_Atheresthes stomias_), yellowfin sole (_Limanda aspera_), flathead sole (_Hippoglossoides elassodon_), northern rock sole (_Lepidopsetta polyxystra_), and Alaska plaice (_Pleuronectes quadrituberculatus_) collected in bottom trawls at standard survey stations (Figure 1). For these analyses and results, survey strata 31 and 32 were combined as stratum 30; strata 41, 42, and 43 were combined as stratum 40; and strata 61 and 62 were combined as stratum 60. Northwest survey strata 82 and 90 were excluded from these analyses.
+
+To calculate indicators, length-weight relationships were estimated from linear regression models based on a log-transformation of the exponential growth relationship, _W_ = _aL_^_b_^, where _W_ is weight (g) and _L_ is fork length (mm) for all areas for the period 1997–2023 (EBS: 1997–2023, NBS: 2010, 2017, 2019, 2021-2023). Unique  intercepts (*a*) and slopes (*b*) were estimated for each survey stratum, sex, and interaction between stratum and sex to account for sexual dimorphism and spatial-temporal variation in growth and bottom trawl survey sampling. Length-weight relationships for 100–250 mm fork length walleye pollock (corresponding with ages 1–2 years) were calculated separately from adult walleye pollock (> 250 mm). Residuals for individual fish were obtained by subtracting observed weights from bias-corrected weights-at-length that were estimated from regression models. Length-weight residuals from each stratum were aggregated and weighted proportionally to total biomass in each stratum from area-swept expansion of mean bottom-trawl survey catch per unit effort (CPUE; i.e., design-based stratum biomass estimates). Variation in fish condition was evaluated by comparing average length-weight residuals among years. To minimize the influence of unrepresentative samples on indicator calculations, combinations of species, stratum, and year with a sample size <10 were used to fit length-weight regressions, but were excluded from calculating length-weight residuals for both the EBS and NBS. Morphometric condition indicator time series, code for calculating the indicators, and figures showing results for individual species are available through the *akfishcondition* R package and GitHub repository (https://github.com/afsc-gap-products/akfishcondition).
+
+**Methodological Changes**: In Groundfish Morphometric Condition Indicator contributions to the 2022 Eastern Bering Sea and Aleutians Islands Ecosystem Status Reports, historical stratum-biomass weighted residuals condition indicators were presented alongside condition indicators that were calculated using the R package VAST following methods that were presented for select GOA species during the Spring Preview of Ecological and Economic Conditions (PEEC) in May 2020. The authors noted there were strong correlations between VAST and stratum-biomass weighted condition indicators for most EBS and NBS species (r = 0.79–0.98). The authors received the following feedback about the change from the BSAI Groundfish Plan Team meeting during their November 2022 meeting:
+
+*"The Team discussed the revised condition indices that now use a different, VAST-based condition index, but felt additional methodology regarding this transition was needed. The Team recommended a short presentation next September to the Team to review the methods and tradeoffs in approaches. The Team encouraged collaboration with the NMFS longline survey team to develop analogous VAST indices."* 
+
+Based on feedback from the Plan Team, staff limitations, and the lack of a clear path to transition condition indicators for longline survey species to VAST, analyses supporting the transition to VAST were not conducted during 2023. Therefore, the 2023 condition indicator was calculated from statum-biomass weighted residuals of length-weight regressions.
+
+Stratum-biomass weighted residuals for NBS strata are presented for the first time in 2023. NBS length-weight samples were previously pooled across strata to calculate region-wide length-weight residuals because of the lack of samples from regular survey sampling prior to 2017. The authors have opted to present stratum-biomass weighted residuals for the NBS in 2023 because of the accumulation of regular length-weight samples in recent years.
+
+**Status and Trends**: Fish condition, indicated by length-weight residuals, has varied over time for all species examined in the EBS (Figure 2 & 3). In 2023 a downward trend in condition from 2022 was observed for all species in the EBS, with large walleye pollock (>250 mm), and arrowtooth flounder decreasing since 2019; however, all species were still within one standard deviation of the mean except for large walleye pollock (>250 mm) which was negative but within two standard deviations of the mean (Figure 2). Large walleye pollock (>250 mm) exhibited the second worst condition observed over the full time series with the lowest observed condition occurring in 1999 (Figure 2). In 2019, an upward trend in condition was observed for most species relative to 2017–2018 with positive weighted length-weight residuals relative to historical averages for large walleye pollock (>250 mm), northern rock sole, yellowfin sole, arrowtooth flounder, and Alaska plaice; however, in 2021 condition had a downward trend in most species examined. In 2022 in the EBS, conditions were near the historical mean, or positive for all species examined except for arrowtooth flounder and large walleye pollock (>250 mm). While their conditions were below average, the mean for both groups fell within one standard deviation of the historical mean (Figure 2).
+
+In the EBS in 2023, condition was negative for large walleye pollock (>250 mm), arrowtooth flounder, and flathead sole across most strata (Figure 3). In 2023, there was a divergence in small walleye pollock (100-250 mm) condition among strata with more positive condition observed on the inner shelf (Stratum 10), and more negative condition observed on the middle shelf (Stratum 30). 
+
+```{r figure 2 grid, include=TRUE, echo=FALSE, fig.height=14,fig.width=12,fig.cap="\\label{fig:figs}Figure 2. Morphometric condition of groundfish species collected during AFSC/RACE GAP standard summer bottom trawl surveys of the eastern Bering Sea shelf (1999 to 2023) based on residuals of length-weight regressions. The dash in the blue boxes denote the mean for that year, the box denotes one standard error, and the lines on the boxes denote two standard errors. Lines on each plot represent the historical mean, dashed lines denote one standard deviation, and dotted lines denote two standard deviations.",  message=FALSE, warning=FALSE}
+# Set factor levels for plotting order
+fig2  <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION,
+                        region = "BS",
+                        fill_color = "#0085CA",
+                        var_y_name = "mean_wt_resid",
+                        var_y_se_name = "se_wt_resid",
+                        var_x_name = "year",
+                        y_title = "Length-weight residual (ln(g))",
+                        plot_type = "box",
+                        format_for = "rmd")
+
+fig2_png  <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION,
+                        region = "BS",
+                        fill_color = "#0085CA",
+                        var_y_name = "mean_wt_resid",
+                        var_y_se_name = "se_wt_resid",
+                        var_x_name = "year",
+                        y_title = "Length-weight residual (ln(g))",
+                        plot_type = "box",
+                        format_for = "png")
+
+print(fig2 + theme_condition_index())
+```
+
+```{r figure 2 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+png(here::here("plots", region, "EBS_condition.png"),width=6,height=7,units="in",res=600)
+print(fig2_png + theme_blue_strip())
+dev.off()
+```
+
+```{r figure 3 grid, include=TRUE, echo=FALSE, fig.height=14,fig.width=12,fig.cap="\\label{fig:figs}Figure 3. Length-weight residuals by survey stratum (10-60) for seven eastern Bering Sea shelf groundfish species and age 1–2 walleye pollock (100–250 mm) sampled in the AFSC/RACE GAP standard summer bottom trawl survey, 1999-2023. Length-weight residuals are not weighted by stratum biomass.",  message=FALSE, warning=FALSE}
+# EBS stratum-biomass weighted residual stratum stacked bar plots
+fig3 <- akfishcondition::plot_stratum_stacked_bar(x = EBS_INDICATOR$STRATUM, 
+                                                         region = region, 
+                                                         var_x_name = "year", 
+                                                         var_y_name = "stratum_resid_mean", 
+                                                         y_title = "Length-weight residual (ln(g))",
+                                                         var_group_name = "stratum",
+                                                         fill_title = "Stratum",
+                                                         fill_palette = "BrBG")
+                                                  
+
+fig3_png <- akfishcondition::plot_stratum_stacked_bar(x = EBS_INDICATOR$STRATUM, 
+                                                         region = region, 
+                                                         var_x_name = "year", 
+                                                         var_y_name = "stratum_resid_mean", 
+                                                         y_title = "Length-weight residual (ln(g))",
+                                                         var_group_name = "stratum",
+                                                         fill_title = "Stratum",
+                                                         fill_palette = "BrBG")
+                                                         
+print(fig3 + theme_condition_index()+ theme(strip.text = element_text(size = 20)))
+```
+
+```{r figure 3 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+png(here::here("plots", region, "EBS_SBW_stratum_stacked_bar.png"), width = 6, height = 7, units = "in", res = 600)
+print(fig3_png + theme_blue_strip() + theme(legend.position = "right", legend.title = element_text(size = 9)))
+dev.off()
+```
+
+In the NBS in 2023, positive condition was observed for large walleye pollock (>250 mm), which has been increasing since 2021. The remaining species exhibited near-average condition in the NBS in 2023, except for yellowfin sole which exhibited negative condition, and has been declining since 2019 (Figure 4).
+
+In 2023 large walleye pollock (>250 mm) condition was positive in all NBS strata, whereas condition was previously negative in all strata from 2021-2022 (Figure 5). Pacific cod, small walleye pollock (100-250 mm), Alaska plaice, and yellowfin sole condition have been consistently negative across all strata since 2021, with a notable exception in 2023 of positive condition for Pacific cod in the inner southern NBS shelf, and Alaska plaice in the northern inner NBS shelf and Norton Sound (Figure 5).
+
+```{r figure 4 grid, include=TRUE, echo=FALSE, fig.height=14,fig.width=12,fig.cap="\\label{fig:figs}Figure 4. Morphometric condition of groundfish species collected during AFSC/RACE GAP standard summer bottom trawl surveys of the northern Bering Sea shelf (2010, 2017, 2019 and 2021-2023) based on residuals of length-weight regressions. The dash in the blue boxes denote the mean for that year, the box denotes one standard error, and the lines on the boxes denote two standard errors. Lines on each plot represent the historical mean, dashed lines denote one standard deviation, and dotted lines denote two standard deviations.",  message=FALSE, warning=FALSE}
+# Set factor levels for plotting order
+fig4 <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
+                        region = "BS", 
+                        fill_color = "#54ADDB", 
+                        var_y_name = "mean_wt_resid", 
+                        var_y_se_name = "se_wt_resid",
+                        var_x_name = "year",
+                        y_title = "Length-weight residual (ln(g))",
+                        plot_type = "box",
+                        format_for = "rmd")
+
+fig4_png <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
+                        region = "BS", 
+                        fill_color = "#54ADDB", 
+                        var_y_name = "mean_wt_resid", 
+                        var_y_se_name = "se_wt_resid",
+                        var_x_name = "year",
+                        y_title = "Length-weight residual (ln(g))",
+                        plot_type = "box",
+                        format_for = "png")
+
+print(fig4 + theme_condition_index())
+
+```
+
+```{r figure 4 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+png(here::here("plots", region, "NBS_condition.png"), width=6, height=7, units="in", res=600)
+print(fig4_png + theme_blue_strip())
+dev.off()
+```
+
+```{r figure 5 grid, include=TRUE, echo=FALSE, fig.height=14,fig.width=12,fig.cap="\\label{fig:figs}Figure 5. Length-weight residuals by survey stratum (70, 71 and 81) for four northern Bering Sea shelf groundfish species and age 1–2 walleye pollock (100–250 mm) sampled in the AFSC/RACE GAP standard summer bottom trawl survey during 2010, 2017, 2019 and 2021-2023. Length-weight residuals are not weighted by stratum biomass.",  message=FALSE, warning=FALSE}
+# NBS stratum-biomass weighted residual stratum stacked bar plots
+fig5 <- akfishcondition::plot_stratum_stacked_bar(x = NBS_INDICATOR$STRATUM, 
+                                                             region = region, 
+                                                             var_x_name = "year", 
+                                                             var_y_name = "stratum_resid_mean", 
+                                                             y_title = "Length-weight residual (ln(g))",
+                                                             var_group_name = "stratum",
+                                                             fill_title = "Stratum",
+                                                             fill_palette = "PuBu")
+
+fig5_png <- akfishcondition::plot_stratum_stacked_bar(x = NBS_INDICATOR$STRATUM, 
+                                                             region = region, 
+                                                             var_x_name = "year", 
+                                                             var_y_name = "stratum_resid_mean", 
+                                                             y_title = "Length-weight residual (ln(g))",
+                                                             var_group_name = "stratum",
+                                                             fill_title = "Stratum",
+                                                             fill_palette = "PuBu")
+
+print(fig5 + theme_condition_index()+ theme(strip.text = element_text(size = 20)))
+
+```
+
+```{r figure 5 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+png(here::here("plots", region, "NBS_SBW_stratum_stacked_bar.png"), width = 6, height = 7, units = "in", res = 600)
+print(fig5_png + theme_blue_strip() + theme(legend.position = "right", legend.title = element_text(size = 9)))
+dev.off()
+```
+
+
+
+```{r sbw_legacy_plots, include=FALSE, message=FALSE, warning=FALSE}
+# # EBS stratum-biomass weighted residual time series anomaly
+# ebs_sbw_timeseries <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION,
+#                         region = region, 
+#                         fill_color = "#0085CA", 
+#                         var_y_name = "mean_wt_resid", 
+#                         var_y_se_name = "se_wt_resid",
+#                         var_x_name = "year",
+#                         y_title = "Length-weight residual (ln(g))",
+#                         plot_type = "box",
+#                         format_for = "png",
+#                         set_intercept = 0)
+# 
+# png(here::here("plots", region, "EBS_SBW_timeseries.png"), width = 6, height = 7, units = "in", res = 600)
+# print(ebs_sbw_timeseries + akfishcondition::theme_blue_strip())
+# dev.off()
+# 
+# # EBS stratum-biomass weighted residual stratum stacked bar plots
+# ebs_stacked_bar <- akfishcondition::plot_stratum_stacked_bar(x = EBS_INDICATOR$STRATUM, 
+#                                                          region = region, 
+#                                                          var_x_name = "year", 
+#                                                          var_y_name = "stratum_resid_mean", 
+#                                                          y_title = "Length-weight residual (ln(g))",
+#                                                          var_group_name = "stratum",
+#                                                          fill_title = "Stratum",
+#                                                          fill_palette = "BrBG")
+# 
+# png(here::here("plots", region, "EBS_SBW_stratum_stacked_bar.png"), width = 6, height = 7, units = "in", res = 600)
+# print(ebs_stacked_bar + theme_blue_strip() + theme(legend.position = "right", legend.title = element_text(size = 9)))
+# dev.off()
+# 
+# # EBS single species stratum plots
+# akfishcondition::plot_species_stratum_bar(x = EBS_INDICATOR$STRATUM, 
+#                                           region = "EBS", 
+#                                           var_x_name = "year", 
+#                                           var_y_name = "stratum_resid_mean", 
+#                                           var_y_se_name = "stratum_resid_se",
+#                                           y_title = "Length-weight residual (ln(g))",
+#                                           var_group_name = "stratum",
+#                                           fill_title = "Stratum",
+#                                           fill_palette = "BrBG",
+#                                           write_plot = TRUE)
+# 
+# # NBS stratum-biomass weighted residual time series anomaly
+# nbs_sbw_timeseries <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
+#                         region = region, 
+#                         fill_color = "#0085CA", 
+#                         var_y_name = "mean_wt_resid", 
+#                         var_y_se_name = "se_wt_resid",
+#                         var_x_name = "year",
+#                         y_title = "Length-weight residual (ln(g))",
+#                         plot_type = "box",
+#                         format_for = "png",
+#                         set_intercept = 0)
+# 
+# png(here::here("plots", region, "NBS_SBW_timeseries.png"), width = 6, height = 7, units = "in", res = 600)
+# print(nbs_sbw_timeseries + akfishcondition::theme_blue_strip())
+# dev.off()
+# 
+# # NBS stratum-biomass weighted residual stratum stacked bar plots
+# nbs_stacked_bar <- akfishcondition::plot_stratum_stacked_bar(x = NBS_INDICATOR$STRATUM, 
+#                                                              region = region, 
+#                                                              var_x_name = "year", 
+#                                                              var_y_name = "stratum_resid_mean", 
+#                                                              y_title = "Length-weight residual (ln(g))",
+#                                                              var_group_name = "stratum",
+#                                                              fill_title = "Stratum",
+#                                                              fill_palette = "PuBu")
+# 
+# png(here::here("plots", region, "NBS_SBW_stratum_stacked_bar.png"), width = 6, height = 7, units = "in", res = 600)
+# print(nbs_stacked_bar + theme_blue_strip() + theme(legend.position = "right", legend.title = element_text(size = 9)))
+# dev.off()
+# 
+# 
+# # NBS single species stratum plots
+# akfishcondition::plot_species_stratum_bar(x = NBS_INDICATOR$STRATUM,
+#                                           region = "NBS",
+#                                           var_x_name = "year",
+#                                           var_y_name = "stratum_resid_mean",
+#                                           var_y_se_name = "stratum_resid_se",
+#                                           y_title = "Length-weight residual (ln(g))",
+#                                           var_group_name = "stratum",
+#                                           fill_title = "Stratum",
+#                                           fill_palette = "PuBu",
+#                                           write_plot = TRUE)
+
+```
+
+**Factors influencing observed trends**: Temperature appears to influence morphological condition of several species in the EBS and NBS, so near-average cold pool extent and water temperatures in 2023 likely played a role in the near-average condition (within 1 S.D. of the mean) for most species in the EBS and NBS. Historically, particularly cold years tend to correspond with negative condition, while particularly warm years tend to correspond to positive condition. For example, water temperatures were particularly cold during the 1999 Bering Sea survey, a year in which negative condition was observed for all species that data were available. In addition, spatiotemporal factor analyses suggest the morphometric condition of age-7 walleye pollock is strongly correlated with cold pool extent in the EBS [@Gruss2021]. In recent years, warm temperatures across the Bering Sea shelf, since the record low seasonal sea ice extent in 2017–2018 and historical cold pool area minimum in 2018 [@Stabeno2019a], may have influenced the positive trend in the condition of several species from 2016 to 2019. However, despite near-average temperature in 2023 large walleye pollock (>250 mm) condition in the EBS was the second lowest recorded over the time series.
+
+Although warmer temperatures may increase growth rates if there is adequate prey to offset temperature-dependent increases in metabolic demand, growth rates may also decline if prey resources are insufficient to offset temperature-dependent increases in metabolic demand. The influence of temperature on growth rates depends on the physiology of predator species, prey availability, and the adaptive capacity of predators to respond to environmental change through migration, changes in behavior, and acclimatization. For example, elevated temperatures during the 2014–2016 marine heatwave in the Gulf of Alaska led to lower growth rates of Pacific cod and lower condition because available prey resources did not make up for increased metabolic demand [@Barbeaux2020]. 
+
+Other factors that could affect morphological condition include survey timing, stomach fullness, fish movement patterns, sex, and environmental conditions [@Froese2006]. The starting date of annual length-weight data collections has varied from late May to early June and ended in late July-early August in the EBS, and mid-August in the NBS. Although we account for some of this variation by using spatially-varying coefficients in the length-weight relationship, variation in condition could relate to variation in the timing of sample collection within survey strata. Survey timing can be further compounded by seasonal fluctuations in reproductive condition with the buildup and depletion of energy stores [@Wuenschel2019]. Another consideration is that fish weights sampled at sea include gut content weights, so variation in gut fullness may influence weight measurements. Since feeding conditions vary over space and time, prey consumption rates and the proportion of total body weight attributable to gut contents may be an important factor influencing the length-weight residuals. 
+
+Finally, although the condition indicators characterize temporal variation in morphometric condition for important fish species in the EBS and NBS, they do not inform the mechanisms or processes behind the observed patterns.
+
+**Implications**: Fish morphometric condition can be considered an indicator of ecosystem productivity with implications for fish survival, maturity, and reproduction. For example, in Prince William Sound, the pre-winter condition of herring may determine their overwinter survival [@Paul1999], differences in feeding conditions have been linked to differences in morphometric condition of pink salmon in Prince William Sound [@Boldt2004], variation in morphometric condition has been linked to variation in maturity of sablefish [@Rodgveller2019], and lower morphometric condition of Pacific cod was associated with higher mortality and lower growth rates during the 2014–2016 marine heat wave in the Gulf of Alaska [@Barbeaux2020]. Condition can also be an indicator of stock status relative to carrying capacity because morphometric condition is expected to be high when the stock is at low abundance and low when the stock is at high abundance because of the effects of density-dependent competition [@Haberle2023]. Thus, the condition of EBS and NBS groundfishes may provide insight into ecosystem productivity as well as fish survival, demographic status, and population health. However, survivorship is likely affected by many factors not examined here. 
+
+Another important consideration is that fish condition was computed for all sizes of fishes combined, except in the case of walleye pollock. Examining condition of early juvenile stage fishes not yet recruited to the fishery, or the condition of adult fishes separately, could provide greater insight into the value of length-weight residuals as an indicator of individual health or survivorship [@Froese2006], particularly since juvenile and adult walleye pollock exhibited opposite trends in condition in the EBS this year.
+
+The near-average  condition for most species in 2023 may be related to the near historical average temperatures observed. However, trends in recent years such as prolonged warmer water temperatures following the marine heat wave of 2014-16 [@Bond2015] and reduced sea ice and cold pool areal extent in the eastern Bering Sea [@Stabeno2019a] may affect fish condition in ways that have not yet been determined. Additionally, periods of high fishing mortality that reduce population biomass are likely to increase body condition because of the compensatory alleviation of density-dependent competition [@Haberle2023]. As we continue to add years of length-weight data and expand our knowledge of relationships between condition, growth, production, survival, and the ecosystem, these data may increase our understanding of the health of fish populations in the EBS and NBS.
+
+ 
+**Research priorities**: Research is being planned and implemented across multiple AFSC programs to explore standardization of statistical methods for calculating condition indicators, and to examine relationships among putatively similar indicators of fish condition (i.e., morphometric, bioenergetic, physiological). Research is underway to evaluate connections between morphometric condition indices, temperature, and density-dependent competition.
+
+
+## References
