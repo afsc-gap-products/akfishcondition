@@ -5,6 +5,7 @@ select a.hauljoin, a.year, c.start_latitude latitude, c.start_longitude longitud
 	from goa.cpue a, racebase.species b, racebase.haul c, race_data.cruises f, race_data.surveys g
 	where a.species_code = b.species_code
 	and a.hauljoin = c.hauljoin
+	and f.cruise >= 19900
 	and f.survey_id = g.survey_id
   and g.survey_definition_id = 47
   and c.cruisejoin = f.racebase_cruisejoin

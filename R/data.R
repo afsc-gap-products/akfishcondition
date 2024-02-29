@@ -1,4 +1,4 @@
-#' Aleutian Islands (1986-2022)
+#' Aleutian Islands (1991-2022)
 #' 
 #' Morphometric condition indicators based on the allometric intercept estimated using VAST and residuals from a length-weight regression for Pacific cod, walleye pollock (> 250 mm), walleye pollock (100-250 mm), southern rock sole, arrowtooth flounder, Atka mackerel, northern rockfish, and Pacific ocean perch in the Aleutian Islands.
 #' 
@@ -37,7 +37,7 @@
 #' @export
 "AI_INDICATOR"
 
-#' Gulf of Alaska (1984-2021)
+#' Gulf of Alaska (1990-2021)
 #' 
 #' Morphometric condition indicators based on residuals from a length-weight regression for Pacific cod, walleye pollock (> 250 mm), walleye pollock (100-250 mm), southern rock sole, arrowtooth flounder, Atka mackerel, northern rockfish, and Pacific ocean perch in the Gulf of Alaska.
 #' 
