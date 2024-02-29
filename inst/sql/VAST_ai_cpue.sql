@@ -9,4 +9,4 @@ select a.hauljoin, a.year, c.start_latitude latitude, c.start_longitude longitud
   and c.cruisejoin = f.racebase_cruisejoin
 	and a.hauljoin = c.hauljoin
 	and a.species_code in (21740,21741,21720,10262,10110,30060,30152,21921,30420)
-	and (c.cruise >= 198401 and c.cruise != 198901)
+	and (c.cruise >= 199100)
