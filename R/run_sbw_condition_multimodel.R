@@ -110,7 +110,7 @@ run_sbw_condition_multimodel <- function(region,
   pcod$common_name[pcod$species_code == 21722] <- "Pacific cod (adult)"
   pollock <- dplyr::filter(dat, species_code == 21740)
   dat$species_code[dat$species_code == 21740 & dat$length_mm >= 100 & dat$length_mm <= 250] <- 21741
-  dat$common_name[dat$species_code == 21741] <- "walleye pollock (100–250 mm)"
+  dat$common_name[dat$species_code == 21741] <- "walleye pollock (100-250 mm)"
   dat$species_code[dat$species_code == 21740] <- 21742
   dat$common_name[dat$species_code == 21742] <- "walleye pollock (>250 mm)"
   

@@ -239,7 +239,7 @@ fig5_png <- akfishcondition::plot_stratum_stacked_bar(x = NBS_INDICATOR$STRATUM,
                                                              fill_title = "Stratum",
                                                              fill_palette = "PuBu")
 
-print(fig5 + theme_condition_index()+ theme(strip.text = element_text(size = 20)))
+print(fig5 + theme_condition_index() + theme(strip.text = element_text(size = 20)))
 
 ```
 

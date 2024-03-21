@@ -25,10 +25,6 @@ unzip(system.file("extdata/2022_ESR.zip", package = "akfishcondition"))
 
 dir.create(here::here("plots", region))
 
-
-# Load data
-# goa_ann_mean_resid_df <- GOA_INDICATOR$FULL_REGION
-# goa_stratum_resids_df <- GOA_INDICATOR$STRATUM
 ```
 
 Contributed by Cecilia O'Leary^1^ and Sean Rohan^1^
@@ -39,13 +35,13 @@ Contributed by Cecilia O'Leary^1^ and Sean Rohan^1^
 
 **Description of Indicator**: Length-weight residuals represent how heavy a fish is per unit body length and are an indicator of somatic growth variability (Brodeur et al., 2004). Therefore, length-weight residuals can be considered indicators of prey availability, growth, general health, and habitat condition (Blackwell et al., 2000; Froese, 2006). Positive length-weight residuals indicate better condition (i.e., heavier per unit length) and negative residuals indicate poorer condition (i.e., lighter per unit length) (Froese, 2006). Fish condition calculated in this way reflects realized outcomes of intrinsic and extrinsic processes that affect fish growth which can have implications for biological productivity through direct effects on growth and indirect effects on demographic processes such as, reproduction, and mortality (e.g., Rodgveller (2019); Barbeaux et al. (2020)).
 
-```{r map, include = TRUE, out.width = "200%", fig.cap = "\\label{fig:figs}Figure 1. National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center Resource Assessment and Conservation Engineering (AFSC/RACE) Groundfish Assessment Program (GAP) Gulf of Alaska summer bottom trawl survey area with International North Pacific Fisheries Commission (INPFC) statistical fishing strata delineated by the red lines.",  echo = FALSE}
+```{r map, include = TRUE, out.width = "100%", fig.cap = "\\label{fig:figs}Figure 1. National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center Resource Assessment and Conservation Engineering (AFSC/RACE) Groundfish Assessment Program (GAP) Gulf of Alaska summer bottom trawl survey area with International North Pacific Fisheries Commission (INPFC) statistical fishing strata delineated by the red lines.",  echo = FALSE}
 knitr::include_graphics("MapGOA.png") 
 ```
 
 The groundfish morphometric condition indicator is calculated from paired fork lengths (mm) and weights (g) of individual fishes that were collected during bottom trawl survey of the Gulf of Alaska (GOA) which were conducted by the Alaska Fisheries Science Center biennial Resource Assessment and Conservation Engineering (AFSC/RACE) - Groundfish Assessment Program’s (GAP). Fish condition analyses were applied to walleye pollock (*Gadus chalcogrammus*), Pacific cod (*Gadus macrocephalus*), arrowtooth flounder (*Atheresthes stomias*), southern rock sole (*Lepidopsetta bilineata*), northern rockfish (*Sebastes polyspinis*), Pacific ocean perch (*Sebastes alutus*), dusky rockfish (*Sebastes variabilis*), shortraker rockfish (*Sebastes borealis*), rougheye rockfish (*Sebastes aleutianus*),sharpchin rockfish (*Sebastes zacentrus*),flathead sole (*Hippoglossoides elassodon*),dover sole (*Microstomus pacificus*), and rex sole(*Glyptocephalus zachirus*) collected in trawls with satisfactory performance at standard survey stations. Data were combined in the former International North Pacific Fisheries Commission (INPFC) strata; Shumagin, Chirikof, Kodiak, Yakutat and Southeast (Figure 1). 
 
-To calculate indicators, length-weight relationships were estimated from linear regression models based on a log-transformation of the exponential growth relationship, W = aLb, where W is weight (g) and L is fork length (mm) for all areas for the period 1984–2023. UniqueA unique intercepts and (a) and slopes (b) wereas estimated for each survey stratum, sex, and interaction between stratum and sex to account for sexual dimorphism and spatial-temporal variation in growth and bottom trawl survey sampling. Length-weight relationships for 100–250 mm fork length walleye pollock (corresponding with ages 1–2 years) were calculated separately from adult walleye pollock (> 250 mm). Residuals for individual fish were obtained by subtracting observed weights from bias-corrected weights-at-length that were estimated from regression models. Individual length-weight residuals were aggregated and averaged for each stratum, weighted based on the proportion to total biomass in each stratum from area-swept expansion of bottom-trawl survey catch per unit effort (CPUE; i.e., design-based stratum biomass estimates). Variation in fish condition was evaluated by comparing average length-weight residuals among years. To minimize the influence of unrepresentative samples on indicator calculations, combinations of species, stratum, and year with a sample size < 10 were used to fit length-weight regressions but were excluded from calculating length-weight residuals. Morphometric condition indicator time series, code for calculating the indicators, and figures showing results for individual species are available through the akfishcondition R package and GitHub repository (https://github.com/afsc-gap-products/akfishcondition).
+To calculate indicators, length-weight relationships were estimated from linear regression models based on a log-transformation of the exponential growth relationship, W = aLb, where W is weight (g) and L is fork length (mm) for all areas for the period 1984–2023. Unique unique intercepts and (a) and slopes (b) were estimated for each survey stratum, sex, and interaction between stratum and sex to account for sexual dimorphism and spatial-temporal variation in growth and bottom trawl survey sampling. Length-weight relationships for 100–250 mm fork length walleye pollock (corresponding with ages 1–2 years) were calculated separately from adult walleye pollock (> 250 mm). Residuals for individual fish were obtained by subtracting observed weights from bias-corrected weights-at-length that were estimated from regression models. Individual length-weight residuals were aggregated and averaged for each stratum, weighted based on the proportion to total biomass in each stratum from area-swept expansion of bottom-trawl survey catch per unit effort (CPUE; i.e., design-based stratum biomass estimates). Variation in fish condition was evaluated by comparing average length-weight residuals among years. To minimize the influence of unrepresentative samples on indicator calculations, combinations of species, stratum, and year with a sample size < 10 were used to fit length-weight regressions but were excluded from calculating length-weight residuals. Morphometric condition indicator time series, code for calculating the indicators, and figures showing results for individual species are available through the akfishcondition R package and GitHub repository (https://github.com/afsc-gap-products/akfishcondition).
 
 **Methodological changes**: In 2022, historical stratum-biomass weighted residuals condition indicators were presented alongside condition indicators that were calculated using the R package VAST following methods that were presented for select GOA species during the Spring Preview of Ecological and Economic Conditions in May 2020. The authors noted there were strong correlations between VAST and stratum biomass weighted condition indicators for most species (r = 0.79–0.98). The authors received the following feedback about the change from the BSAI Groundfish Plan Team meeting during their November 2022 meeting:
 "The Team discussed the revised condition indices that now use a different, VAST-based condition index, but felt additional methodology regarding this transition was needed. The Team recommended a short presentation next September to the Team to review the methods and tradeoffs in approaches. The Team encouraged collaboration with the NMFS longline survey team to develop analogous VAST indices." 
@@ -147,12 +143,18 @@ fig3b <- plot_stratum_stacked_bar(x = dplyr::filter(GOA_INDICATOR$STRATUM,
                                  fill_title = "Stratum",
                                  y_title = "Length-weight residual (ln(g))")
 
-print(fig3a + theme_condition_index())
+print(fig3a + theme_condition_index() + 
+        theme_condition_index() + 
+        theme(legend.position = "bottom", 
+              legend.title = element_blank()))
 
 ```
 
 ```{r figure 3b grid, include = TRUE, echo = FALSE, fig.height = 14, fig.width = 12, fig.cap = "\\label{fig:figs}Figure 3B. Residual body condition index for sixteen Gulf of Alaska groundfish species collected on the National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center Resource Assessment and Conservation Engineering (AFSC/RACE) Groundfish Assessment Program (GAP) standard summer bottom trawl survey (1984--2023) grouped by International North Pacific Fisheries Commission (INPFC) statistical sampling strata.", message = FALSE, warning = FALSE}
-print(fig3b + theme_condition_index())
+print(fig3b + theme_condition_index() + 
+        theme_condition_index() + 
+        theme(legend.position = "bottom", 
+              legend.title = element_blank()))
 ```
 
 ```{r figure 3 grid png, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}

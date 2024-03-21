@@ -336,7 +336,7 @@ knitr::kable(out$n_specimen_by_vessel, caption = 'Table 3. Number of length-weig
 add_common_name <- function(x) {
   
   spp_df <- data.frame(common_name = c(
-    "walleye pollock", "walleye pollock (100–250 mm)", "walleye pollock (>250 mm)", "Pacific cod", 
+    "walleye pollock", "walleye pollock (100-250 mm)", "walleye pollock (>250 mm)", "Pacific cod", 
     "Pacific cod (juvenile)", "Pacific cod (adult)", "Atka mackerel", "arrowtooth flounder", 
     "flathead sole", "yellowfin sole", "northern rock sole", "southern rock sole", "Alaska plaice",
     "Pacific ocean perch", "dusky rockfish", "northern rockfish", "Dover sole", "rex sole", "shortraker rockfish", "rougheye rockfish", "blackspotted rockfish", "sharpchin rockfish"),
