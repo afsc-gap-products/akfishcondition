@@ -45,20 +45,20 @@ weight_lw_residuals <- function(residuals, year, stratum = NA, stratum_biomass =
       }
   } else {
     # Weight residuals by stratum with biomass expansion (2020 ESR) 
-    biomass_df <- data.frame(stratum_biomass, stratum, year) %>% 
+    biomass_df <- data.frame(stratum_biomass, stratum, year) |> 
       unique()
     
-    biomass_proportion_df <- biomass_df %>% 
-      dplyr::group_by(year) %>%
-      dplyr::summarise(year_biomass = sum(stratum_biomass)) %>%
-      dplyr::inner_join(biomass_df) %>%
-      dplyr::mutate(stratum_weight = stratum_biomass/year_biomass) %>%
+    biomass_proportion_df <- biomass_df |> 
+      dplyr::group_by(year) |>
+      dplyr::summarise(year_biomass = sum(stratum_biomass)) |>
+      dplyr::inner_join(biomass_df) |>
+      dplyr::mutate(stratum_weight = stratum_biomass/year_biomass) |>
       dplyr::select(year, stratum, stratum_weight)
     
     residuals_df <- data.frame(residuals, 
                                year, 
-                               stratum) %>% 
-      dplyr::inner_join(biomass_proportion_df) %>%
+                               stratum) |> 
+      dplyr::inner_join(biomass_proportion_df) |>
       dplyr::mutate(weighted_residuals = residuals * stratum_weight)
     
     wtlw.res <- residuals_df$weighted_residuals

@@ -182,39 +182,39 @@ select_species <- function(species_code, region, remove_outliers = TRUE, bonferr
 #' @noRd
 
 make_data_summary <- function(dat_csv, region) {
-  dat <- read.csv(file = dat_csv) %>%
-    dplyr::mutate(start_time = as.POSIXct(start_time)) %>%
-    dplyr::mutate(yday = lubridate::yday(start_time)) %>%
+  dat <- read.csv(file = dat_csv) |>
+    dplyr::mutate(start_time = as.POSIXct(start_time)) |>
+    dplyr::mutate(yday = lubridate::yday(start_time)) |>
     dplyr::arrange(year)
   
-  n_spp_by_year <- dat %>%
-    dplyr::filter(!is.na(length_mm)) %>%
-    dplyr::group_by(common_name, year) %>%
+  n_spp_by_year <- dat |>
+    dplyr::filter(!is.na(length_mm)) |>
+    dplyr::group_by(common_name, year) |>
     dplyr::summarise(n = n()) 
   
   
-  out <- list(n_cpue_by_year = dat %>%
-                dplyr::filter(!is.na(cpue_kg_km2)) %>%
-                dplyr::group_by(common_name, year) %>%
-                dplyr::summarise(n = n()) %>%
-                tidyr::pivot_wider(names_from = c("common_name"), values_from = "n", values_fill = 0) %>%
+  out <- list(n_cpue_by_year = dat |>
+                dplyr::filter(!is.na(cpue_kg_km2)) |>
+                dplyr::group_by(common_name, year) |>
+                dplyr::summarise(n = n()) |>
+                tidyr::pivot_wider(names_from = c("common_name"), values_from = "n", values_fill = 0) |>
                 data.frame(),
-              n_specimen_by_year = n_spp_by_year%>%
-                tidyr::pivot_wider(names_from = c("common_name"), values_from = "n", values_fill = 0) %>%
-                dplyr::arrange(year) %>%
+              n_specimen_by_year = n_spp_by_year|>
+                tidyr::pivot_wider(names_from = c("common_name"), values_from = "n", values_fill = 0) |>
+                dplyr::arrange(year) |>
                 data.frame(),
-              n_specimen_by_vessel =dat %>%
-                dplyr::filter(!is.na(length_mm)) %>%
-                dplyr::group_by(vessel, cruise) %>%
-                dplyr::summarise(n = n()) %>%
-                tidyr::pivot_wider(names_from = c("vessel"), values_from = "n", values_fill = 0) %>%
-                dplyr::arrange(cruise) %>%
+              n_specimen_by_vessel =dat |>
+                dplyr::filter(!is.na(length_mm)) |>
+                dplyr::group_by(vessel, cruise) |>
+                dplyr::summarise(n = n()) |>
+                tidyr::pivot_wider(names_from = c("vessel"), values_from = "n", values_fill = 0) |>
+                dplyr::arrange(cruise) |>
                 data.frame())
   
   dir.create(here::here("output", region), recursive = TRUE)
   saveRDS(object = out, file = here::here("output", region, paste0(region, "_sample_tables.rds")))
   
-  yday_df <- dat %>%
+  yday_df <- dat |>
     dplyr::filter(!is.na(length_mm))
   
   yday_range <- range(yday_df$yday)
@@ -235,7 +235,7 @@ make_data_summary <- function(dat_csv, region) {
   
   for(jj in 1:ceiling(length(yday_years)/6)) {
     png(file = here::here("output", region, paste0(region, "_ecdf_samples_by_year_", jj, ".png")), width = 7, height = 7, units = "in", res = 120)
-    print(ggplot(data = yday_df %>%
+    print(ggplot(data = yday_df |>
                    dplyr::filter(year %in% yday_years[(1+6*(jj-1)):min(c((6+6*(jj-1)), length(yday_years)))]),
                  aes(x = yday, color = common_name)) +
             stat_ecdf(size = rel(1.2)) +
@@ -260,10 +260,10 @@ make_data_summary <- function(dat_csv, region) {
   map_layers <- akgfmaps::get_base_layers(select.region = tolower(map_region), 
                                           set.crs = "EPSG:3338")
   
-  lw_dat.sub <- read.csv(file = here::here("data", paste0(region, "_all_species.csv"))) %>%
-    dplyr::filter(!is.na(length_mm)) %>%
-    dplyr::select(year, species_code, latitude, longitude, common_name) %>%
-    unique() %>%
+  lw_dat.sub <- read.csv(file = here::here("data", paste0(region, "_all_species.csv"))) |>
+    dplyr::filter(!is.na(length_mm)) |>
+    dplyr::select(year, species_code, latitude, longitude, common_name) |>
+    unique() |>
     akgfmaps::transform_data_frame_crs(coords = c("longitude", "latitude"), 
                                        in.crs = "+proj=longlat", 
                                        out.crs = "EPSG:3338")
@@ -277,7 +277,7 @@ make_data_summary <- function(dat_csv, region) {
         geom_sf(data = map_layers$survey.area, 
                 fill = NA,
                 size = 0.7) +
-        geom_point(data = lw_dat.sub %>%
+        geom_point(data = lw_dat.sub |>
                      dplyr::filter(common_name == ii),
                    aes(x = longitude, y = latitude),
                    size = 0.4,

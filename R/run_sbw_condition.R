@@ -32,8 +32,8 @@ run_sbw_condition <- function(region, stratum_col = NULL, biomass_col = NULL, co
   lw <- read.csv(file = here::here("data", paste0(region, "_all_species.csv")))
   
   if(region == "EBS") {
-    lw <- lw %>%
-      dplyr::filter(stratum < 70) %>%
+    lw <- lw |>
+      dplyr::filter(stratum < 70) |>
       dplyr::mutate(stratum = floor(stratum/10)*10)
   }
   
@@ -41,27 +41,27 @@ run_sbw_condition <- function(region, stratum_col = NULL, biomass_col = NULL, co
     lw <- dplyr::mutate(lw, stratum = 999)
   }
 
-  lw <- lw %>% 
-    dplyr::filter(!is.na(length_mm)) %>%
+  lw <- lw |> 
+    dplyr::filter(!is.na(length_mm)) |>
     dplyr::mutate(ID = paste(cruise, vessel, haul, specimenid, sep = "_"))
   
   names(lw)[which(names(lw) == stratum_col)] <- "survey_stratum"
   
-  nsamp <- table(lw$survey_stratum, lw$common_name) %>%
+  nsamp <- table(lw$survey_stratum, lw$common_name) |>
     as.data.frame() |>
     dplyr::rename(n_raw = Freq)
   
-  dat <- lw %>% 
+  dat <- lw |> 
     dplyr::inner_join(biomass,
-                      by = c("year", "species_code", "survey_stratum")) %>%
+                      by = c("year", "species_code", "survey_stratum")) |>
     dplyr::select(-vessel, -cruise, -haul, -hauljoin)
   
   # Checks (stratum count match should be TRUE)
   
-  qc_df <- table(dat$survey_stratum, dat$common_name) %>% 
-    as.data.frame() %>%
-    dplyr::rename(n_filtered = Freq) %>%
-    dplyr::inner_join(nsamp) %>%
+  qc_df <- table(dat$survey_stratum, dat$common_name) |> 
+    as.data.frame() |>
+    dplyr::rename(n_filtered = Freq) |>
+    dplyr::inner_join(nsamp) |>
     dplyr::mutate(equal = n_filtered == n_raw)
   
   count_match <- sum(qc_df$equal) == nrow(qc_df)
@@ -76,7 +76,7 @@ run_sbw_condition <- function(region, stratum_col = NULL, biomass_col = NULL, co
   message("Splitting Pacific cod and pollock for ESP and ESR length cutoffs.")
   
   # Create separate data.frames for adult and juvenile pollock and cod
-  pcod <- dat %>% dplyr::filter(species_code == 21720)
+  pcod <- dat |> dplyr::filter(species_code == 21720)
   pcod$species_code[pcod$length < cod_juv_cutoff_mm] <- 21721
   pcod$species_code[pcod$length >= cod_juv_cutoff_mm] <- 21722
   pcod$common_name[pcod$species_code == 21721] <- "Pacific cod (juvenile)"
@@ -134,22 +134,22 @@ run_sbw_condition <- function(region, stratum_col = NULL, biomass_col = NULL, co
     
     stratum_resids <- NULL
     
-    ann_mean_resid_df <- dat %>% 
-      dplyr::group_by(common_name, year) %>%
+    ann_mean_resid_df <- dat |> 
+      dplyr::group_by(common_name, year) |>
       dplyr::summarise(mean_resid = mean(resid, na.rm = TRUE),
                        se = sd(resid, na.rm = TRUE)/n(),
-                       n = n()) %>%
+                       n = n()) |>
       dplyr::filter(n >= min_n)
     
   } else {
     
     # Estimate mean and std. err for each stratum, filter out strata with less than min_n samples
-    stratum_resids <- dat %>% 
-      dplyr::group_by(common_name, species_code, year, survey_stratum, stratum_biomass) %>%
+    stratum_resids <- dat |> 
+      dplyr::group_by(common_name, species_code, year, survey_stratum, stratum_biomass) |>
       dplyr::summarise(stratum_resid_mean = mean(resid_mean),
                        stratum_resid_sd = sd(resid_mean),
-                       n = n()) %>%
-      dplyr::filter(n >= min_n) %>%
+                       n = n()) |>
+      dplyr::filter(n >= min_n) |>
       dplyr::mutate(stratum_resid_se = stratum_resid_sd/sqrt(n))
     
     # Weight strata by biomass
@@ -167,12 +167,12 @@ run_sbw_condition <- function(region, stratum_col = NULL, biomass_col = NULL, co
     }
     
     # Biomass-weighted residual and SE by year
-    ann_mean_resid_df <- stratum_resids %>% 
-      dplyr::group_by(year, common_name) %>%
+    ann_mean_resid_df <- stratum_resids |> 
+      dplyr::group_by(year, common_name) |>
       dplyr::summarise(mean_wt_resid = mean(weighted_resid_mean),
                        se_wt_resid = mean(weighted_resid_se))
     
-    stratum_resids <- stratum_resids %>%
+    stratum_resids <- stratum_resids |>
       dplyr::select(-stratum_biomass, - stratum_resid_sd)
     
     names(stratum_resids)[which(names(stratum_resids) == "survey_stratum")] <- stratum_col
@@ -182,6 +182,8 @@ run_sbw_condition <- function(region, stratum_col = NULL, biomass_col = NULL, co
   names(biomass)[which(names(biomass) == "survey_stratum")] <- stratum_col
   names(lw)[which(names(lw) == "survey_stratum")] <- stratum_col
   names(biomass)[which(names(biomass) == "stratum_biomass")] <- biomass_col
+  
+  stratum_resids <- stratum_resids |>  dplyr::ungroup() |> dplyr::select(-species_code)
   
   return(list(full_sbw = ann_mean_resid_df,
               stratum_sbw = stratum_resids,

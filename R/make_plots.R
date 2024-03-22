@@ -52,9 +52,9 @@ plot_anomaly_timeseries <- function(x,
   x <- dplyr::filter(x, !is.na(var_y))
   
   # Anomalies
-  x_anomaly <- x %>%
+  x_anomaly <- x |>
     dplyr::group_by(common_name,
-                    display_name) %>%
+                    display_name) |>
     dplyr::summarise(mean_var_y = mean(var_y),
                      sd_var_y = sd(var_y))
   
@@ -352,7 +352,7 @@ plot_species_stratum_bar <- function(x,
     }
     
     p1 <- 
-      ggplot(data = x %>% 
+      ggplot(data = x |> 
                dplyr::filter(display_name == unique_groups[ii]),
              aes(x = var_x, 
                  y = var_y, 
@@ -461,9 +461,9 @@ plot_species_bar <- function(x,
   x <- dplyr::filter(x, !is.na(var_y))
   
   # Anomalies
-  x_anomaly <- x %>%
+  x_anomaly <- x |>
     dplyr::group_by(common_name,
-                    display_name) %>%
+                    display_name) |>
     dplyr::summarise(mean_var_y = mean(var_y),
                      sd_var_y = sd(var_y))
   
@@ -516,20 +516,20 @@ plot_species_bar <- function(x,
                  mapping = aes(yintercept = mean_var_y - 2*sd_var_y),
                  linetype = 3,
                  color = "grey50") +
-      geom_linerange(data = x %>% 
+      geom_linerange(data = x |> 
                        dplyr::filter(display_name == unique_groups[ii]),
                      mapping = aes(x = var_x,
                                    ymax = var_y + 2*var_y_se,
                                    ymin = var_y - 2*var_y_se),
                      color = "black") +
-      geom_rect(data = x %>% 
+      geom_rect(data = x |> 
                   dplyr::filter(display_name == unique_groups[ii]),
                 mapping = aes(xmin = var_x+0.4,
                               xmax = var_x-0.4,
                               ymax = var_y + var_y_se,
                               ymin = var_y - var_y_se),
                 fill = fill_color) +
-      geom_segment(data = x %>% 
+      geom_segment(data = x |> 
                      dplyr::filter(display_name == unique_groups[ii]), 
                    aes(x = var_x+0.4,
                        xend = var_x-0.4,
@@ -658,31 +658,31 @@ plot_two_timeseries <- function(x_1,
   
   # Scale y variables
   if(scale_y) {
-    x_1 <- x_1 %>%
-      dplyr::group_by(common_name, display_name) %>%
+    x_1 <- x_1 |>
+      dplyr::group_by(common_name, display_name) |>
       dplyr::mutate(var_y = scale(var_y)[,1])
-    x_2 <- x_2 %>%
-      dplyr::group_by(common_name, display_name) %>%
+    x_2 <- x_2 |>
+      dplyr::group_by(common_name, display_name) |>
       dplyr::mutate(var_y = scale(var_y)[,1])
   }
   
   
   # Correlation between timeseries
   corr_df <- dplyr::inner_join(
-    x_1 %>%
-      dplyr::ungroup() %>%
-      dplyr::rename(var_y_1 = var_y) %>%
+    x_1 |>
+      dplyr::ungroup() |>
+      dplyr::rename(var_y_1 = var_y) |>
       dplyr::select(display_name, 
                     var_x, 
                     var_y_1),
-    x_2 %>%
-      dplyr::ungroup() %>%
-      dplyr::rename(var_y_2 = var_y) %>%
+    x_2 |>
+      dplyr::ungroup() |>
+      dplyr::rename(var_y_2 = var_y) |>
       dplyr::select(display_name, 
                     var_x, 
                     var_y_2),
-    by = c("display_name", "var_x")) %>%
-    dplyr::group_by(display_name) %>%
+    by = c("display_name", "var_x")) |>
+    dplyr::group_by(display_name) |>
     dplyr::summarise(
       r = round(cor(var_y_1, 
                     var_y_2, 
@@ -804,42 +804,42 @@ plot_xy_corr <- function(x_1,
 
   # Correlation between timeseries
   x_combined <- dplyr::inner_join(
-    x_1 %>%
-      dplyr::ungroup() %>%
+    x_1 |>
+      dplyr::ungroup() |>
       dplyr::rename(var_y_1 = var_y,
-                    var_y_se_1 = var_y_se) %>%
+                    var_y_se_1 = var_y_se) |>
       dplyr::select(display_name, 
                     var_x, 
                     var_y_1,
                     var_y_se_1),
-    x_2 %>%
-      dplyr::ungroup() %>%
+    x_2 |>
+      dplyr::ungroup() |>
       dplyr::rename(var_y_2 = var_y,
-                    var_y_se_2 = var_y_se) %>%
+                    var_y_se_2 = var_y_se) |>
       dplyr::select(display_name, 
                     var_x, 
                     var_y_2,
                     var_y_se_2),
-    by = c("display_name", "var_x")) %>%
+    by = c("display_name", "var_x")) |>
     dplyr::ungroup()
   
   
-  corr_df <- x_combined %>%
-    dplyr::group_by(display_name) %>%
+  corr_df <- x_combined |>
+    dplyr::group_by(display_name) |>
     dplyr::summarise(
       r = round(cor(var_y_1, 
                     var_y_2, 
                     use = "complete.obs",
                     method = "pearson"), 2))
   
-  corr_df <- corr_df %>%
+  corr_df <- corr_df |>
     dplyr::inner_join(
-      x_combined %>%
-        dplyr::group_by(display_name) %>%
+      x_combined |>
+        dplyr::group_by(display_name) |>
         dplyr::summarise(min_x = min(var_y_1-2*var_y_se_1),
                          max_x = max(var_y_1+2*var_y_se_1),
                          min_y = min(var_y_2-2*var_y_se_2),
-                         max_y = max(var_y_2+2*var_y_se_2)) %>%
+                         max_y = max(var_y_2+2*var_y_se_2)) |>
         dplyr::mutate(lab_x = max_x - (max_x - min_x)*0.12,
                       lab_y = min_y + (max_y - min_y)*0.07),
       by = "display_name")
