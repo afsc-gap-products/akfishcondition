@@ -124,7 +124,7 @@ ESP_SETTINGS <- list(ESP_SPECIES =
 ```
 
 
-# 1. Update stratum-biomass weighted condition inidicators
+# 1. Update stratum-biomass weighted condition indicators
 
 ```{r get_ai, message=TRUE, warning=TRUE}
 # Aleutian Islands

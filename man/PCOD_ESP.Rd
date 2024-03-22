@@ -14,8 +14,6 @@ Eight data frames (indicator for the full region and indicator by stratum for th
          \item{common_name}{: Species common name}
          \item{mean_wt_resid}{: Mean residual for the full region}
          \item{se_wt_resid}{: Standard error of the indicator for the full region}
-         \item{vast_condition}{: Estimate of the allometric intercept,a, of the length-weight equation (W = aL^b), estimated using VAST.}
-         \item{vast_condition_se}{Standard error of a, estimated using VAST.}
          }
        \item STRATUM_* (data frame): Residuals by stratum
         \itemize{
@@ -27,7 +25,7 @@ Eight data frames (indicator for the full region and indicator by stratum for th
          \item{n}{: Sample size for the stratum}
          \item{stratum_resid_sd}{: Standard error of the stratum mean residual}
          \item{weighted_resid_mean}{: Stratum mean Residual weighted in proportion to stratum biomass}
-         \item{weighted_resid_mean}{: Standard error of the stratum mean residual weighted in proportion to stratum biomass}
+         \item{weighted_resid_se}{: Standard error of the stratum mean residual weighted in proportion to stratum biomass}
          }
        \item LAST_UPDATE: Date when indicator and data were last updated.
      }
