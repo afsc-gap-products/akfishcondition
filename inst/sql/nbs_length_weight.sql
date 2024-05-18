@@ -1,13 +1,33 @@
 /* Query to retrieve length and weight samples for northern Bering Sea strata. */
 
-select a.haul, a.vessel, a.cruise, floor(a.cruise/100) year,  b.species_code, a.region,
-decode(a.stratum, 31, 30, 32, 30, 61, 60, 62, 60, 41, 40, 42, 40, 43, 40, a.stratum) stratum, 
-a.start_latitude latitude, a.start_longitude longitude, a.start_time, d.specimenid,
-e.common_name, d.sex, d.length length_mm, d.weight weight_g
-from racebase.haul a, racebase.catch b, racebase.specimen d , racebase.species e, race_data.v_cruises c
-where a.region = 'BS' and a.cruise >= 201000
-and b.species_code in (21740, 21720, 10210, 10285)
-and a.hauljoin = b.hauljoin and b.hauljoin = d.hauljoin
-and b.species_code = e.species_code and b.species_code = d.species_code and d.length != 0 and d.weight != 0
-and a.cruisejoin = c.cruisejoin and c.survey_definition_id = 143 and a.stratum not in (82, 90)
-and a.stratum between 70 and 99
+SELECT
+  h.haul, 
+  c.vessel_id vessel,
+  c.cruise,
+  c.year,
+  s.species_code,
+  h.stratum,
+  h.latitude_dd_start latitude,
+  h.longitude_dd_start longitude,
+  h.date_time_start start_time,
+  s.specimen_id,
+  t.common_name, 
+  s.species_code,
+  s.sex,
+  s.length_mm,
+  s.weight_g,
+  s.age
+FROM
+  gap_products.akfin_specimen s,
+  gap_products.akfin_haul h,
+  gap_products.akfin_cruise c,
+  gap_products.akfin_taxonomic_groups t
+WHERE
+  s.species_code IN (21740, 21720, 10210, 10285)
+  AND c.survey_definition_id = 143
+  AND h.hauljoin = s.hauljoin
+  AND h.cruisejoin = c.cruisejoin
+  AND h.stratum BETWEEN 70 and 81
+  AND s.weight_g != 0
+  AND s.length_mm != 0
+  AND s.species_code = t.species_code;
