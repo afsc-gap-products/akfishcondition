@@ -1,9 +1,18 @@
 /* Query to retrieve stratum biomass for Gulf of Alaska INPFC strata  */
 
-select a.year, a.species_code, a.area_biomass, a.biomass_var, b.inpfc_area inpfc_stratum
-from goa.biomass_inpfc a, (select inpfc_area, summary_area, sum(area) inpfc_Stratum_area from goa.goa_strata where nvl(stratum,1) != 0
-and survey = 'GOA' group by inpfc_area, summary_area) b where (a.year >= 1984 and a.year != 1989 and a.year != 1985) 
-and a.species_code in
-(21740,21741,21720,30420,10262,10110,30060,30152,10261,10180,10200,10130,30576,30051,30052,30560) 
-and a.summary_Area = b.summary_area 
-order by a.year, a.species_code, b.inpfc_Area
+SELECT
+     b.species_code,
+     b.year,
+     b.area_id,
+     a.area_name inpfc_stratum,
+     b.biomass_mt biomass,
+     b.biomass_var
+FROM
+     gap_products.biomass b,
+     gap_products.akfin_area a
+WHERE
+     b.species_code in (21740,21741,21720,30420,10262,10110,30060,30152,10261,10180,10200,10130,30576,30051,30052,30560) 
+     AND b.survey_definition_id = 47
+     AND b.area_id in (919, 929, 939, 949, 959)
+     AND a.survey_definition_id = b.survey_definition_id
+     AND a.area_id = b.area_id;

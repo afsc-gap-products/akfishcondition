@@ -114,17 +114,17 @@ ESP_SETTINGS <- list(ESP_SPECIES =
                                                 n_knots = c(400, 400,
                                                             400, 600,
                                                             750, 750),
-                                                fl_min = c(0, 421,
-                                                           0, 461,
-                                                           0, 461),
-                                                fl_max = c(420, 1e7,
-                                                           460, 1e7,
-                                                           460, 1e7))
+                                                fl_min = c(0, 504,
+                                                           0, 581,
+                                                           0, 581),
+                                                fl_max = c(503, 1e7,
+                                                           580, 1e7,
+                                                           580, 1e7))
 )
 ```
 
 
-# 1. Update stratum-biomass weighted condition inidicators
+# 1. Update stratum-biomass weighted condition indicators
 
 ```{r get_ai, message=TRUE, warning=TRUE}
 # Aleutian Islands
@@ -277,9 +277,7 @@ Update sysdata.rda with raw data for the condition indicator and write raw data 
 ```{r save_to_sysdata, message=FALSE, warning=FALSE}
 EBS_INDICATOR <- list(
   FULL_REGION = as.data.frame(
-    # dplyr::full_join(
-      ebs_sbw$full_sbw) %>% #,
-      # ebs_vast_df)) %>%
+      ebs_sbw$full_sbw) |> 
     dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$EBS]),
   STRATUM = as.data.frame(
     dplyr::filter(
@@ -291,9 +289,7 @@ EBS_INDICATOR <- list(
 
 NBS_INDICATOR <- list(
   FULL_REGION = as.data.frame(
-    # dplyr::full_join(
-      nbs_sbw$full_sbw) %>% #,
-                           # nbs_vast_df) %>% 
+      nbs_sbw$full_sbw) |>
       dplyr::filter( 
                     common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$NBS]),
   STRATUM = as.data.frame(
@@ -306,9 +302,7 @@ NBS_INDICATOR <- list(
 
 GOA_INDICATOR <- list(
   FULL_REGION = as.data.frame(
-    # dplyr::full_join(
-      goa_sbw$full_sbw) %>% #,
-      # goa_vast_df)) %>%
+      goa_sbw$full_sbw) |> 
     dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$GOA]),
   STRATUM = as.data.frame(
     dplyr::filter(
@@ -320,10 +314,7 @@ GOA_INDICATOR <- list(
 
 AI_INDICATOR <- list(
   FULL_REGION = as.data.frame(
-    # dplyr::full_join(
-      ai_sbw$full_sbw) %>% #,
-      # ai_vast_df)
-    # ) %>%
+      ai_sbw$full_sbw) |> 
     dplyr::filter(common_name %in% ESR_SETTINGS$ESR_SPECIES$common_name[ESR_SETTINGS$ESR_SPECIES$AI]),
   STRATUM = as.data.frame(
     dplyr::filter(
@@ -335,22 +326,18 @@ AI_INDICATOR <- list(
 
 PCOD_ESP <- list(
   FULL_REGION_EBS = as.data.frame(
-    # dplyr::full_join(ebs_sbw$full_sbw, ebs_vast_df) %>%
     dplyr::filter(ebs_sbw$full_sbw,
       common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
     )),
   FULL_REGION_GOA = as.data.frame(
-        # dplyr::full_join(goa_sbw$full_sbw, goa_vast_df) %>%
     dplyr::filter(goa_sbw$full_sbw,
       common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
     )),
   FULL_REGION_AI = as.data.frame(
-    # dplyr::full_join(ai_sbw$full_sbw, ai_vast_df) %>%
       dplyr::filter(ai_sbw$full_sbw,
         common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
       )),
   FULL_REGION_NBS = as.data.frame(
-    # dplyr::full_join(nbs_sbw$full_sbw, nbs_vast_df) %>%
     dplyr::filter(
       nbs_sbw$full_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
     )),

@@ -3,29 +3,28 @@
 \docType{data}
 \name{GOA_INDICATOR}
 \alias{GOA_INDICATOR}
-\title{Gulf of Alaska (1984-2021)}
+\title{Gulf of Alaska (1990-2023)}
 \format{
 A list containing two data frames (indicator for the full region, indicator by stratum) and a character vector.
 \describe{
      \itemize{
        \item FULL_REGION (data frame): Residuals for the full region
          \itemize{
-         \item{YEAR}{: Year}
-         \item{COMMON_NAME}{: Year}
+         \item{year}{: Year}
+         \item{common_name}{: Year}
          \item{mean_wt_resid}{: Mean residual for the full region}
          \item{se_wt_resid}{: Standard error of the indicator for the full region}
          }
        \item STRATUM (data frame): Residuals by stratum
         \itemize{
-         \item{YEAR}{: Year}
-         \item{COMMON_NAME}{: Species Common name}
-         \item{SPECIES_CODE}{: RACE/GAP species code}
-         \item{INPFC_STRATUM}{: INPFC Stratum}
+         \item{common_name}{: Species Common name}
+         \item{year}{: Year}
+         \item{inpfc_stratum}{: INPFC Stratum}
          \item{stratum_resid_mean}{: Unweighted stratum mean residual}
          \item{n}{: Sample size for the stratum}
          \item{stratum_resid_sd}{: Standard error of the stratum mean residual}
          \item{weighted_resid_mean}{: Stratum mean Residual weighted in proportion to stratum biomass}
-         \item{weighted_resid_mean}{: Standard error of the stratum mean residual weighted in proportion to stratum biomass}
+         \item{weighted_resid_se}{: Standard error of the stratum mean residual weighted in proportion to stratum biomass}
          }
        \item LAST_UPDATE: Date when indicator and data were last updated.
      }
@@ -38,6 +37,6 @@ A list containing two data frames (indicator for the full region, indicator by s
 GOA_INDICATOR
 }
 \description{
-Morphometric condition indicators based on residuals from a length-weight regression for Pacific cod, walleye pollock (> 250 mm), walleye pollock (100-250 mm), southern rock sole, arrowtooth flounder, Atka mackerel, northern rockfish, and Pacific ocean perch in the Gulf of Alaska.
+Morphometric condition indicators based on residuals from length-weight regressions for Pacific cod, walleye pollock (> 250 mm), walleye pollock (100-250 mm), Pacific cod, northern rock sole, southern rock sole, arrowtooth flounder, Dover sole, rex sole, flathead sole, Atka mackerel, blackspotted rockfish, rougheye rockfish, northern rockfish, shortraker rockfish, shaprchin rockfish, and Pacific ocean perch in the Gulf of Alaska.
 }
 \keyword{datasets}
