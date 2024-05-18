@@ -1,5 +1,9 @@
 SELECT 
-  species_code, year, area_id*10 stratum, biomass_mt biomass, biomass_var
+  species_code, 
+  year, 
+  area_id*10 stratum, 
+  biomass_mt biomass, 
+  biomass_var
 FROM 
   gap_products.biomass
 WHERE 

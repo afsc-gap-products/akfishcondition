@@ -1,12 +1,28 @@
 /* Query to retrieve CPUE in kilograms per square kilometer from all Gulf of Alaska strata for VAST. */
 
-select a.hauljoin, a.year, c.start_latitude latitude, c.start_longitude longitude, c.start_time,
-	b.species_code, common_name, a.wgtcpue cpue_kg_km2, a.number_fish, a.effort effort_km2
-	from goa.cpue a, racebase.species b, racebase.haul c, race_data.cruises f, race_data.surveys g
-	where a.species_code = b.species_code
-	and a.hauljoin = c.hauljoin
-	and f.cruise >= 19900
-	and f.survey_id = g.survey_id
-  and g.survey_definition_id = 47
-  and c.cruisejoin = f.racebase_cruisejoin
-	and a.species_code in (21740,21741,21720,30420,10262,10110,30060,30152)
+SELECT 
+  a.hauljoin, 
+  a.start_latitude latitude, 
+  a.start_longitude longitude, 
+  a.start_time, 
+  a.stationid, 
+  b.species_code, 
+  floor(a.cruise/100) year, 
+  b.cpue_kgkm2 cpue_kg_km2, 
+  b.count number_fish, 
+  b.area_swept_km2 effort_km2, 
+  d.common_name
+FROM 
+  racebase.haul a, 
+  gap_products.cpue b, 
+  race_data.v_cruises c, 
+  racebase.species d 
+WHERE 
+  a.cruise >= 199000
+  AND a.hauljoin = b.hauljoin 
+  AND a.haul_type = 3
+  AND a.cruisejoin = c.cruisejoin
+  AND c.survey_definition_id = 47
+  AND b.species_code = d.species_code
+  AND b.species_code IN (21740,21720,30420,10262,10110,30060,30152,10261,10180,10200,10130,30576,30051,30052,30560)
+ORDER BY hauljoin;

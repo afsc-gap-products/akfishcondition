@@ -10,7 +10,7 @@ fontsize: 12pt
 bibliography: EBS_references.bib
 csl: fish-and-fisheries.csl
 addr: 
-  l1: 7600 Sand Pointe Way, NE
+  l1: 7600 Sand Point Way, NE
   l2: NMFS RACE Division, Groundfish Assessment Program
   l3: Seattle, WA 98115
 ---

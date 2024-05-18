@@ -10,9 +10,8 @@ SELECT
   h.latitude_dd_start latitude,
   h.longitude_dd_start longitude,
   h.date_time_start start_time,
-  s.specimen_id,
+  s.specimen_id specimenid,
   t.common_name, 
-  s.species_code,
   s.sex,
   s.length_mm,
   s.weight_g,
@@ -30,4 +29,5 @@ WHERE
   AND h.stratum BETWEEN 10 and 62
   AND s.weight_g != 0
   AND s.length_mm != 0
-  AND s.species_code = t.species_code;
+  AND s.species_code = t.species_code
+  AND c.year >= 1999;

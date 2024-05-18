@@ -10,9 +10,8 @@ SELECT
   h.latitude_dd_start latitude,
   h.longitude_dd_start longitude,
   h.date_time_start start_time,
-  s.specimen_id,
+  s.specimen_id specimenid,
   t.common_name, 
-  s.species_code,
   s.sex,
   s.length_mm,
   s.weight_g,
@@ -27,7 +26,7 @@ FROM
 WHERE
   s.species_code IN (21740,21741,21720,30420,10262,10110,30060,21921)
   AND c.survey_definition_id = 52
-  AND a.area_id IN (919, 929, 939, 949, 959)
+  AND a.area_id IN (299, 799, 3499, 5699)
   AND a.survey_definition_id = c.survey_definition_id
   AND h.hauljoin = s.hauljoin
   AND h.cruisejoin = c.cruisejoin

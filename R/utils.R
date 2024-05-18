@@ -87,7 +87,7 @@ get_condition_data <- function(channel = NULL) {
     names(dat_lw) <- casefold(names(dat_lw))
     names(dat_cpue) <- casefold(names(dat_cpue))
     names(dat_biomass) <- casefold(names(dat_biomass))
-    combined_cpue_lw <- dplyr::bind_rows(dat_lw, dat_cpue) #, pollock_cpue, pollock_lw, cod_cpue, cod_lw)
+    combined_cpue_lw <- dplyr::bind_rows(dat_lw, dat_cpue)
     
     write.csv(combined_cpue_lw, paste0(getwd(),"/data/",i, "_all_species.csv"), row.names = FALSE)
     write.csv(dat_biomass, paste0(getwd(),"/data/",i, "_stratum_biomass_all_species.csv"), row.names = FALSE)
