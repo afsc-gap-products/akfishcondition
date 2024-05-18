@@ -22,7 +22,7 @@ run_sbw_condition <- function(region, stratum_col = NULL, biomass_col = NULL, co
   }
   
   if(is.null(biomass_col)) {
-    biomass_col <- c("area_biomass", "biomass", "biomass", "area_biomass")[region_index]
+    biomass_col <- "biomass"
   }
   
   biomass <- read.csv(file = here::here("data",  paste0(region, "_stratum_biomass_all_species.csv")))

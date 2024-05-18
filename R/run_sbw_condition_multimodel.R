@@ -46,7 +46,7 @@ run_sbw_condition_multimodel <- function(region,
   }
   
   if(is.null(biomass_col)) {
-    biomass_col <- c("area_biomass", "biomass", "biomass", "area_biomass")[region_index]
+    biomass_col <- "biomass"
   }
   
   biomass <- read.csv(file = here::here("data",  paste0(region, "_stratum_biomass_all_species.csv")))
