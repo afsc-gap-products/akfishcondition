@@ -1,9 +1,9 @@
 Package: akfishcondition
 Type: Package
 Title: Groundfish morphometric condition indicator
-Version: 4.1.1
+Version: 4.1.2
 Authors@R: c(person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre")),
-    person("Cecilia", "O'Leary", email = "cecilia.oleary@noaa.gov", role = c("aut")),
+    person("Cecilia", "O'Leary", role = c("aut")),
     person("Bianca", "Prohaska", email = "bianca.prohaska@noaa.gov", role = c("ctb")),
     person("Ned", "Laman", email = "ned.laman@noaa.gov", role = c("ctb")))
 Maintainer: Sean Rohan <sean.rohan@noaa.gov>
@@ -31,6 +31,6 @@ Suggests: knitr,
     getPass, 
     ggthemes,
     akgfmaps
-Remotes: James-Thorson-NOAA/VAST (>= 3.8.2), 
-    James-Thorson-NOAA/FishStatsUtils (>= 2.11.0)
+Remotes: James-Thorson-NOAA/VAST, 
+    James-Thorson-NOAA/FishStatsUtils
 VignetteBuilder: knitr
