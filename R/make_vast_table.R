@@ -3,7 +3,7 @@
 #' Generate tables containing settings for VAST and the VAST estimate of the allometric slope of the length-weight (b in W = a*L^b) relationship.
 #' 
 #' @param region One or more region as a character vector ("EBS", "NBS", "AI", "GOA")
-#' @param write_table Should the table be written as a .csv file to /plots/{region{/{region}_VAST_summary_table.csv?
+#' @param write_table Should the table be written as a .csv file to /plots/{region}/{region}_VAST_summary_table.csv?
 #' @export
 
 make_vast_table <- function(region, write_table = TRUE) {
@@ -15,7 +15,7 @@ make_vast_table <- function(region, write_table = TRUE) {
   sel_region <- region
   
   sel_spp <- dplyr::filter(akfishcondition::ESR_SETTINGS$VAST_SETTINGS, 
-                           region %in% sel_region )
+                           region %in% sel_region)
   
   out_df <- data.frame()
   
