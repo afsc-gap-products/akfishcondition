@@ -239,7 +239,7 @@ fig5_png <- akfishcondition::plot_stratum_stacked_bar(x = NBS_INDICATOR$STRATUM,
                                                              fill_title = "Stratum",
                                                              fill_palette = "PuBu")
 
-print(fig5 + theme_condition_index()+ theme(strip.text = element_text(size = 20)))
+print(fig5 + theme_condition_index() + theme(strip.text = element_text(size = 20)))
 
 ```
 
@@ -247,96 +247,6 @@ print(fig5 + theme_condition_index()+ theme(strip.text = element_text(size = 20)
 png(here::here("plots", region, "NBS_SBW_stratum_stacked_bar.png"), width = 6, height = 7, units = "in", res = 600)
 print(fig5_png + theme_blue_strip() + theme(legend.position = "right", legend.title = element_text(size = 9)))
 dev.off()
-```
-
-
-
-```{r sbw_legacy_plots, include=FALSE, message=FALSE, warning=FALSE}
-# # EBS stratum-biomass weighted residual time series anomaly
-# ebs_sbw_timeseries <- plot_anomaly_timeseries(x = EBS_INDICATOR$FULL_REGION,
-#                         region = region, 
-#                         fill_color = "#0085CA", 
-#                         var_y_name = "mean_wt_resid", 
-#                         var_y_se_name = "se_wt_resid",
-#                         var_x_name = "year",
-#                         y_title = "Length-weight residual (ln(g))",
-#                         plot_type = "box",
-#                         format_for = "png",
-#                         set_intercept = 0)
-# 
-# png(here::here("plots", region, "EBS_SBW_timeseries.png"), width = 6, height = 7, units = "in", res = 600)
-# print(ebs_sbw_timeseries + akfishcondition::theme_blue_strip())
-# dev.off()
-# 
-# # EBS stratum-biomass weighted residual stratum stacked bar plots
-# ebs_stacked_bar <- akfishcondition::plot_stratum_stacked_bar(x = EBS_INDICATOR$STRATUM, 
-#                                                          region = region, 
-#                                                          var_x_name = "year", 
-#                                                          var_y_name = "stratum_resid_mean", 
-#                                                          y_title = "Length-weight residual (ln(g))",
-#                                                          var_group_name = "stratum",
-#                                                          fill_title = "Stratum",
-#                                                          fill_palette = "BrBG")
-# 
-# png(here::here("plots", region, "EBS_SBW_stratum_stacked_bar.png"), width = 6, height = 7, units = "in", res = 600)
-# print(ebs_stacked_bar + theme_blue_strip() + theme(legend.position = "right", legend.title = element_text(size = 9)))
-# dev.off()
-# 
-# # EBS single species stratum plots
-# akfishcondition::plot_species_stratum_bar(x = EBS_INDICATOR$STRATUM, 
-#                                           region = "EBS", 
-#                                           var_x_name = "year", 
-#                                           var_y_name = "stratum_resid_mean", 
-#                                           var_y_se_name = "stratum_resid_se",
-#                                           y_title = "Length-weight residual (ln(g))",
-#                                           var_group_name = "stratum",
-#                                           fill_title = "Stratum",
-#                                           fill_palette = "BrBG",
-#                                           write_plot = TRUE)
-# 
-# # NBS stratum-biomass weighted residual time series anomaly
-# nbs_sbw_timeseries <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
-#                         region = region, 
-#                         fill_color = "#0085CA", 
-#                         var_y_name = "mean_wt_resid", 
-#                         var_y_se_name = "se_wt_resid",
-#                         var_x_name = "year",
-#                         y_title = "Length-weight residual (ln(g))",
-#                         plot_type = "box",
-#                         format_for = "png",
-#                         set_intercept = 0)
-# 
-# png(here::here("plots", region, "NBS_SBW_timeseries.png"), width = 6, height = 7, units = "in", res = 600)
-# print(nbs_sbw_timeseries + akfishcondition::theme_blue_strip())
-# dev.off()
-# 
-# # NBS stratum-biomass weighted residual stratum stacked bar plots
-# nbs_stacked_bar <- akfishcondition::plot_stratum_stacked_bar(x = NBS_INDICATOR$STRATUM, 
-#                                                              region = region, 
-#                                                              var_x_name = "year", 
-#                                                              var_y_name = "stratum_resid_mean", 
-#                                                              y_title = "Length-weight residual (ln(g))",
-#                                                              var_group_name = "stratum",
-#                                                              fill_title = "Stratum",
-#                                                              fill_palette = "PuBu")
-# 
-# png(here::here("plots", region, "NBS_SBW_stratum_stacked_bar.png"), width = 6, height = 7, units = "in", res = 600)
-# print(nbs_stacked_bar + theme_blue_strip() + theme(legend.position = "right", legend.title = element_text(size = 9)))
-# dev.off()
-# 
-# 
-# # NBS single species stratum plots
-# akfishcondition::plot_species_stratum_bar(x = NBS_INDICATOR$STRATUM,
-#                                           region = "NBS",
-#                                           var_x_name = "year",
-#                                           var_y_name = "stratum_resid_mean",
-#                                           var_y_se_name = "stratum_resid_se",
-#                                           y_title = "Length-weight residual (ln(g))",
-#                                           var_group_name = "stratum",
-#                                           fill_title = "Stratum",
-#                                           fill_palette = "PuBu",
-#                                           write_plot = TRUE)
-
 ```
 
 **Factors influencing observed trends**: Temperature appears to influence morphological condition of several species in the EBS and NBS, so near-average cold pool extent and water temperatures in 2023 likely played a role in the near-average condition (within 1 S.D. of the mean) for most species in the EBS and NBS. Historically, particularly cold years tend to correspond with negative condition, while particularly warm years tend to correspond to positive condition. For example, water temperatures were particularly cold during the 1999 Bering Sea survey, a year in which negative condition was observed for all species that data were available. In addition, spatiotemporal factor analyses suggest the morphometric condition of age-7 walleye pollock is strongly correlated with cold pool extent in the EBS [@Gruss2021]. In recent years, warm temperatures across the Bering Sea shelf, since the record low seasonal sea ice extent in 2017–2018 and historical cold pool area minimum in 2018 [@Stabeno2019a], may have influenced the positive trend in the condition of several species from 2016 to 2019. However, despite near-average temperature in 2023 large walleye pollock (>250 mm) condition in the EBS was the second lowest recorded over the time series.
