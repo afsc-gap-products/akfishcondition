@@ -1,3 +1,13 @@
+akfishcondition 4.1.3 (October 9, 2024)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Fix bug in bias_correction and outlier_rm arguments to 
+  calc_lw_residuals().
+
+
+
 akfishcondition 4.1.2 (September 25, 2024)
 ----------------------------------------------------------------
 

@@ -5,8 +5,8 @@
 #' @param length Set of individual fish lengths.
 #' @param weight Corresponding set of individual fish weights.
 #' @param stratum Stratum code for length-weight regression by stratum.
-#' @param bias.correct Bias corrected residuals following Brodziak (2012)
-#' @param outlier.rm Should outliers be removed using Bonferoni test (cutoff = 0.7)
+#' @param bias_correction Bias corrected residuals following Brodziak (2012)
+#' @param outlier_rm Should outliers be removed using Bonferoni test (cutoff = 0.7)
 #' @param make_diagnostics Output diagnostic plots and summaries? Default FALSE produces no diagnostics and summaries. If true, species_code and region should be specified.
 #' @param species_code Species code (provide if make_diagnostics = TRUE)
 #' @param region Region (provide if make_diagnostics = TRUE)
@@ -26,12 +26,12 @@ calc_lw_residuals <- function(len,
                               region = NA,
                               include_ci = TRUE) {
   
-  if(exists("outlier.rm")) {
-    outlier_rm <- outlier.rm
+  if(exists("outlier_rm")) {
+    outlier_rm <- outlier_rm
   }
   
-  if(exists("bias.correction")) {
-    bias_correction <- bias.correction
+  if(exists("bias_correction")) {
+    bias_correction <- bias_correction
   }
   
   loglen <- log(len)
@@ -57,7 +57,7 @@ calc_lw_residuals <- function(len,
   lw.reg <- run_lw_reg(logwt = logwt, loglen = loglen, stratum = stratum)
   
   #Assessing Outliers using Bonferroni Outlier Test
-  if(outlier.rm) {
+  if(outlier_rm) {
     #Produce a Bonferroni value for each point in your data
     bonf_p <- car::outlierTest(lw.reg$mod,n.max=Inf,cutoff=Inf,order=FALSE)$bonf.p 
     remove <- which(bonf_p < .05)
@@ -70,7 +70,7 @@ calc_lw_residuals <- function(len,
   } 
   
   # Apply bias correction factor
-  if(bias.correction) {
+  if(bias_correction) {
     syx <- summary(lw.reg$mod)$sigma
     cf <- exp((syx^2)/2) 
     
