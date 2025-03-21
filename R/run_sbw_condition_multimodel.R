@@ -4,7 +4,7 @@
 #' 
 #' @param region Region as a character vector ("EBS", "NBS", "AI", or "GOA")
 #' @param stratum_col Optional. Name of the stratum column as a character vector.
-#' @param biomass_col Optional. Name of the biomass column as a charcater vector.
+#' @param biomass_col Optional. Name of the biomass column as a character vector.
 #' @param cod_juv_cutoff_mm Optional. Fork length cutoff for adult and juvenile.
 #' @param covariates_to_use Character vector indicating which variables to use ('sex', 'day_of_year', 'stratum').
 #' @param min_n Minimum number of samples for data from a stratum to be included in condition indicator calculations. Default = 10.
@@ -42,7 +42,7 @@ run_sbw_condition_multimodel <- function(region,
   }
   
   if(is.null(stratum_col)) {
-    stratum_col <- c("inpfc_stratum", "stratum", "stratum", "inpfc_stratum")[region_index]
+    stratum_col <- "stratum"
   }
   
   if(is.null(biomass_col)) {
@@ -58,11 +58,11 @@ run_sbw_condition_multimodel <- function(region,
   lw$start_time <- as.POSIXct(lw$start_time)
   lw$day_of_year <- lubridate::yday(lw$start_time)
   
-  if(region == "EBS") {
-    lw <- lw |>
-      dplyr::filter(stratum < 70) |>
-      dplyr::mutate(stratum = floor(stratum/10)*10)
-  }
+  # if(region == "EBS") {
+  #   lw <- lw |>
+  #     dplyr::filter(stratum < 70) |>
+  #     dplyr::mutate(stratum = floor(stratum/10)*10)
+  # }
   
   lw <- lw |> 
     dplyr::filter(!is.na(length_mm)) |>

@@ -178,11 +178,11 @@ set_stratum_order <- function(stratum, region) {
   }
   if(region == "GOA") {
     return(factor(stratum,
-                  levels = c("Shumagin",
-                             "Chirikof",
-                             "Kodiak",
-                             "Yakutat",
-                             "Southeastern")))
+                  levels = c(610,
+                             620,
+                             630,
+                             640,
+                             650)))
   } else if(region == "AI") {
     return(factor(stratum,
                   levels = c("Southern Bering Sea", 
