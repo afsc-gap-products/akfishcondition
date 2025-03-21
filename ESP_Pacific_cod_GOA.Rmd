@@ -17,11 +17,11 @@ addr:
 
 # Gulf of Alaska Pacific cod
 
-## Adults (&geq;42 cm FL)
+## Adults (&geq;50.3 cm FL)
 
 *Status and Trends:*  In 2023, the condition of adult Pacific cod in the GOA was neutral (within one standard deviation of the time series mean), which continues the trend of neutral morphometric condition observed since 2017.
 
-## Juveniles (<42 cm FL)
+## Juveniles (<50.3 cm FL)
 
 *Status and Trends:* In 2023, the condition of juvenile Pacific cod in the EBS was neutral (within one standard deviation of the time series mean), which continues the trend of neutral morphometric condition observed since 2019.
 

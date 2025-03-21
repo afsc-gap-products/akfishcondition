@@ -129,7 +129,7 @@ fig3a <- plot_stratum_stacked_bar(x = dplyr::filter(GOA_INDICATOR$STRATUM,
                                  fill_palette = "BrBG",
                                  var_y_name = "stratum_resid_mean", 
                                  var_x_name = "year",
-                                 var_group_name = "inpfc_stratum",
+                                 var_group_name = "area_id",
                                  fill_title = "Stratum",
                                  y_title = "Length-weight residual (ln(g))")
 
@@ -139,7 +139,7 @@ fig3b <- plot_stratum_stacked_bar(x = dplyr::filter(GOA_INDICATOR$STRATUM,
                                  fill_palette = "BrBG",
                                  var_y_name = "stratum_resid_mean", 
                                  var_x_name = "year",
-                                 var_group_name = "inpfc_stratum",
+                                 var_group_name = "area_id",
                                  fill_title = "Stratum",
                                  y_title = "Length-weight residual (ln(g))")
 
@@ -173,7 +173,7 @@ plot_species_stratum_bar(
   var_y_name = "stratum_resid_mean",
   var_y_se_name = "stratum_resid_se",
   y_title = "Length-weight residual (ln(g))",
-  var_group_name = "inpfc_stratum",
+  var_group_name = "area_id",
   fill_title = "Stratum",
   fill_palette = "BrBG",
   write_plot = TRUE)
