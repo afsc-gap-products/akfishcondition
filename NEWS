@@ -1,3 +1,19 @@
+akfishcondition 4.2.1 (August 26, 2025)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Fixed poststratify_goa_hauls() paths to match akgfmaps 
+  release. 
+  
+DATA UPDATE
+
+- Added 2025 EBS and GOA stratum-biomass-weighted condition 
+  indicators.
+- stratum and inpfc_stratum field names for condition indicators
+  changed to area_id to match GAP_PRODUCTS AREA_ID names.
+  
+
 akfishcondition 4.2.0 (March 21, 2025)
 ----------------------------------------------------------------
 

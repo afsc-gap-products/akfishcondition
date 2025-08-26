@@ -3,7 +3,7 @@
 \docType{data}
 \name{NBS_INDICATOR}
 \alias{NBS_INDICATOR}
-\title{Northern Bering Sea (2010-2022)}
+\title{Northern Bering Sea (2010-2023)}
 \format{
 A list containing a data frames (indicator for the full region) and a character vector.
 \describe{
@@ -21,7 +21,7 @@ A list containing a data frames (indicator for the full region) and a character 
         \itemize{
          \item{common_name}{: Species Common name}
          \item{year}{: Year}
-         \item{stratum}{: Survey stratum}
+         \item{area_id}{: Survey stratum; matches GAP_PRODUCTS AREA_ID}
          \item{stratum_resid_mean}{: Unweighted stratum mean residual}
          \item{stratum_resid_sd}{: Standard error of the stratum mean residual}
          \item{n}{: Sample size for the stratum}
