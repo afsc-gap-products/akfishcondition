@@ -6,3 +6,9 @@ analysis
 archive
 past_years
 plots
+output
+^.*\.Rmd$
+^.*\.png$
+^.*\.csv$
+^.*\.bib$
+^.*\.csl$
