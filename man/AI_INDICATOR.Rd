@@ -19,7 +19,7 @@ A list containing two data frames (indicator for the full region, indicator by s
         \itemize{
          \item{common_name}{: Species Common name}
          \item{year}{: Year}
-         \item{inpfc_stratum}{: INPFC Stratum}
+         \item{area_id}{: INPFC Stratum; matches GAP_PRODUCTS AREA_ID}
          \item{stratum_resid_mean}{: Unweighted stratum mean residual}
          \item{n}{: Sample size for the stratum}
          \item{stratum_resid_se}{: Standard error of the stratum mean residual}

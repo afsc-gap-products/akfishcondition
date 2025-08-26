@@ -16,7 +16,7 @@
 #'         \itemize{
 #'          \item{common_name}{: Species Common name}
 #'          \item{year}{: Year}
-#'          \item{inpfc_stratum}{: INPFC Stratum}
+#'          \item{area_id}{: INPFC Stratum; matches GAP_PRODUCTS AREA_ID}
 #'          \item{stratum_resid_mean}{: Unweighted stratum mean residual}
 #'          \item{n}{: Sample size for the stratum}
 #'          \item{stratum_resid_se}{: Standard error of the stratum mean residual}
@@ -30,7 +30,7 @@
 #' @export
 "AI_INDICATOR"
 
-#' Gulf of Alaska (1990-2023)
+#' Gulf of Alaska (1990-2025)
 #' 
 #' Morphometric condition indicators based on residuals from length-weight regressions for Pacific cod, walleye pollock (> 250 mm), walleye pollock (100-250 mm), Pacific cod, northern rock sole, southern rock sole, arrowtooth flounder, Dover sole, rex sole, flathead sole, Atka mackerel, blackspotted rockfish, rougheye rockfish, northern rockfish, shortraker rockfish, shaprchin rockfish, and Pacific ocean perch in the Gulf of Alaska.
 #' 
@@ -48,7 +48,7 @@
 #'         \itemize{
 #'          \item{common_name}{: Species Common name}
 #'          \item{year}{: Year}
-#'          \item{inpfc_stratum}{: INPFC Stratum}
+#'          \item{area_id}{: NMFS Statistical Area; intended to match GAP_PRODUCTS AREA_ID}
 #'          \item{stratum_resid_mean}{: Unweighted stratum mean residual}
 #'          \item{n}{: Sample size for the stratum}
 #'          \item{stratum_resid_sd}{: Standard error of the stratum mean residual}
@@ -62,7 +62,7 @@
 #' @export
 "GOA_INDICATOR"
 
-#' Eastern Bering Sea continental shelf (1999-2022)
+#' Eastern Bering Sea continental shelf (1999-2025)
 #' 
 #' Morphometric condition indicators based on length-weight regressions for Pacific cod, walleye pollock (> 250 mm), walleye pollock (100-250 mm), northern rock sole, arrowtooth flounder, flathead sole, Alaska plaice, and yellowfin sole in the eastern Bering Sea.
 #' 
@@ -81,7 +81,7 @@
 #'         \itemize{
 #'          \item{common_name}{: Species Common name}
 #'          \item{year}{: Year}
-#'          \item{stratum}{: Survey Stratum}
+#'          \item{area_id}{: Survey subarea; matches GAP_PRODUCTS AREA_ID}
 #'          \item{stratum_resid_mean}{: Unweighted stratum mean residual}
 #'          \item{stratum_resid_sd}{: Standard error of the stratum mean residual}
 #'          \item{n}{: Sample size for the stratum}
@@ -95,7 +95,7 @@
 #' @export
 "EBS_INDICATOR"
 
-#' Northern Bering Sea (2010-2022)
+#' Northern Bering Sea (2010-2023)
 #' 
 #' Morphometric condition indicators based on length-weight regressions for Pacific cod, walleye pollock (> 250 mm), walleye pollock (100-250 mm), Alaska plaice, and yellowfin sole in the northern Bering Sea.
 #' 
@@ -115,7 +115,7 @@
 #'         \itemize{
 #'          \item{common_name}{: Species Common name}
 #'          \item{year}{: Year}
-#'          \item{stratum}{: Survey stratum}
+#'          \item{area_id}{: Survey stratum; matches GAP_PRODUCTS AREA_ID}
 #'          \item{stratum_resid_mean}{: Unweighted stratum mean residual}
 #'          \item{stratum_resid_sd}{: Standard error of the stratum mean residual}
 #'          \item{n}{: Sample size for the stratum}

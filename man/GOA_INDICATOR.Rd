@@ -3,7 +3,7 @@
 \docType{data}
 \name{GOA_INDICATOR}
 \alias{GOA_INDICATOR}
-\title{Gulf of Alaska (1990-2023)}
+\title{Gulf of Alaska (1990-2025)}
 \format{
 A list containing two data frames (indicator for the full region, indicator by stratum) and a character vector.
 \describe{
@@ -19,7 +19,7 @@ A list containing two data frames (indicator for the full region, indicator by s
         \itemize{
          \item{common_name}{: Species Common name}
          \item{year}{: Year}
-         \item{inpfc_stratum}{: INPFC Stratum}
+         \item{area_id}{: NMFS Statistical Area; intended to match GAP_PRODUCTS AREA_ID}
          \item{stratum_resid_mean}{: Unweighted stratum mean residual}
          \item{n}{: Sample size for the stratum}
          \item{stratum_resid_sd}{: Standard error of the stratum mean residual}

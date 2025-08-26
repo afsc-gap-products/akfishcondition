@@ -1,8 +1,8 @@
 Package: akfishcondition
 Type: Package
 Title: Groundfish morphometric condition indicator
-Version: 4.2.0
-Date: 2024-10-09
+Version: 4.2.1
+Date: 2025-08-26
 Authors@R: c(person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre")),
     person("Cecilia", "O'Leary", role = "aut"),
     person("Bianca", "Prohaska", email = "bianca.prohaska@noaa.gov", role = "ctb"),
