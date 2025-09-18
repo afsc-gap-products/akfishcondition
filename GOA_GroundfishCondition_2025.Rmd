@@ -7,6 +7,8 @@ author:
   name: Bianca Prohaska
 output: word_document
 fontsize: 12pt
+bibliography: GOA_references.bib
+csl: fish-and-fisheries.csl
 addr: 
   l1: 7600 Sand Point Way NE
   l2: NMFS RACE Division, Groundfish Assessment Program
@@ -104,7 +106,7 @@ Contributed by Bianca Prohaska^1^ and Sean Rohan^1^
 **Contact**: 
 **Last updated**: September 2025
 
-**Description of Indicator**: Length-weight residuals represent how heavy a fish is per unit body length and are an indicator of somatic growth variability (Brodeur et al., 2004). Therefore, length-weight residuals can be considered indicators of prey availability, growth, general health, and habitat condition (Blackwell et al., 2000; Froese, 2006). Positive length-weight residuals indicate better condition (i.e., heavier per unit length) and negative residuals indicate poorer condition (i.e., lighter per unit length) (Froese, 2006). Fish condition calculated in this way reflects realized outcomes of intrinsic and extrinsic processes that affect fish growth which can have implications for biological productivity through direct effects on growth and indirect effects on demographic processes such as, reproduction, and mortality (e.g., Rodgveller, 2019; Barbeaux et al., 2020).
+**Description of Indicator**: Length-weight residuals represent how heavy a fish is per unit body length and are an indicator of somatic growth variability (Brodeur et al., 2004). Therefore, length-weight residuals can be considered indicators of prey availability, growth, general health, and habitat condition (Blackwell et al., 2000; Froese, 2006). Positive length-weight residuals indicate better condition (i.e., heavier per unit length) and negative residuals indicate poorer condition (i.e., lighter per unit length) (Froese, 2006). Fish condition calculated in this way reflects realized outcomes of intrinsic and extrinsic processes that affect fish growth which can have implications for biological productivity through direct effects on growth and indirect effects on demographic processes such as, reproduction, and mortality (e.g., [@Rodgveller2019; @Barbeaux2020]).
 
 ```{r map, include = TRUE, out.width = "100%", fig.cap = "\\label{fig:figs}Figure 1. National Marine Fisheries Service (NMFS) Alaska Fisheries Science Center Resource Assessment and Conservation Engineering (AFSC/RACE) Groundfish Assessment Program (GAP) Gulf of Alaska summer bottom trawl survey area with NMFS Statistical Reporting Areas demarcated.",  echo = FALSE}
 knitr::include_graphics(path = here::here("plots", "GOA", "goa_survey_area.png"))
@@ -250,5 +252,7 @@ plot_species_stratum_bar(
 
 **Implications**: Variations in body condition likely have implications for fish survival. The condition of GOA groundfish may contribute to variation in  mortality. As additional years are added to the time series, the relationship between length-weight residuals and subsequent survival will be examined further. It is important that residual body condition for most species in these analyses was computed for all sizes and sexes combined. Prey consumption and habitat use patterns often differ among life stages which can cause different responses to temperature variation among sizes/ages of a single species (e.g., Oke et al., 2022). Future analyses may benefit from examining life-stages (e.g., early juvenile, subadult, and adult phases) as well as potential effects of density-dependent growth.  
 
-The continuing pattern of below average body condition for many GOA species over the last decade is a potential cause for concern. It could reflect the influence of locally changing environmental conditions that are inhibiting growth, local production, or survivorship. Indications are that the Warm Blob (Bond et al., 2015; Stabeno et al., 2019) has been followed by subsequent years with elevated water temperatures (Oceanographic Synthesis, this year’s ESR) which may be related to changes in fish condition. As more years of fish condition data are added to the record, and as our understanding of the relationships between condition, growth, production and survival expands, we hope to gain deeper insights into the overall health of fish populations in the GOA.  
+The continuing pattern of below average body condition for many GOA species over the last decade is a potential cause for concern. It could reflect the influence of locally changing environmental conditions that are inhibiting growth, local production, or survivorship. Indications are that the Warm Blob (Bond et al., 2015; Stabeno et al., 2019) has been followed by subsequent years with elevated water temperatures (Oceanographic Synthesis, this year’s ESR) which may be related to changes in fish condition. As more years of fish condition data are added to the record, and as our understanding of the relationships between condition, growth, production and survival expands, we hope to gain deeper insights into the overall health of fish populations in the GOA.  [@Suryan2021]
 
+
+## References
