@@ -34,62 +34,62 @@ if(!dir.exists(here::here("plots", region))) {
 
 if(make_map){
   library(akgfmaps)
-  
-  ebs_layers <- akgfmaps::get_base_layers(select.region = "ebs",
-                                          set.crs = "EPSG:3338")
-  
-  
-  # Simple version
-  survey_strata <- ebs_layers$survey.strata %>%
-    dplyr::mutate(agg_stratum = STRATUM) %>%
-    dplyr::mutate(agg_stratum = replace(agg_stratum, agg_stratum %in% c(31,32), 30),
-                  agg_stratum = replace(agg_stratum, agg_stratum %in% c(41,42,43), 40),
-                  agg_stratum = replace(agg_stratum, agg_stratum %in% c(61,62), 60),
-                  SURVEY = replace(SURVEY_DEFINITION_ID, SURVEY_DEFINITION_ID == 98,  "EBS Shelf"), 
-                  SURVEY = replace(SURVEY_DEFINITION_ID, SURVEY_DEFINITION_ID == 143, "NBS")) %>% 
-    dplyr::group_by(agg_stratum, SURVEY) %>% 
-    dplyr::summarise()
-  
-  plot_ebs_nbs_survey_stations <- ggplot() +
-    geom_sf(data = survey_strata,
-            aes(fill = SURVEY),
-            color = "black") +
-    geom_sf_text(data = sf::st_centroid(survey_strata), 
-                 aes(label = agg_stratum),
-                 color = "black",
-                 size = rel(6)) +
-    geom_sf(data = sf::st_centroid(ebs_layers$survey.grid %>%
-                                     dplyr::mutate(lab = "Station Location")),
-            aes(shape = lab)) +
-    ggplot2::geom_sf(data = ebs_layers$akland, 
-                     fill = "grey85", 
-                     color = "black") +
-    geom_sf(data = ebs_layers$graticule,
-            size = 0.2,
-            alpha = 0.5) +
-    ggplot2::coord_sf(xlim = ebs_layers$plot.boundary$x, 
-                      ylim = ebs_layers$plot.boundary$y) +
-    ggplot2::scale_x_continuous(name = "Longitude", 
-                                breaks = ebs_layers$lon.breaks) + 
-    ggplot2::scale_y_continuous(name = "Latitude", 
-                                breaks = ebs_layers$lat.breaks) +
-    scale_shape_manual(values = "x") +
-    scale_fill_manual(values = c("#0085CA", "#54ADDB")) +
-    theme_bw() +
-    ggplot2::theme(axis.title = element_blank(),
-                   axis.text = element_text(color = "black"),
-                   axis.ticks = element_line(color = "black"),
-                   panel.border = element_rect(color = "black", fill = NA),
-                   panel.grid = element_blank(),
-                   panel.background = element_rect(color = "black", fill = "white"),
-                   legend.title = element_blank(),
-                   legend.margin = margin(-12,0,0,0),
-                   legend.position = c(0.2,0.1),
-                   legend.background = element_blank())
-  
-  ragg::agg_png(filename = here::here("plots", region, "EBS_NBS_survey_area.png"), width = 5, height = 5, units = "in", res = 600)
-  print(plot_ebs_nbs_survey_stations)
-  dev.off()
+
+ebs_layers <- akgfmaps::get_base_layers(
+  select.region = "ebs",
+  set.crs = "EPSG:3338"
+)
+
+# Simple version
+survey_strata <- ebs_layers$survey.strata %>%
+  dplyr::mutate(agg_stratum = STRATUM) %>%
+  dplyr::mutate(agg_stratum = replace(agg_stratum, agg_stratum %in% c(31,32), 30),
+                agg_stratum = replace(agg_stratum, agg_stratum %in% c(41,42,43), 40),
+                agg_stratum = replace(agg_stratum, agg_stratum %in% c(61,62), 60),
+                SURVEY = dplyr::if_else(SURVEY_DEFINITION_ID == 98, "EBS Shelf", "NBS")) |> 
+  dplyr::group_by(agg_stratum, SURVEY) %>% 
+  dplyr::summarise()
+
+plot_ebs_nbs_survey_stations <- ggplot() +
+  geom_sf(data = survey_strata,
+          aes(fill = SURVEY),
+          color = "black") +
+  geom_sf_text(data = sf::st_centroid(survey_strata), 
+               aes(label = agg_stratum),
+               color = "black",
+               size = rel(6)) +
+  geom_sf(data = sf::st_centroid(ebs_layers$survey.grid %>%
+                                   dplyr::mutate(lab = "Station Location")),
+          aes(shape = lab)) +
+  ggplot2::geom_sf(data = ebs_layers$akland, 
+                   fill = "grey85", 
+                   color = "black") +
+  geom_sf(data = ebs_layers$graticule,
+          size = 0.2,
+          alpha = 0.5) +
+  ggplot2::coord_sf(xlim = ebs_layers$plot.boundary$x, 
+                    ylim = ebs_layers$plot.boundary$y) +
+  ggplot2::scale_x_continuous(name = "Longitude", 
+                              breaks = ebs_layers$lon.breaks) + 
+  ggplot2::scale_y_continuous(name = "Latitude", 
+                              breaks = ebs_layers$lat.breaks) +
+  scale_shape_manual(values = "x") +
+  scale_fill_manual(values = c("#0085CA", "#54ADDB")) +
+  theme_bw() +
+  ggplot2::theme(axis.title = element_blank(),
+                 axis.text = element_text(color = "black"),
+                 axis.ticks = element_line(color = "black"),
+                 panel.border = element_rect(color = "black", fill = NA),
+                 panel.grid = element_blank(),
+                 panel.background = element_rect(color = "black", fill = "white"),
+                 legend.title = element_blank(),
+                 legend.margin = margin(-12,0,0,0),
+                 legend.position = c(0.2,0.1),
+                 legend.background = element_blank())
+
+ragg::agg_png(filename = here::here("plots", region, "EBS_NBS_survey_area.png"), width = 5, height = 5, units = "in", res = 600)
+print(plot_ebs_nbs_survey_stations)
+dev.off()
 }
 
 ```
@@ -149,25 +149,29 @@ dev.off()
 
 ```{r figure 3 grid, include=TRUE, echo=FALSE, fig.height=14,fig.width=12,fig.cap="\\label{fig:figs}Figure 3. Length-weight residuals by survey stratum (10-60) for seven eastern Bering Sea shelf groundfish species and age 1–2 walleye pollock (100–250 mm) sampled in the AFSC/RACE GAP standard summer bottom trawl survey, 1999-2025. Length-weight residuals are not weighted by stratum biomass.",  message=FALSE, warning=FALSE}
 # EBS stratum-biomass weighted residual stratum stacked bar plots
-fig3 <- akfishcondition::plot_stratum_stacked_bar(x = EBS_INDICATOR$STRATUM, 
-                                                         region = region, 
-                                                         var_x_name = "year", 
-                                                         var_y_name = "stratum_resid_mean", 
-                                                         y_title = "Length-weight residual (ln(g))",
-                                                         var_group_name = "area_id",
-                                                         fill_title = "Stratum",
-                                                         fill_palette = "BrBG")
-                                                  
+fig3 <- akfishcondition::plot_stratum_stacked_bar(
+  x = EBS_INDICATOR$STRATUM |>
+    dplyr::mutate(area_id = area_id * 10), 
+  region = region, 
+  var_x_name = "year", 
+  var_y_name = "stratum_resid_mean", 
+  y_title = "Length-weight residual (ln(g))",
+  var_group_name = "area_id",
+  fill_title = "Stratum",
+  fill_palette = "BrBG")
 
-fig3_png <- akfishcondition::plot_stratum_stacked_bar(x = EBS_INDICATOR$STRATUM, 
-                                                         region = region, 
-                                                         var_x_name = "year", 
-                                                         var_y_name = "stratum_resid_mean", 
-                                                         y_title = "Length-weight residual (ln(g))",
-                                                         var_group_name = "area_id",
-                                                         fill_title = "Stratum",
-                                                         fill_palette = "BrBG")
-                                                         
+
+fig3_png <- akfishcondition::plot_stratum_stacked_bar(
+  x = EBS_INDICATOR$STRATUM |>
+    dplyr::mutate(area_id = area_id * 10), 
+  region = region, 
+  var_x_name = "year", 
+  var_y_name = "stratum_resid_mean", 
+  y_title = "Length-weight residual (ln(g))",
+  var_group_name = "area_id",
+  fill_title = "Stratum",
+  fill_palette = "BrBG")
+
 print(fig3 + theme_condition_index()+ theme(strip.text = element_text(size = 20)))
 ```
 
@@ -183,7 +187,8 @@ In 2025, large walleye pollock (>250 mm) exhibited positive condition across all
 
 ```{r figure 4 grid, include=TRUE, echo=FALSE, fig.height=14,fig.width=12,fig.cap="\\label{fig:figs}Figure 4. Morphometric condition of groundfish species collected during AFSC/RACE GAP standard summer bottom trawl surveys of the northern Bering Sea shelf (2010, 2017, 2019,  2021-2023 and 2025) based on residuals of length-weight regressions. The dash in the blue boxes denotes the mean for that year, the box denotes one standard error, and the lines on the boxes denote two standard errors. Lines on each plot represent the historical mean, dashed lines denote one standard deviation, and dotted lines denote two standard deviations.",  message=FALSE, warning=FALSE}
 # Set factor levels for plotting order
-fig4 <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
+fig4 <- plot_anomaly_timeseries(
+  x = NBS_INDICATOR$FULL_REGION,
                         region = "BS", 
                         fill_color = "#54ADDB", 
                         var_y_name = "mean_wt_resid", 
@@ -191,9 +196,11 @@ fig4 <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
                         var_x_name = "year",
                         y_title = "Length-weight residual (ln(g))",
                         plot_type = "box",
-                        format_for = "rmd")
+                        format_for = "rmd"
+  )
 
-fig4_png <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
+fig4_png <- plot_anomaly_timeseries(
+  x = NBS_INDICATOR$FULL_REGION,
                         region = "BS", 
                         fill_color = "#54ADDB", 
                         var_y_name = "mean_wt_resid", 
@@ -201,7 +208,8 @@ fig4_png <- plot_anomaly_timeseries(x = NBS_INDICATOR$FULL_REGION,
                         var_x_name = "year",
                         y_title = "Length-weight residual (ln(g))",
                         plot_type = "box",
-                        format_for = "png")
+                        format_for = "png"
+  )
 
 print(fig4 + theme_condition_index())
 
