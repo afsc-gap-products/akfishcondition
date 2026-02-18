@@ -4,6 +4,7 @@ library(akfishcondition)
 # Retrieve length-weight, cpue, and biomass data; write to /data/
 channel <- akfishcondition:::get_connected(schema = "AFSC")
 
+# Requires gapindex >= 3.0.3
 akfishcondition::get_condition_data(channel = channel)
 
 akfishcondition:::make_data_summary(dat_csv = here::here("data", "nbs_all_species.csv"), region = "NBS")
@@ -20,22 +21,22 @@ ESR_SETTINGS <-
         "Pacific cod (juvenile)", "Pacific cod (adult)", "Atka mackerel", "arrowtooth flounder", 
         "flathead sole", "yellowfin sole", "northern rock sole", "southern rock sole", "Alaska plaice",
         "Pacific ocean perch", "dusky rockfish", "northern rockfish", "Dover sole", "rex sole", 
-        "shortraker rockfish", "rougheye rockfish", "blackspotted rockfish", "sharpchin rockfish"),
+        "shortraker rockfish", "rougheye rockfish", "blackspotted rockfish", "sharpchin rockfish", "Greenland turbot", "Kamchatka flounder"),
       species_code = 
         c(21740, 21741, 21742, 21720, 21721, 21722, 21921, 10110, 10130,
-          10210, 10261, 10262, 10285, 30060, 30152, 30420, 10180, 10200, 30576, 30051, 30052, 30560),
+          10210, 10261, 10262, 10285, 30060, 30152, 30420, 10180, 10200, 30576, 30051, 30052, 30560, 10115, 10112),
       AI = 
         c(FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, TRUE, 
-          FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
+          FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
       GOA = 
         c(FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, 
-          TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE),
+          TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE),
       EBS = 
         c(FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, 
-          FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
+          FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE),
       NBS = 
         c(FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, TRUE, 
-          FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
+          FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
     ),
     VAST_SETTINGS = 
       data.frame(
@@ -100,12 +101,12 @@ ESP_SETTINGS <-
   list(
     ESP_SPECIES = 
       data.frame(
-        common_name = c("Pacific cod (juvenile)", "Pacific cod (adult)"),
-        species_code = c(21721, 21722),
-        AI = c(TRUE, TRUE),
-        GOA = c(TRUE, TRUE),
-        EBS = c(TRUE, TRUE),
-        NBS = c(FALSE, FALSE)),
+        common_name = c("Pacific cod (juvenile)", "Pacific cod (adult)", "arrowtooth flounder (adult)", "Greenland turbot (adult)"),
+        species_code = c(21721, 21722, 10110, 10115),
+        AI = c(TRUE, TRUE, FALSE, FALSE),
+        GOA = c(TRUE, TRUE, TRUE, FALSE),
+        EBS = c(TRUE, TRUE, FALSE, TRUE),
+        NBS = c(FALSE, FALSE, FALSE, FALSE)),
     VAST_SETTINGS = data.frame(species_code = c(21721, 21722,
                                                 21721, 21722,
                                                 21721, 21722),
@@ -323,33 +324,99 @@ AI_INDICATOR <- list(
 PCOD_ESP <- list(
   FULL_REGION_EBS = as.data.frame(
     dplyr::filter(ebs_sbw$full_sbw,
-                  common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
+                  common_name %in% c("Pacific cod (juvenile)", "Pacific cod (adult)")
     )),
   FULL_REGION_GOA = as.data.frame(
     dplyr::filter(goa_sbw$full_sbw,
-                  common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
+                  common_name %in% c("Pacific cod (juvenile)", "Pacific cod (adult)")
     )),
   FULL_REGION_AI = as.data.frame(
     dplyr::filter(ai_sbw$full_sbw,
-                  common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
+                  common_name %in% c("Pacific cod (juvenile)", "Pacific cod (adult)")
     )),
   FULL_REGION_NBS = as.data.frame(
     dplyr::filter(
-      nbs_sbw$full_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
+      nbs_sbw$full_sbw, common_name %in% c("Pacific cod (juvenile)", "Pacific cod (adult)")
     )),
   STRATUM_EBS = as.data.frame(
     dplyr::filter(
-      ebs_sbw$stratum_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
+      ebs_sbw$stratum_sbw, common_name %in% c("Pacific cod (juvenile)", "Pacific cod (adult)")
     )),
   STRATUM_GOA = as.data.frame(
     dplyr::filter(
-      goa_sbw$stratum_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
+      goa_sbw$stratum_sbw, common_name %in% c("Pacific cod (juvenile)", "Pacific cod (adult)")
     )),
   STRATUM_AI = as.data.frame(
     dplyr::filter(
-      ai_sbw$stratum_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
+      ai_sbw$stratum_sbw, common_name %in% c("Pacific cod (juvenile)", "Pacific cod (adult)")
     )),
   stratum_NBS = NA,
+  LAST_UPDATE = Sys.Date()
+)
+
+ATF_ESP <- list(
+  # FULL_REGION_EBS = as.data.frame(
+  #   dplyr::filter(ebs_sbw$full_sbw,
+  #                 common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
+  #   )),
+  FULL_REGION_GOA = as.data.frame(
+    dplyr::filter(goa_sbw$full_sbw,
+                  common_name %in% c("arrowtooth flounder (adult)"))
+    ),
+  # FULL_REGION_AI = as.data.frame(
+  #   dplyr::filter(ai_sbw$full_sbw,
+  #                 common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
+  #   )),
+  # FULL_REGION_NBS = as.data.frame(
+  #   dplyr::filter(
+  #     nbs_sbw$full_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
+  #   )),
+  # STRATUM_EBS = as.data.frame(
+  #   dplyr::filter(
+  #     ebs_sbw$stratum_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
+  #   )),
+  STRATUM_GOA = as.data.frame(
+    dplyr::filter(
+      goa_sbw$stratum_sbw, common_name %in% c("arrowtooth flounder (adult)"))
+    ),
+  # STRATUM_AI = as.data.frame(
+  #   dplyr::filter(
+  #     ai_sbw$stratum_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
+  #   )),
+  # stratum_NBS = NA,
+  LAST_UPDATE = Sys.Date()
+)
+
+GT_ESP <- list(
+  # FULL_REGION_EBS = as.data.frame(
+  #   dplyr::filter(ebs_sbw$full_sbw,
+  #                 common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
+  #   )),
+  FULL_REGION_EBS = as.data.frame(
+    dplyr::filter(ebs_sbw$full_sbw,
+                  common_name %in% c("Greenland turbot (adult)"))
+  ),
+  # FULL_REGION_AI = as.data.frame(
+  #   dplyr::filter(ai_sbw$full_sbw,
+  #                 common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
+  #   )),
+  # FULL_REGION_NBS = as.data.frame(
+  #   dplyr::filter(
+  #     nbs_sbw$full_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
+  #   )),
+  # STRATUM_EBS = as.data.frame(
+  #   dplyr::filter(
+  #     ebs_sbw$stratum_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
+  #   )),
+  STRATUM_EBS = as.data.frame(
+    dplyr::filter(
+      ebs_sbw$stratum_sbw, common_name %in% c("Greenland turbot (adult)"))
+  ),
+  # STRATUM_AI = as.data.frame(
+  #   dplyr::filter(
+  #     ai_sbw$stratum_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
+  #   )),
+  # stratum_NBS = NA,
   LAST_UPDATE = Sys.Date()
 )
 
@@ -363,6 +430,8 @@ usethis::use_data(AI_INDICATOR, overwrite = TRUE)
 usethis::use_data(GOA_INDICATOR, overwrite = TRUE)
 usethis::use_data(NBS_INDICATOR, overwrite = TRUE)
 usethis::use_data(PCOD_ESP, overwrite = TRUE)
+usethis::use_data(ATF_ESP, overwrite = TRUE)
+usethis::use_data(GT_ESP, overwrite = TRUE)
 
 save(
   EBS_INDICATOR,
@@ -370,6 +439,8 @@ save(
   GOA_INDICATOR,
   AI_INDICATOR,
   PCOD_ESP,
+  ATF_ESP,
+  GT_ESP,
   ESR_SETTINGS,
   ESP_SETTINGS,
   file = here::here("R", "sysdata.rda")
