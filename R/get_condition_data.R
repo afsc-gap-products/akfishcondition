@@ -27,7 +27,7 @@ get_condition_data <- function(
     
     species_by_region <-
       list(
-        "EBS" = c(21740, 21720, 10110, 10210, 10130, 10261, 10285),
+        "EBS" = c(21740, 21720, 10110, 10210, 10130, 10261, 10285, 10112, 10115),
         "NBS" = c(21740, 21720, 10210, 10285),
         "GOA" = c(21740, 21720, 30420, 10262, 10110, 30060, 30152, 10261, 
                   10180, 10200, 10130, 30576, 30051, 30052, 30560),
@@ -143,8 +143,8 @@ get_condition_data <- function(
     # Format data for subsequent functions
     haul <- gapdata$haul |>
       dplyr::mutate(
-        latitude = (START_LATITUDE + END_LATITUDE)/2,
-        longitude = (START_LONGITUDE + END_LONGITUDE)/2,
+        latitude = START_LATITUDE,
+        longitude = START_LONGITUDE,
         year = floor(CRUISE/100)
       )
     

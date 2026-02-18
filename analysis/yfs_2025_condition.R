@@ -1,11 +1,13 @@
 library(akfishcondition)
 library(nlme)
+library(akgfmaps)
+library(ggthemes)
 
 channel <- akfishcondition:::get_connected(schema = "AFSC")
 
 yfs_specimen <- RODBC::sqlQuery(
   channel = channel,
-  query = "select s.*, h.stratum 
+  query = "select s.*, h.stratum, h.start_latitude_dd, h.start_longitude_dd 
   from racebase.specimen s, racebase.haul h where s.cruise in (202501, 202502) 
   and s.species_code in 10210 
   and s.vessel in (162, 134) 
@@ -15,7 +17,7 @@ yfs_specimen <- RODBC::sqlQuery(
 
 yfs_specimen <- RODBC::sqlQuery(
   channel = channel,
-"select s.*, h.stratum, c.year
+"select s.*, h.stratum, c.year, h.latitude_dd_start, h.longitude_dd_start
   from gap_products.akfin_specimen s, 
   gap_products.akfin_haul h,
   gap_products.akfin_cruise c
@@ -26,12 +28,12 @@ yfs_specimen <- RODBC::sqlQuery(
   and h.cruisejoin = c.cruisejoin"
 )
 
-
 yfs_female <-
   yfs_specimen |>
   dplyr::filter(
     SEX == 2, 
     STRATUM < 70,
+    # LENGTH_MM < 250,
     !is.na(MATURITY),
     MATURITY > 0
   ) |>
@@ -42,13 +44,59 @@ yfs_female <-
       ifelse(MATURITY %in% c(2:4), 
              "Dev/Spawn",
              "Imm/Spent/Rest/Trans"),
-      ifelse(MATURITY %in% c(2, 3),
+      ifelse(MATURITY %in% c(2, 3, 9),
              "Dev/Spawn", 
              "Imm/Spent/Rest/Trans")),
     loglen = log(LENGTH_MM),
     logwt = log(WEIGHT_G),
     stratum = factor(floor(STRATUM/10))
+  ) |>
+  dplyr::filter(
+    !(YEAR != 2025 & MATURITY == 5)
   )
+
+map_layers <- akgfmaps::get_base_layers(select.region = "sebs", set.crs = 3338)
+
+yfs_sf <- yfs_female |> 
+  sf::st_as_sf(coords = c("LONGITUDE_DD_START", "LATITUDE_DD_START"), crs = "WGS84") |>
+  sf::st_transform(crs = 3338)
+
+before_2025 <- 
+  ggplot() +
+  geom_sf(
+    data = dplyr::filter(yfs_sf, YEAR < 2025),
+    mapping = aes(color = as.factor(MATURITY))
+  ) + 
+  geom_sf(data = map_layers$akland) +
+  scale_x_continuous(limits = map_layers$plot.boundary$x,
+                     breaks = map_layers$lon.breaks) +
+  scale_y_continuous(limits = map_layers$plot.boundary$y,
+                     breaks = map_layers$lat.breaks) +
+  scale_color_colorblind(name = "Maturity ('4-point')") +
+  facet_wrap(~MATURITY) +
+  theme_minimal()
+
+since_2025 <- 
+  ggplot() +
+  geom_sf(
+    data = dplyr::filter(yfs_sf, YEAR == 2025),
+    mapping = aes(color = as.factor(MATURITY))
+  ) + 
+  geom_sf(data = map_layers$akland) +
+  scale_x_continuous(limits = map_layers$plot.boundary$x,
+                     breaks = map_layers$lon.breaks) +
+  scale_y_continuous(limits = map_layers$plot.boundary$y,
+                     breaks = map_layers$lat.breaks) +
+  scale_color_tableau(name = "Maturity") +
+  facet_wrap(~MATURITY) +
+  theme_minimal()
+
+cowplot::plot_grid(
+  before_2025 + ggtitle("1991-2002"),
+  since_2025 + ggtitle("2025"),
+  nrow = 2
+)
+
 
 table(yfs_female$YEAR, yfs_female$developing)/rowSums(table(yfs_female$YEAR, yfs_female$developing))
 table(yfs_female$YEAR, yfs_female$developing)
@@ -76,6 +124,17 @@ ggplot() +
   scale_x_continuous(expand = c(0, 0)) +
   scale_y_continuous("Samples (%)", expand = c(0, 0)) +
   theme_bw()
+
+
+ggplot() +
+  geom_histogram(
+    data = yfs_female,
+    mapping = aes(x = LENGTH_MM, fill = factor(MATURITY))
+    ) +
+  facet_wrap(~YEAR) +
+  scale_fill_viridis_d(name = "Stage") +
+  theme_bw()
+
 
 
 m0 <- lm(formula = logwt~loglen, data = yfs_female)
@@ -118,7 +177,7 @@ ggplot() +
             ) +
   facet_wrap(~stratum) +
   scale_y_log10() +
-  scale_x_lo
+  scale_x_log10()
 
 
 maturity_weight <- 

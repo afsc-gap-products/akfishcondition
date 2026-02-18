@@ -5,7 +5,9 @@
 #' @param region Region as a character vector ("EBS", "NBS", "AI", or "GOA")
 #' @param stratum_col Optional. Name of the stratum column as a character vector.
 #' @param biomass_col Optional. Name of the biomass column as a character vector.
-#' @param cod_juv_cutoff_mm Optional. Fork length cutoff for adult and juvenile.
+#' @param cod_juv_cutoff_mm Optional. Fork length cutoff for adult and juvenile Pacific cod.
+#' @param atf_juv_cutoff_mm Optional. Fork length cutoff for adult and juvenile arrowtooth flounder.
+#' @param gt_juv_cutoff_mm Optional. Fork length cutoff for adult and juvenile Greenland turbot.
 #' @param covariates_to_use Character vector indicating which variables to use ('sex', 'day_of_year', 'stratum').
 #' @param min_n Minimum number of samples for data from a stratum to be included in condition indicator calculations. Default = 10.
 #' @noRd
@@ -14,6 +16,8 @@ run_sbw_condition_multimodel <- function(region,
                                          stratum_col = NULL, 
                                          biomass_col = NULL, 
                                          cod_juv_cutoff_mm = NULL, 
+                                         atf_juv_cutoff_mm = NULL,
+                                         gt_juv_cutoff_mm = NULL,
                                          covariates_to_use = c('sex', 'day_of_year', 'stratum'), 
                                          min_n = 10) {
   
@@ -39,6 +43,14 @@ run_sbw_condition_multimodel <- function(region,
   
   if(is.null(cod_juv_cutoff_mm)) {
     cod_juv_cutoff_mm <- c(460, 460, 460, 420)[region_index]
+  }
+  
+  if(is.null(atf_juv_cutoff_mm)) {
+    atf_juv_cutoff_mm <- c(480, 460, 460, 480)[region_index]
+  }
+  
+  if(is.null(gt_juv_cutoff_mm)) {
+    gt_juv_cutoff_mm <- c(580, 580, 580, 580)[region_index]
   }
   
   if(is.null(stratum_col)) {
@@ -104,6 +116,19 @@ run_sbw_condition_multimodel <- function(region,
   pcod$species_code[pcod$length >= cod_juv_cutoff_mm] <- 21722
   pcod$common_name[pcod$species_code == 21721] <- "Pacific cod (juvenile)"
   pcod$common_name[pcod$species_code == 21722] <- "Pacific cod (adult)"
+  
+  atf <- dat |> dplyr::filter(species_code == 10110)
+  atf$species_code[atf$length < atf_juv_cutoff_mm] <- 1011000
+  atf$species_code[atf$length >= atf_juv_cutoff_mm] <- 1011099
+  atf$common_name[atf$species_code == 1011000] <- "arrowtooth flounder (juvenile)"
+  atf$common_name[atf$species_code == 1011099] <- "arrowtooth flounder (adult)"
+  
+  gt <- dat |> dplyr::filter(species_code == 10115)
+  gt$species_code[gt$length < gt_juv_cutoff_mm] <- 1011500
+  gt$species_code[gt$length >= gt_juv_cutoff_mm] <- 1011599
+  gt$common_name[gt$species_code == 1011500] <- "Greenland turbot (juvenile)"
+  gt$common_name[gt$species_code == 1011599] <- "Greenland turbot (adult)"
+  
   pollock <- dplyr::filter(dat, species_code == 21740)
   dat$species_code[dat$species_code == 21740 & dat$length_mm >= 100 & dat$length_mm <= 250] <- 21741
   dat$common_name[dat$species_code == 21741] <- "walleye pollock (100-250 mm)"
@@ -111,8 +136,7 @@ run_sbw_condition_multimodel <- function(region,
   dat$common_name[dat$species_code == 21742] <- "walleye pollock (>250 mm)"
   
   # Bind adult and juvenile pollock and cod to dat
-  dat <- dplyr::bind_rows(dat, pollock)
-  dat <- dplyr::bind_rows(dat, pcod)
+  dat <- dplyr::bind_rows(dat, pcod, atf, gt, pollock)
   
   spp_vec <- unique(dat$species_code)
   
@@ -120,19 +144,20 @@ run_sbw_condition_multimodel <- function(region,
   for(i in 1:length(spp_vec)) {
     
     # Separate slope for each stratum. Bias correction according to Brodziak, no outlier detection.
-    raw_resid_df <- akfishcondition::calc_lw_residuals_multimodel(
-      len = dat$length_mm[dat$species_code == spp_vec[i]], 
-      wt = dat$weight_g[dat$species_code == spp_vec[i]], 
-      sex = null_flag(use = use_sex, var = dat$sex[dat$species_code == spp_vec[i]]),
-      year = dat$year[dat$species_code == spp_vec[i]],
-      day_of_year = null_flag(use = use_doy, var = dat$day_of_year[dat$species_code == spp_vec[i]]),
-      stratum = null_flag(use = use_stratum, var = dat$survey_stratum[dat$species_code == spp_vec[i]]),
-      make_diagnostics = TRUE, # Make diagnostics
-      bias_correction = TRUE, # Bias correction turned on
-      outlier_rm = TRUE, # Outlier removal turned off
-      region = region,
-      species_code = dat$species_code[dat$species_code == spp_vec[i]]
-    )
+    raw_resid_df <- 
+      akfishcondition::calc_lw_residuals_multimodel(
+        len = dat$length_mm[dat$species_code == spp_vec[i]], 
+        wt = dat$weight_g[dat$species_code == spp_vec[i]], 
+        sex = null_flag(use = use_sex, var = dat$sex[dat$species_code == spp_vec[i]]),
+        year = dat$year[dat$species_code == spp_vec[i]],
+        day_of_year = null_flag(use = use_doy, var = dat$day_of_year[dat$species_code == spp_vec[i]]),
+        stratum = null_flag(use = use_stratum, var = dat$survey_stratum[dat$species_code == spp_vec[i]]),
+        make_diagnostics = TRUE, # Make diagnostics
+        bias_correction = TRUE, # Bias correction turned on
+        outlier_rm = TRUE, # Outlier removal turned off
+        region = region,
+        species_code = dat$species_code[dat$species_code == spp_vec[i]]
+      )
     
     dat$resid_mean[dat$species_code == spp_vec[i]] <- raw_resid_df$lw.res_mean
     dat$resid_lwr[dat$species_code == spp_vec[i]] <- raw_resid_df$lw.res_lwr
@@ -180,10 +205,19 @@ run_sbw_condition_multimodel <- function(region,
   
   stratum_resids <- stratum_resids |>  dplyr::ungroup() |> dplyr::select(-species_code)
   
-  return(list(full_sbw = ann_mean_resid_df,
-              stratum_sbw = stratum_resids,
-              input_data = list(LW = lw,
-                                BIOMASS = biomass,
-                                AKFISHCONDITION_VERSION = utils::packageVersion("akfishcondition"),
-                                LAST_UPDATE = Sys.Date())))
+  output <- 
+    list(
+      full_sbw = ann_mean_resid_df,
+      stratum_sbw = stratum_resids,
+      input_data = 
+        list(
+          LW = lw,
+          BIOMASS = biomass,
+          AKFISHCONDITION_VERSION = utils::packageVersion("akfishcondition"),
+          LAST_UPDATE = Sys.Date()
+        )
+    )
+  
+  return(output)
+  
 }

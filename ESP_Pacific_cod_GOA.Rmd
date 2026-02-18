@@ -91,13 +91,13 @@ dev.off()
 ```{r make_txt, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
   con <- file(here::here("output", "ESP_GOA_PCOD_Adult.txt"))
   
-  writeLines(text = paste(akfishcondition::PCOD_ESP$FULL_REGION_GOA$mean_wt_resid[akfishcondition::PCOD_ESP$FULL_REGION_GOA$common_name == "Pacific cod (adult)"], collapse = ", "), 
+  writeLines(text = paste(akfishcondition::PCOD_ESP$FULL_REGION_GOA$mean_wt_resid[akfishcondition::PCOD_ESP$FULL_REGION_GOA$common_name == "Pacific cod (adult)"], collapse = " "), 
              con = con)
   close(con)
   
     con <- file(here::here("output", "ESP_GOA_PCOD_Juvenile.txt"))
   
-  writeLines(text = paste(akfishcondition::PCOD_ESP$FULL_REGION_GOA$mean_wt_resid[akfishcondition::PCOD_ESP$FULL_REGION_GOA$common_name == "Pacific cod (juvenile)"], collapse = ", "), 
+  writeLines(text = paste(akfishcondition::PCOD_ESP$FULL_REGION_GOA$mean_wt_resid[akfishcondition::PCOD_ESP$FULL_REGION_GOA$common_name == "Pacific cod (juvenile)"], collapse = " "), 
              con = con)
   close(con)
 ```
