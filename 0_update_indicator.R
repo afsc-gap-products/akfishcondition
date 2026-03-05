@@ -101,12 +101,18 @@ ESP_SETTINGS <-
   list(
     ESP_SPECIES = 
       data.frame(
-        common_name = c("Pacific cod (juvenile)", "Pacific cod (adult)", "arrowtooth flounder (adult)", "Greenland turbot (adult)"),
-        species_code = c(21721, 21722, 10110, 10115),
-        AI = c(TRUE, TRUE, FALSE, FALSE),
-        GOA = c(TRUE, TRUE, TRUE, FALSE),
-        EBS = c(TRUE, TRUE, FALSE, TRUE),
-        NBS = c(FALSE, FALSE, FALSE, FALSE)),
+        common_name = c(
+          "Pacific cod (juvenile)", 
+          "Pacific cod (adult)", 
+          "arrowtooth flounder (juvenile)", 
+          "arrowtooth flounder (adult)", 
+          "Greenland turbot (juvenile)", 
+          "Greenland turbot (adult)"),
+        species_code = c(21721, 21722, 1011000, 1011099, 1011500, 1011599),
+        AI = c(TRUE, TRUE, FALSE, FALSE, FALSE, FALSE),
+        GOA = c(TRUE, TRUE, TRUE, TRUE, FALSE, FALSE),
+        EBS = c(TRUE, TRUE, FALSE, FALSE, TRUE, TRUE),
+        NBS = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)),
     VAST_SETTINGS = data.frame(species_code = c(21721, 21722,
                                                 21721, 21722,
                                                 21721, 21722),
@@ -361,7 +367,7 @@ ATF_ESP <- list(
   #   )),
   FULL_REGION_GOA = as.data.frame(
     dplyr::filter(goa_sbw$full_sbw,
-                  common_name %in% c("arrowtooth flounder (adult)"))
+                  common_name %in% c("arrowtooth flounder (adult)", "arrowtooth flounder (juvenile)"))
     ),
   # FULL_REGION_AI = as.data.frame(
   #   dplyr::filter(ai_sbw$full_sbw,
@@ -377,7 +383,7 @@ ATF_ESP <- list(
   #   )),
   STRATUM_GOA = as.data.frame(
     dplyr::filter(
-      goa_sbw$stratum_sbw, common_name %in% c("arrowtooth flounder (adult)"))
+      goa_sbw$stratum_sbw, common_name %in% c("arrowtooth flounder (adult)", "arrowtooth flounder (juvenile)"))
     ),
   # STRATUM_AI = as.data.frame(
   #   dplyr::filter(
@@ -394,7 +400,7 @@ GT_ESP <- list(
   #   )),
   FULL_REGION_EBS = as.data.frame(
     dplyr::filter(ebs_sbw$full_sbw,
-                  common_name %in% c("Greenland turbot (adult)"))
+                  common_name %in% c("Greenland turbot (adult)", "Greenland turbot (juvenile)"))
   ),
   # FULL_REGION_AI = as.data.frame(
   #   dplyr::filter(ai_sbw$full_sbw,
@@ -410,7 +416,7 @@ GT_ESP <- list(
   #   )),
   STRATUM_EBS = as.data.frame(
     dplyr::filter(
-      ebs_sbw$stratum_sbw, common_name %in% c("Greenland turbot (adult)"))
+      ebs_sbw$stratum_sbw, common_name %in% c("Greenland turbot (adult)", "Greenland turbot (juvenile)"))
   ),
   # STRATUM_AI = as.data.frame(
   #   dplyr::filter(

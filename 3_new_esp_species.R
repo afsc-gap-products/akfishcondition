@@ -1,18 +1,37 @@
 library(akfishcondition)
 
-akfishcondition:::ATF_ESP$FULL_REGION_GOA %>%
+akfishcondition:::ATF_ESP$FULL_REGION_GOA |>
+  dplyr::filter(common_name == "arrowtooth flounder (adult)") |>
   dplyr::mutate(indicator_name = "Summer_Arrowtooth_Flounder_Condition_Adult_GOA_Survey",
-                data_value = mean_wt_resid) %>%
-  dplyr::select(year, indicator_name, data_value) %>%
+                data_value = mean_wt_resid) |>
+  dplyr::select(year, indicator_name, data_value) |>
   write.csv(file = here::here("output", "Summer_Arrowtooth_Flounder_Condition_Adult_GOA_Survey.csv"),
             row.names = FALSE)
 
-akfishcondition:::GT_ESP$FULL_REGION_EBS %>%
+akfishcondition:::ATF_ESP$FULL_REGION_GOA |>
+  dplyr::filter(common_name == "arrowtooth flounder (juvenile)") |>
+  dplyr::mutate(indicator_name = "Summer_Arrowtooth_Flounder_Condition_Juvenile_GOA_Survey",
+                data_value = mean_wt_resid) |>
+  dplyr::select(year, indicator_name, data_value) |>
+  write.csv(file = here::here("output", "Summer_Arrowtooth_Flounder_Condition_Juvenile_GOA_Survey.csv"),
+            row.names = FALSE)
+
+akfishcondition:::GT_ESP$FULL_REGION_EBS |>
+  dplyr::filter(common_name == "Greenland turbot (adult)") |>
   dplyr::mutate(indicator_name = "Summer_Greenland_Turbot_Condition_Adult_EBS_Survey",
-                data_value = mean_wt_resid) %>%
-  dplyr::select(year, indicator_name, data_value) %>%
+                data_value = mean_wt_resid) |>
+  dplyr::select(year, indicator_name, data_value) |>
   write.csv(file = here::here("output", "Summer_Greenland_Turbot_Condition_Adult_EBS_Survey.csv"),
             row.names = FALSE)
+
+akfishcondition:::GT_ESP$FULL_REGION_EBS |>
+  dplyr::filter(common_name == "Greenland turbot (juvenile)") |>
+  dplyr::mutate(indicator_name = "Summer_Greenland_Turbot_Condition_Juvenile_EBS_Survey",
+                data_value = mean_wt_resid) |>
+  dplyr::select(year, indicator_name, data_value) |>
+  write.csv(file = here::here("output", "Summer_Greenland_Turbot_Condition_Juvenile_EBS_Survey.csv"),
+            row.names = FALSE)
+
 
 p_gt_ebs_esp <- 
   plot_anomaly_timeseries(
