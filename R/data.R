@@ -197,6 +197,40 @@
 "ATF_ESP"
 
 
+#' Atka mackerel Ecosystem and Socioeconomic Profile (ESP) indicator
+#' 
+#' Morphometric condition indicators based on residuals from a length-weight regression for adult and juvenile Atka mackerel. Separate indicator for each region.
+#' 
+#' @format Eight data frames (indicator for the full region and indicator by stratum for the AI) and a character vector.
+#' \describe{
+#'      \itemize{
+#'        \item FULL_REGION_* (data frame): Residuals for the full region
+#'          \itemize{
+#'          \item{year}{: Year}
+#'          \item{common_name}{: Species common name}
+#'          \item{mean_wt_resid}{: Mean residual for the full region}
+#'          \item{se_wt_resid}{: Standard error of the indicator for the full region}
+#'          }
+#'        \item STRATUM_* (data frame): Residuals by stratum
+#'         \itemize{
+#'          \item{year}{: Year}
+#'          \item{common_name}{: Species Common name}
+#'          \item{species_code}{: RACE/GAP species code}
+#'          \item{inpfc_stratum}{: INPFC Stratum}
+#'          \item{stratum_resid_mean}{: Unweighted stratum mean residual}
+#'          \item{n}{: Sample size for the stratum}
+#'          \item{stratum_resid_sd}{: Standard error of the stratum mean residual}
+#'          \item{weighted_resid_mean}{: Stratum mean Residual weighted in proportion to stratum biomass}
+#'          \item{weighted_resid_se}{: Standard error of the stratum mean residual weighted in proportion to stratum biomass}
+#'          }
+#'        \item LAST_UPDATE: Date when indicator and data were last updated.
+#'      }
+#' }
+#' @source \url{https://www.fisheries.noaa.gov/contact/groundfish-assessment-program}
+#' @export
+"ATKA_ESP"
+
+
 #' Greenland turbot Ecosystem and Socioeconomic Profile (ESP) indicator
 #' 
 #' Morphometric condition indicators based on residuals from a length-weight regression for adult Greenland turbot. Separate indicator for each region.

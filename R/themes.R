@@ -91,6 +91,8 @@ set_plot_order <- function(common_name, region) {
                              "Kamchatka flounder",
                              "southern rock sole",
                              "Atka mackerel",
+                             "Atka mackerel (juvenile)",
+                             "Atka mackerel (adult)",
                              "northern rockfish",
                              "Pacific ocean perch"),
                   labels = c("walleye pollock", 
@@ -108,6 +110,8 @@ set_plot_order <- function(common_name, region) {
                              "Greenland turbot (adult)",
                              "southern rock sole",
                              "Atka mackerel",
+                             "Atka mackerel (juvenile)",
+                             "Atka mackerel (adult)",
                              "northern rockfish",
                              "Pacific ocean perch")))
   } else if(region == "GOA") {
@@ -215,7 +219,8 @@ set_stratum_order <- function(stratum, region) {
                              650)))
   } else if(region == "AI") {
     return(factor(stratum,
-                  levels = c("Southern Bering Sea", 
+                  levels = c(799, 5699, 3499, 299),
+                  labels = c("Southern Bering Sea", 
                              "Eastern Aleutians",
                              "Central Aleutians",
                              "Western Aleutians")))

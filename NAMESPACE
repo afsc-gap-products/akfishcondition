@@ -2,6 +2,7 @@
 
 export(AI_INDICATOR)
 export(ATF_ESP)
+export(ATKA_ESP)
 export(EBS_INDICATOR)
 export(ESR_SETTINGS)
 export(GOA_INDICATOR)
