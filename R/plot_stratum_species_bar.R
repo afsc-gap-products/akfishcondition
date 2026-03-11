@@ -116,7 +116,7 @@ plot_species_stratum_bar <- function(x,
       dev.off()
     }
     
-    out_list[ii] <- p1
+    out_list[[ii]] <- p1
     
   }
   

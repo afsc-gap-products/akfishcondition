@@ -96,7 +96,7 @@ ESR_SETTINGS <-
       )
   )
 
-# Setup ESP Pacific cod
+# Setup ESP species
 ESP_SETTINGS <- 
   list(
     ESP_SPECIES = 
@@ -107,12 +107,13 @@ ESP_SETTINGS <-
           "arrowtooth flounder (juvenile)", 
           "arrowtooth flounder (adult)", 
           "Greenland turbot (juvenile)", 
-          "Greenland turbot (adult)"),
-        species_code = c(21721, 21722, 1011000, 1011099, 1011500, 1011599),
-        AI = c(TRUE, TRUE, FALSE, FALSE, FALSE, FALSE),
-        GOA = c(TRUE, TRUE, TRUE, TRUE, FALSE, FALSE),
-        EBS = c(TRUE, TRUE, FALSE, FALSE, TRUE, TRUE),
-        NBS = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)),
+          "Greenland turbot (adult)",
+          "Atka mackerel (juvenile)", "Atka mackerel (adult)"),
+        species_code = c(21721, 21722, 1011000, 1011099, 1011500, 1011599, 2192100, 2192199),
+        AI = c(TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE),
+        GOA = c(TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE),
+        EBS = c(TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE),
+        NBS = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)),
     VAST_SETTINGS = data.frame(species_code = c(21721, 21722,
                                                 21721, 21722,
                                                 21721, 21722),
@@ -361,68 +362,26 @@ PCOD_ESP <- list(
 )
 
 ATF_ESP <- list(
-  # FULL_REGION_EBS = as.data.frame(
-  #   dplyr::filter(ebs_sbw$full_sbw,
-  #                 common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
-  #   )),
   FULL_REGION_GOA = as.data.frame(
     dplyr::filter(goa_sbw$full_sbw,
                   common_name %in% c("arrowtooth flounder (adult)", "arrowtooth flounder (juvenile)"))
     ),
-  # FULL_REGION_AI = as.data.frame(
-  #   dplyr::filter(ai_sbw$full_sbw,
-  #                 common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
-  #   )),
-  # FULL_REGION_NBS = as.data.frame(
-  #   dplyr::filter(
-  #     nbs_sbw$full_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
-  #   )),
-  # STRATUM_EBS = as.data.frame(
-  #   dplyr::filter(
-  #     ebs_sbw$stratum_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
-  #   )),
   STRATUM_GOA = as.data.frame(
     dplyr::filter(
       goa_sbw$stratum_sbw, common_name %in% c("arrowtooth flounder (adult)", "arrowtooth flounder (juvenile)"))
     ),
-  # STRATUM_AI = as.data.frame(
-  #   dplyr::filter(
-  #     ai_sbw$stratum_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
-  #   )),
-  # stratum_NBS = NA,
   LAST_UPDATE = Sys.Date()
 )
 
-GT_ESP <- list(
-  # FULL_REGION_EBS = as.data.frame(
-  #   dplyr::filter(ebs_sbw$full_sbw,
-  #                 common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
-  #   )),
-  FULL_REGION_EBS = as.data.frame(
-    dplyr::filter(ebs_sbw$full_sbw,
-                  common_name %in% c("Greenland turbot (adult)", "Greenland turbot (juvenile)"))
+ATKA_ESP <- list(
+  FULL_REGION_AI = as.data.frame(
+    dplyr::filter(ai_sbw$full_sbw,
+                  common_name %in% c("Atka mackerel (adult)", "Atka mackerel (juvenile)"))
   ),
-  # FULL_REGION_AI = as.data.frame(
-  #   dplyr::filter(ai_sbw$full_sbw,
-  #                 common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
-  #   )),
-  # FULL_REGION_NBS = as.data.frame(
-  #   dplyr::filter(
-  #     nbs_sbw$full_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
-  #   )),
-  # STRATUM_EBS = as.data.frame(
-  #   dplyr::filter(
-  #     ebs_sbw$stratum_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
-  #   )),
-  STRATUM_EBS = as.data.frame(
+  STRATUM_AI = as.data.frame(
     dplyr::filter(
-      ebs_sbw$stratum_sbw, common_name %in% c("Greenland turbot (adult)", "Greenland turbot (juvenile)"))
+      ai_sbw$stratum_sbw, common_name %in% c("Atka mackerel (adult)", "Atka mackerel (juvenile)"))
   ),
-  # STRATUM_AI = as.data.frame(
-  #   dplyr::filter(
-  #     ai_sbw$stratum_sbw, common_name %in% ESP_SETTINGS$ESP_SPECIES$common_name
-  #   )),
-  # stratum_NBS = NA,
   LAST_UPDATE = Sys.Date()
 )
 
@@ -438,6 +397,7 @@ usethis::use_data(NBS_INDICATOR, overwrite = TRUE)
 usethis::use_data(PCOD_ESP, overwrite = TRUE)
 usethis::use_data(ATF_ESP, overwrite = TRUE)
 usethis::use_data(GT_ESP, overwrite = TRUE)
+usethis::use_data(ATKA_ESP, overwrite = TRUE)
 
 save(
   EBS_INDICATOR,
@@ -447,6 +407,7 @@ save(
   PCOD_ESP,
   ATF_ESP,
   GT_ESP,
+  ATKA_ESP,
   ESR_SETTINGS,
   ESP_SETTINGS,
   file = here::here("R", "sysdata.rda")

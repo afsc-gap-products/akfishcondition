@@ -8,6 +8,7 @@
 #' @param cod_juv_cutoff_mm Optional. Fork length cutoff for adult and juvenile Pacific cod.
 #' @param atf_juv_cutoff_mm Optional. Fork length cutoff for adult and juvenile arrowtooth flounder.
 #' @param gt_juv_cutoff_mm Optional. Fork length cutoff for adult and juvenile Greenland turbot.
+#' @param atka_juv_cutoff_mm Optional. Fork length cutoff for adult and juvenile Atka mackerel.
 #' @param covariates_to_use Character vector indicating which variables to use ('sex', 'day_of_year', 'stratum').
 #' @param min_n Minimum number of samples for data from a stratum to be included in condition indicator calculations. Default = 10.
 #' @noRd
@@ -18,6 +19,7 @@ run_sbw_condition_multimodel <- function(region,
                                          cod_juv_cutoff_mm = NULL, 
                                          atf_juv_cutoff_mm = NULL,
                                          gt_juv_cutoff_mm = NULL,
+                                         atka_juv_cutoff_mm = NULL,
                                          covariates_to_use = c('sex', 'day_of_year', 'stratum'), 
                                          min_n = 10) {
   
@@ -51,6 +53,10 @@ run_sbw_condition_multimodel <- function(region,
   
   if(is.null(gt_juv_cutoff_mm)) {
     gt_juv_cutoff_mm <- c(580, 580, 580, 580)[region_index]
+  }
+  
+  if(is.null(atka_juv_cutoff_mm)) {
+    atka_juv_cutoff_mm <- c(340, 340, 340, 340)[region_index]
   }
   
   if(is.null(stratum_col)) {
@@ -129,6 +135,12 @@ run_sbw_condition_multimodel <- function(region,
   gt$common_name[gt$species_code == 1011500] <- "Greenland turbot (juvenile)"
   gt$common_name[gt$species_code == 1011599] <- "Greenland turbot (adult)"
   
+  atka <- dat |> dplyr::filter(species_code == 21921)
+  atka$species_code[atka$length < atka_juv_cutoff_mm] <- 2192100
+  atka$species_code[atka$length >= atka_juv_cutoff_mm] <- 2192199
+  atka$common_name[atka$species_code == 2192100] <- "Atka mackerel (juvenile)"
+  atka$common_name[atka$species_code == 2192199] <- "Atka mackerel (adult)"
+  
   pollock <- dplyr::filter(dat, species_code == 21740)
   dat$species_code[dat$species_code == 21740 & dat$length_mm >= 100 & dat$length_mm <= 250] <- 21741
   dat$common_name[dat$species_code == 21741] <- "walleye pollock (100-250 mm)"
@@ -136,7 +148,7 @@ run_sbw_condition_multimodel <- function(region,
   dat$common_name[dat$species_code == 21742] <- "walleye pollock (>250 mm)"
   
   # Bind adult and juvenile pollock and cod to dat
-  dat <- dplyr::bind_rows(dat, pcod, atf, gt, pollock)
+  dat <- dplyr::bind_rows(dat, pcod, atf, gt, atka, pollock)
   
   spp_vec <- unique(dat$species_code)
   
