@@ -18,13 +18,13 @@ Fish length, weight, and design-based biomass index data are included in the pac
 
 <dl>
 <dt><b>AI_INDICATOR</b></dt>
-<dd><p>Data frame containing Aleutian Islands length-weight residual condition indicator based on AFSC summer bottom trawl survey data from 1986 to 2024.</p></dd>
+<dd><p>Data frame containing Aleutian Islands length-weight residual condition indicator based on AFSC summer bottom trawl survey data from 1986 to 2026.</p></dd>
 <dt><b>GOA_INDICATOR</b></dt>
-<dd><p>Data frame containing Gulf of Alaska length-weight residual condition indicator (years: 1984-2023).</p></dd>
+<dd><p>Data frame containing Gulf of Alaska length-weight residual condition indicator (years: 1984-2025).</p></dd>
 <dt><b>EBS_INDICATOR</b></dt>
-<dd><p>Data frame containing Eastern Bering Sea length-weight residual condition indicator based on AFSC summer bottom trawl survey data from 1999 to 2025.</p></dd>
+<dd><p>Data frame containing Eastern Bering Sea length-weight residual condition indicator based on AFSC summer bottom trawl survey data from 1999 to 2026.</p></dd>
 <dt><b>NBS_INDICATOR</b></dt>
 <dd><p>Data frame containing Northern Bering Sea length-weight residual condition indicator based on AFSC summer bottom trawl survey data from 2010 to 2025</p></dd>
 <dt><b>PCOD_ESP</b></dt>
-<dd><p>List containing data frames with adult and juvenile Pacific cod length-weight residual condition indicator from AFSC summer bottom trawl survey data from the eastern Bering Sea (1999-2023), Aleutian Islands (1986-2022), Gulf of Alaska (1984-2025). Length cut-offs between adults and juveniles are region-specific and based on Essential Fish Habitat thresholds.</p></dd>
+<dd><p>List containing data frames with adult and juvenile Pacific cod length-weight residual condition indicator from AFSC summer bottom trawl survey data from the eastern Bering Sea (1999-2026), Aleutian Islands (1986-2026), Gulf of Alaska (1984-2025). Length cut-offs between adults and juveniles are region-specific and based on Essential Fish Habitat thresholds.</p></dd>
 </dl>
