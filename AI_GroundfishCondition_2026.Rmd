@@ -83,14 +83,13 @@ fig3 <- plot_stratum_stacked_bar(x = AI_INDICATOR$STRATUM,
                                  fill_palette = "BrBG",
                                  var_y_name = "stratum_resid_mean", 
                                  var_x_name = "year",
-                                 var_group_name = "inpfc_stratum",
+                                 var_group_name = "area_id",
                                  fill_title = "Stratum",
                                  y_title = "Length-weight residual (ln(g))")
 
-print(fig3 + 
+print(fig3 + theme_condition_index() + 
         theme_condition_index() + 
         theme(legend.position = "bottom", 
-              legend.text = element_text(size = 19),
               legend.title = element_blank()))
 
 ```
