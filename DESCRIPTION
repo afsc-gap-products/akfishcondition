@@ -1,8 +1,8 @@
 Package: akfishcondition
 Type: Package
 Title: Groundfish morphometric condition indicator
-Version: 4.2.5
-Date: 2026-03-11
+Version: 4.3.0
+Date: 2026-08-31
 Authors@R: c(person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre")),
     person("Cecilia", "O'Leary", role = "aut"),
     person("Bianca", "Prohaska", email = "bianca.prohaska@noaa.gov", role = "ctb"),
@@ -24,7 +24,7 @@ Description: This package calculates groundfish condition based on length-weight
 License: GPL (>=2)
 Encoding: UTF-8
 LazyData: false
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Imports: colorspace,
     viridis
 Suggests: knitr, 

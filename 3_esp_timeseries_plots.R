@@ -228,3 +228,4 @@ akfishcondition::ATKA_ESP$STRATUM_AI |>
   dplyr::select(year, indicator_name, data_value) |>
   write.csv(file = here::here("output", "Summer_Atka_Mackerel_Condition_Juvenile_EAI_Survey.csv"),
             row.names = FALSE)
+
