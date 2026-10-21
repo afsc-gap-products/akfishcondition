@@ -35,7 +35,7 @@ A list containing two data frames (indicator for the full region, indicator by s
 \url{https://www.fisheries.noaa.gov/contact/groundfish-assessment-program}
 }
 \usage{
-EBS_INDICATOR
+data(EBS_INDICATOR)
 }
 \description{
 Morphometric condition indicators based on length-weight regressions for Pacific cod, walleye pollock (> 250 mm), walleye pollock (100-250 mm), northern rock sole, arrowtooth flounder, flathead sole, Alaska plaice, and yellowfin sole in the eastern Bering Sea.

@@ -35,7 +35,7 @@ A list containing two data.frames (list of species for each region, VAST setting
     }
 }
 \usage{
-ESR_SETTINGS
+data(ESR_SETTINGS)
 }
 \description{
 ESR species and VAST settings for ESR species.

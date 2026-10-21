@@ -385,6 +385,18 @@ ATKA_ESP <- list(
   LAST_UPDATE = Sys.Date()
 )
 
+GT_ESP <- list(
+  FULL_REGION_EBS = as.data.frame(
+    dplyr::filter(ebs_sbw$full_sbw,
+                  common_name %in% c("Greenland turbot (adult)", "Greenland turbot (juvenile)"))
+  ),
+  STRATUM_EBS = as.data.frame(
+    dplyr::filter(
+      ebs_sbw$stratum_sbw, common_name %in% c("Greenland turbot (adult)", "Greenland turbot (juvenile)"))
+  ),
+  LAST_UPDATE = Sys.Date()
+)
+
 # EBS_INDICATOR$STRATUM <- dplyr::rename(EBS_INDICATOR$STRATUM, stratum = area_id)
 # NBS_INDICATOR$STRATUM <- dplyr::rename(NBS_INDICATOR$STRATUM, stratum = area_id)
 # GOA_INDICATOR$STRATUM <- dplyr::rename(GOA_INDICATOR$STRATUM, rep_area = area_id)

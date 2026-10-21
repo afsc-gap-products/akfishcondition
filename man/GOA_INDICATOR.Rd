@@ -34,7 +34,7 @@ A list containing two data frames (indicator for the full region, indicator by s
 \url{https://www.fisheries.noaa.gov/contact/groundfish-assessment-program}
 }
 \usage{
-GOA_INDICATOR
+data(GOA_INDICATOR)
 }
 \description{
 Morphometric condition indicators based on residuals from length-weight regressions for Pacific cod, walleye pollock (> 250 mm), walleye pollock (100-250 mm), Pacific cod, northern rock sole, southern rock sole, arrowtooth flounder, Dover sole, rex sole, flathead sole, Atka mackerel, blackspotted rockfish, rougheye rockfish, northern rockfish, shortraker rockfish, shaprchin rockfish, and Pacific ocean perch in the Gulf of Alaska.

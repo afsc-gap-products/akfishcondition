@@ -32,6 +32,38 @@ akfishcondition:::GT_ESP$FULL_REGION_EBS |>
   write.csv(file = here::here("output", "Summer_Greenland_Turbot_Condition_Juvenile_EBS_Survey.csv"),
             row.names = FALSE)
 
+akfishcondition:::PCOD_ESP$FULL_REGION_EBS |>
+  dplyr::filter(common_name == "Pacific cod (adult)") |>
+  dplyr::mutate(indicator_name = "Summer_Pacific_Cod_Condition_Adult_EBS_Survey",
+                data_value = mean_wt_resid) |>
+  dplyr::select(year, indicator_name, data_value) |>
+  write.csv(file = here::here("output", "Summer_Pacific_Cod_Condition_Adult_EBS_Survey.csv"),
+            row.names = FALSE)
+
+akfishcondition:::PCOD_ESP$FULL_REGION_EBS |>
+  dplyr::filter(common_name == "Pacific cod (juvenile)") |>
+  dplyr::mutate(indicator_name = "Summer_Pacific_Cod_Condition_Juvenile_EBS_Survey",
+                data_value = mean_wt_resid) |>
+  dplyr::select(year, indicator_name, data_value) |>
+  write.csv(file = here::here("output", "Summer_Pacific_Cod_Condition_Juvenile_EBS_Survey.csv"),
+            row.names = FALSE)
+
+akfishcondition:::PCOD_ESP$FULL_REGION_GOA |>
+  dplyr::filter(common_name == "Pacific cod (adult)") |>
+  dplyr::mutate(indicator_name = "Summer_Pacific_Cod_Condition_Adult_GOA_Survey",
+                data_value = mean_wt_resid) |>
+  dplyr::select(year, indicator_name, data_value) |>
+  write.csv(file = here::here("output", "Summer_Pacific_Cod_Condition_Adult_GOA_Survey.csv"),
+            row.names = FALSE)
+
+akfishcondition:::PCOD_ESP$FULL_REGION_GOA|>
+  dplyr::filter(common_name == "Pacific cod (juvenile)") |>
+  dplyr::mutate(indicator_name = "Summer_Pacific_Cod_Condition_Juvenile_GOA_Survey",
+                data_value = mean_wt_resid) |>
+  dplyr::select(year, indicator_name, data_value) |>
+  write.csv(file = here::here("output", "Summer_Pacific_Cod_Condition_Juvenile_GOA_Survey.csv"),
+            row.names = FALSE)
+
 
 # Arrowtooth flounder (GOA) ----
 
@@ -228,4 +260,43 @@ akfishcondition::ATKA_ESP$STRATUM_AI |>
   dplyr::select(year, indicator_name, data_value) |>
   write.csv(file = here::here("output", "Summer_Atka_Mackerel_Condition_Juvenile_EAI_Survey.csv"),
             row.names = FALSE)
+
+
+# Pacific cod (GOA)
+p_cod_goa_esp <- 
+  plot_anomaly_timeseries(
+    x = akfishcondition::PCOD_ESP$FULL_REGION_GOA,
+    region = "GOA",
+    fill_color = "#0085CA",
+    var_y_name = "mean_wt_resid",
+    var_y_se_name = "se_wt_resid",
+    var_x_name = "year",
+    y_title = "Length-weight residual (ln(g))",
+    plot_type = "box",
+    format_for = "png"
+  ) +
+  theme_blue_strip()
+
+png(here::here("plots", "GOA", "ESP_GOA_PCOD_condition.png"),width=6,height=3,units="in",res=600)
+print(p_cod_goa_esp)
+dev.off()
+
+# Pacific cod (EBS)
+p_cod_ebs_esp <- 
+  plot_anomaly_timeseries(
+    x = akfishcondition::PCOD_ESP$FULL_REGION_EBS,
+    region = "GOA",
+    fill_color = "#0085CA",
+    var_y_name = "mean_wt_resid",
+    var_y_se_name = "se_wt_resid",
+    var_x_name = "year",
+    y_title = "Length-weight residual (ln(g))",
+    plot_type = "box",
+    format_for = "png"
+  ) +
+  theme_blue_strip()
+
+png(here::here("plots", "BS", "ESP_EBS_PCOD_condition.png"),width=6,height=3,units="in",res=600)
+print(p_cod_ebs_esp)
+dev.off()
 

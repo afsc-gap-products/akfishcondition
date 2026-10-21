@@ -36,7 +36,7 @@ A list containing a data frames (indicator for the full region) and a character 
 \url{https://www.fisheries.noaa.gov/contact/groundfish-assessment-program}
 }
 \usage{
-NBS_INDICATOR
+data(NBS_INDICATOR)
 }
 \description{
 Morphometric condition indicators based on length-weight regressions for Pacific cod, walleye pollock (> 250 mm), walleye pollock (100-250 mm), Alaska plaice, and yellowfin sole in the northern Bering Sea.

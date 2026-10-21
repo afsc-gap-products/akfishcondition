@@ -35,7 +35,7 @@ Eight data frames (indicator for the full region and indicator by stratum for th
 \url{https://www.fisheries.noaa.gov/contact/groundfish-assessment-program}
 }
 \usage{
-GT_ESP
+data(GT_ESP)
 }
 \description{
 Morphometric condition indicators based on residuals from a length-weight regression for adult Greenland turbot. Separate indicator for each region.
